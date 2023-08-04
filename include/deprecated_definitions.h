@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -29,24 +30,23 @@
 #ifndef DEPRECATED_DEFINITIONS_H
 #define DEPRECATED_DEFINITIONS_H
 
-
 /* Each FreeRTOS port has a unique portmacro.h header file.  Originally a
- * pre-processor definition was used to ensure the pre-processor found the correct
- * portmacro.h file for the port being used.  That scheme was deprecated in favour
- * of setting the compiler's include path such that it found the correct
- * portmacro.h file - removing the need for the constant and allowing the
- * portmacro.h file to be located anywhere in relation to the port being used.  The
- * definitions below remain in the code for backward compatibility only.  New
- * projects should not use them. */
+ * pre-processor definition was used to ensure the pre-processor found the
+ * correct portmacro.h file for the port being used.  That scheme was deprecated
+ * in favour of setting the compiler's include path such that it found the
+ * correct portmacro.h file - removing the need for the constant and allowing
+ * the portmacro.h file to be located anywhere in relation to the port being
+ * used.  The definitions below remain in the code for backward compatibility
+ * only.  New projects should not use them. */
 
 #ifdef OPEN_WATCOM_INDUSTRIAL_PC_PORT
     #include "..\..\Source\portable\owatcom\16bitdos\pc\portmacro.h"
-    typedef void ( __interrupt __far * pxISR )();
+typedef void( __interrupt __far * pxISR )();
 #endif
 
 #ifdef OPEN_WATCOM_FLASH_LITE_186_PORT
     #include "..\..\Source\portable\owatcom\16bitdos\flsh186\portmacro.h"
-    typedef void ( __interrupt __far * pxISR )();
+typedef void( __interrupt __far * pxISR )();
 #endif
 
 #ifdef GCC_MEGA_AVR
@@ -211,20 +211,20 @@
 
 #ifdef BCC_INDUSTRIAL_PC_PORT
 
-/* A short file name has to be used in place of the normal
- * FreeRTOSConfig.h when using the Borland compiler. */
-    #include "frconfig.h"
+    /* A short file name has to be used in place of the normal
+     * FreeRTOSConfig.h when using the Borland compiler. */
     #include "..\portable\BCC\16BitDOS\PC\prtmacro.h"
-    typedef void ( __interrupt __far * pxISR )();
+    #include "frconfig.h"
+typedef void( __interrupt __far * pxISR )();
 #endif
 
 #ifdef BCC_FLASH_LITE_186_PORT
 
-/* A short file name has to be used in place of the normal
- * FreeRTOSConfig.h when using the Borland compiler. */
-    #include "frconfig.h"
+    /* A short file name has to be used in place of the normal
+     * FreeRTOSConfig.h when using the Borland compiler. */
     #include "..\portable\BCC\16BitDOS\flsh186\prtmacro.h"
-    typedef void ( __interrupt __far * pxISR )();
+    #include "frconfig.h"
+typedef void( __interrupt __far * pxISR )();
 #endif
 
 #ifdef __GNUC__
@@ -248,7 +248,6 @@
 #ifdef __96340
     #include "portmacro.h"
 #endif
-
 
 #ifdef __IAR_V850ES_Fx3__
     #include "../../Source/portable/IAR/V850ES/portmacro.h"

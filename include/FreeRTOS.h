@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -51,44 +52,47 @@
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    extern "C" {
+extern "C" {
 #endif
 /* *INDENT-ON* */
 
 /* Acceptable values for configTICK_TYPE_WIDTH_IN_BITS. */
-#define TICK_TYPE_WIDTH_16_BITS    0
-#define TICK_TYPE_WIDTH_32_BITS    1
-#define TICK_TYPE_WIDTH_64_BITS    2
+#define TICK_TYPE_WIDTH_16_BITS 0
+#define TICK_TYPE_WIDTH_32_BITS 1
+#define TICK_TYPE_WIDTH_64_BITS 2
 
 /* Application specific configuration options. */
 #include "FreeRTOSConfig.h"
 
-#if !defined( configUSE_16_BIT_TICKS ) && !defined( configTICK_TYPE_WIDTH_IN_BITS )
+#if !defined( configUSE_16_BIT_TICKS ) && \
+    !defined( configTICK_TYPE_WIDTH_IN_BITS )
     #error Missing definition:  One of configUSE_16_BIT_TICKS and configTICK_TYPE_WIDTH_IN_BITS must be defined in FreeRTOSConfig.h.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
-#if defined( configUSE_16_BIT_TICKS ) && defined( configTICK_TYPE_WIDTH_IN_BITS )
+#if defined( configUSE_16_BIT_TICKS ) && \
+    defined( configTICK_TYPE_WIDTH_IN_BITS )
     #error Only one of configUSE_16_BIT_TICKS and configTICK_TYPE_WIDTH_IN_BITS must be defined in FreeRTOSConfig.h.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
 /* Define configTICK_TYPE_WIDTH_IN_BITS according to the
  * value of configUSE_16_BIT_TICKS for backward compatibility. */
 #ifndef configTICK_TYPE_WIDTH_IN_BITS
-    #if ( configUSE_16_BIT_TICKS == 1 )
-        #define configTICK_TYPE_WIDTH_IN_BITS    TICK_TYPE_WIDTH_16_BITS
+    #if( configUSE_16_BIT_TICKS == 1 )
+        #define configTICK_TYPE_WIDTH_IN_BITS TICK_TYPE_WIDTH_16_BITS
     #else
-        #define configTICK_TYPE_WIDTH_IN_BITS    TICK_TYPE_WIDTH_32_BITS
+        #define configTICK_TYPE_WIDTH_IN_BITS TICK_TYPE_WIDTH_32_BITS
     #endif
 #endif
 
 /* Set configUSE_MPU_WRAPPERS_V1 to 1 to use MPU wrappers v1. */
 #ifndef configUSE_MPU_WRAPPERS_V1
-    #define configUSE_MPU_WRAPPERS_V1    0
+    #define configUSE_MPU_WRAPPERS_V1 0
 #endif
 
-/* Set default value of configNUMBER_OF_CORES to 1 to use single core FreeRTOS. */
+/* Set default value of configNUMBER_OF_CORES to 1 to use single core FreeRTOS.
+ */
 #ifndef configNUMBER_OF_CORES
-    #define configNUMBER_OF_CORES    1
+    #define configNUMBER_OF_CORES 1
 #endif
 
 /* Basic FreeRTOS definitions. */
@@ -99,11 +103,11 @@
 
 /* Must be defaulted before configUSE_NEWLIB_REENTRANT is used below. */
 #ifndef configUSE_NEWLIB_REENTRANT
-    #define configUSE_NEWLIB_REENTRANT    0
+    #define configUSE_NEWLIB_REENTRANT 0
 #endif
 
 /* Required if struct _reent is used. */
-#if ( configUSE_NEWLIB_REENTRANT == 1 )
+#if( configUSE_NEWLIB_REENTRANT == 1 )
 
     #include "newlib-freertos.h"
 
@@ -111,20 +115,20 @@
 
 /* Must be defaulted before configUSE_PICOLIBC_TLS is used below. */
 #ifndef configUSE_PICOLIBC_TLS
-    #define configUSE_PICOLIBC_TLS    0
+    #define configUSE_PICOLIBC_TLS 0
 #endif
 
-#if ( configUSE_PICOLIBC_TLS == 1 )
+#if( configUSE_PICOLIBC_TLS == 1 )
 
     #include "picolibc-freertos.h"
 
 #endif /* if ( configUSE_PICOLIBC_TLS == 1 ) */
 
 #ifndef configUSE_C_RUNTIME_TLS_SUPPORT
-    #define configUSE_C_RUNTIME_TLS_SUPPORT    0
+    #define configUSE_C_RUNTIME_TLS_SUPPORT 0
 #endif
 
-#if ( configUSE_C_RUNTIME_TLS_SUPPORT == 1 )
+#if( configUSE_C_RUNTIME_TLS_SUPPORT == 1 )
 
     #ifndef configTLS_BLOCK_TYPE
         #error Missing definition:  configTLS_BLOCK_TYPE must be defined in FreeRTOSConfig.h when configUSE_C_RUNTIME_TLS_SUPPORT is set to 1.
@@ -169,7 +173,7 @@
     #error Missing definition:  configUSE_IDLE_HOOK must be defined in FreeRTOSConfig.h as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
-#if ( configNUMBER_OF_CORES > 1 )
+#if( configNUMBER_OF_CORES > 1 )
     #ifndef configUSE_MINIMAL_IDLE_HOOK
         #error Missing definition:  configUSE_MINIMAL_IDLE_HOOK must be defined in FreeRTOSConfig.h as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
     #endif
@@ -179,38 +183,38 @@
     #error Missing definition:  configUSE_TICK_HOOK must be defined in FreeRTOSConfig.h as either 1 or 0.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
-#if ( ( configTICK_TYPE_WIDTH_IN_BITS != TICK_TYPE_WIDTH_16_BITS ) && \
-    ( configTICK_TYPE_WIDTH_IN_BITS != TICK_TYPE_WIDTH_32_BITS ) &&   \
-    ( configTICK_TYPE_WIDTH_IN_BITS != TICK_TYPE_WIDTH_64_BITS ) )
+#if( ( configTICK_TYPE_WIDTH_IN_BITS != TICK_TYPE_WIDTH_16_BITS ) && \
+     ( configTICK_TYPE_WIDTH_IN_BITS != TICK_TYPE_WIDTH_32_BITS ) && \
+     ( configTICK_TYPE_WIDTH_IN_BITS != TICK_TYPE_WIDTH_64_BITS ) )
     #error Macro configTICK_TYPE_WIDTH_IN_BITS is defined to incorrect value.  See the Configuration section of the FreeRTOS API documentation for details.
 #endif
 
 #ifndef configUSE_CO_ROUTINES
-    #define configUSE_CO_ROUTINES    0
+    #define configUSE_CO_ROUTINES 0
 #endif
 
 #ifndef INCLUDE_vTaskPrioritySet
-    #define INCLUDE_vTaskPrioritySet    0
+    #define INCLUDE_vTaskPrioritySet 0
 #endif
 
 #ifndef INCLUDE_uxTaskPriorityGet
-    #define INCLUDE_uxTaskPriorityGet    0
+    #define INCLUDE_uxTaskPriorityGet 0
 #endif
 
 #ifndef INCLUDE_vTaskDelete
-    #define INCLUDE_vTaskDelete    0
+    #define INCLUDE_vTaskDelete 0
 #endif
 
 #ifndef INCLUDE_vTaskSuspend
-    #define INCLUDE_vTaskSuspend    0
+    #define INCLUDE_vTaskSuspend 0
 #endif
 
 #ifdef INCLUDE_xTaskDelayUntil
     #ifdef INCLUDE_vTaskDelayUntil
 
-/* INCLUDE_vTaskDelayUntil was replaced by INCLUDE_xTaskDelayUntil.  Backward
- * compatibility is maintained if only one or the other is defined, but
- * there is a conflict if both are defined. */
+        /* INCLUDE_vTaskDelayUntil was replaced by INCLUDE_xTaskDelayUntil.
+         * Backward compatibility is maintained if only one or the other is
+         * defined, but there is a conflict if both are defined. */
         #error INCLUDE_vTaskDelayUntil and INCLUDE_xTaskDelayUntil are both defined.  INCLUDE_vTaskDelayUntil is no longer required and should be removed
     #endif
 #endif
@@ -218,69 +222,70 @@
 #ifndef INCLUDE_xTaskDelayUntil
     #ifdef INCLUDE_vTaskDelayUntil
 
-/* If INCLUDE_vTaskDelayUntil is set but INCLUDE_xTaskDelayUntil is not then
- * the project's FreeRTOSConfig.h probably pre-dates the introduction of
- * xTaskDelayUntil and setting INCLUDE_xTaskDelayUntil to whatever
- * INCLUDE_vTaskDelayUntil is set to will ensure backward compatibility.
- */
-        #define INCLUDE_xTaskDelayUntil    INCLUDE_vTaskDelayUntil
+        /* If INCLUDE_vTaskDelayUntil is set but INCLUDE_xTaskDelayUntil is not
+         * then the project's FreeRTOSConfig.h probably pre-dates the
+         * introduction of xTaskDelayUntil and setting INCLUDE_xTaskDelayUntil
+         * to whatever INCLUDE_vTaskDelayUntil is set to will ensure backward
+         * compatibility.
+         */
+        #define INCLUDE_xTaskDelayUntil INCLUDE_vTaskDelayUntil
     #endif
 #endif
 
 #ifndef INCLUDE_xTaskDelayUntil
-    #define INCLUDE_xTaskDelayUntil    0
+    #define INCLUDE_xTaskDelayUntil 0
 #endif
 
 #ifndef INCLUDE_vTaskDelay
-    #define INCLUDE_vTaskDelay    0
+    #define INCLUDE_vTaskDelay 0
 #endif
 
 #ifndef INCLUDE_xTaskGetIdleTaskHandle
-    #define INCLUDE_xTaskGetIdleTaskHandle    0
+    #define INCLUDE_xTaskGetIdleTaskHandle 0
 #endif
 
 #ifndef INCLUDE_xTaskAbortDelay
-    #define INCLUDE_xTaskAbortDelay    0
+    #define INCLUDE_xTaskAbortDelay 0
 #endif
 
 #ifndef INCLUDE_xQueueGetMutexHolder
-    #define INCLUDE_xQueueGetMutexHolder    0
+    #define INCLUDE_xQueueGetMutexHolder 0
 #endif
 
 #ifndef INCLUDE_xSemaphoreGetMutexHolder
-    #define INCLUDE_xSemaphoreGetMutexHolder    INCLUDE_xQueueGetMutexHolder
+    #define INCLUDE_xSemaphoreGetMutexHolder INCLUDE_xQueueGetMutexHolder
 #endif
 
 #ifndef INCLUDE_xTaskGetHandle
-    #define INCLUDE_xTaskGetHandle    0
+    #define INCLUDE_xTaskGetHandle 0
 #endif
 
 #ifndef INCLUDE_uxTaskGetStackHighWaterMark
-    #define INCLUDE_uxTaskGetStackHighWaterMark    0
+    #define INCLUDE_uxTaskGetStackHighWaterMark 0
 #endif
 
 #ifndef INCLUDE_uxTaskGetStackHighWaterMark2
-    #define INCLUDE_uxTaskGetStackHighWaterMark2    0
+    #define INCLUDE_uxTaskGetStackHighWaterMark2 0
 #endif
 
 #ifndef INCLUDE_eTaskGetState
-    #define INCLUDE_eTaskGetState    0
+    #define INCLUDE_eTaskGetState 0
 #endif
 
 #ifndef INCLUDE_xTaskResumeFromISR
-    #define INCLUDE_xTaskResumeFromISR    1
+    #define INCLUDE_xTaskResumeFromISR 1
 #endif
 
 #ifndef INCLUDE_xTimerPendFunctionCall
-    #define INCLUDE_xTimerPendFunctionCall    0
+    #define INCLUDE_xTimerPendFunctionCall 0
 #endif
 
 #ifndef INCLUDE_xTaskGetSchedulerState
-    #define INCLUDE_xTaskGetSchedulerState    0
+    #define INCLUDE_xTaskGetSchedulerState 0
 #endif
 
 #ifndef INCLUDE_xTaskGetCurrentTaskHandle
-    #define INCLUDE_xTaskGetCurrentTaskHandle    1
+    #define INCLUDE_xTaskGetCurrentTaskHandle 1
 #endif
 
 #if configUSE_CO_ROUTINES != 0
@@ -290,51 +295,51 @@
 #endif
 
 #ifndef configUSE_DAEMON_TASK_STARTUP_HOOK
-    #define configUSE_DAEMON_TASK_STARTUP_HOOK    0
+    #define configUSE_DAEMON_TASK_STARTUP_HOOK 0
 #endif
 
 #ifndef configUSE_APPLICATION_TASK_TAG
-    #define configUSE_APPLICATION_TASK_TAG    0
+    #define configUSE_APPLICATION_TASK_TAG 0
 #endif
 
 #ifndef configNUM_THREAD_LOCAL_STORAGE_POINTERS
-    #define configNUM_THREAD_LOCAL_STORAGE_POINTERS    0
+    #define configNUM_THREAD_LOCAL_STORAGE_POINTERS 0
 #endif
 
 #ifndef configUSE_RECURSIVE_MUTEXES
-    #define configUSE_RECURSIVE_MUTEXES    0
+    #define configUSE_RECURSIVE_MUTEXES 0
 #endif
 
 #ifndef configUSE_MUTEXES
-    #define configUSE_MUTEXES    0
+    #define configUSE_MUTEXES 0
 #endif
 
 #ifndef configUSE_TIMERS
-    #define configUSE_TIMERS    0
+    #define configUSE_TIMERS 0
 #endif
 
 #ifndef configUSE_COUNTING_SEMAPHORES
-    #define configUSE_COUNTING_SEMAPHORES    0
+    #define configUSE_COUNTING_SEMAPHORES 0
 #endif
 
 #ifndef configUSE_TASK_PREEMPTION_DISABLE
-    #define configUSE_TASK_PREEMPTION_DISABLE    0
+    #define configUSE_TASK_PREEMPTION_DISABLE 0
 #endif
 
 #ifndef configUSE_ALTERNATIVE_API
-    #define configUSE_ALTERNATIVE_API    0
+    #define configUSE_ALTERNATIVE_API 0
 #endif
 
 #ifndef portCRITICAL_NESTING_IN_TCB
-    #define portCRITICAL_NESTING_IN_TCB    0
+    #define portCRITICAL_NESTING_IN_TCB 0
 #endif
 
 #ifndef configMAX_TASK_NAME_LEN
-    #define configMAX_TASK_NAME_LEN    16
+    #define configMAX_TASK_NAME_LEN 16
 #endif
 
 #ifndef configIDLE_SHOULD_YIELD
-    #define configIDLE_SHOULD_YIELD    1
+    #define configIDLE_SHOULD_YIELD 1
 #endif
 
 #if configMAX_TASK_NAME_LEN < 1
@@ -343,21 +348,21 @@
 
 #ifndef configASSERT
     #define configASSERT( x )
-    #define configASSERT_DEFINED    0
+    #define configASSERT_DEFINED 0
 #else
-    #define configASSERT_DEFINED    1
+    #define configASSERT_DEFINED 1
 #endif
 
 /* configPRECONDITION should be defined as configASSERT.
  * The CBMC proofs need a way to track assumptions and assertions.
  * A configPRECONDITION statement should express an implicit invariant or
- * assumption made.  A configASSERT statement should express an invariant that must
- * hold explicit before calling the code. */
+ * assumption made.  A configASSERT statement should express an invariant that
+ * must hold explicit before calling the code. */
 #ifndef configPRECONDITION
     #define configPRECONDITION( X )    configASSERT( X )
-    #define configPRECONDITION_DEFINED    0
+    #define configPRECONDITION_DEFINED 0
 #else
-    #define configPRECONDITION_DEFINED    1
+    #define configPRECONDITION_DEFINED 1
 #endif
 
 #ifndef portMEMORY_BARRIER
@@ -369,13 +374,13 @@
 #endif
 
 #ifndef configRUN_MULTIPLE_PRIORITIES
-    #define configRUN_MULTIPLE_PRIORITIES    0
+    #define configRUN_MULTIPLE_PRIORITIES 0
 #endif
 
 #ifndef portGET_CORE_ID
 
-    #if ( configNUMBER_OF_CORES == 1 )
-        #define portGET_CORE_ID()    0
+    #if( configNUMBER_OF_CORES == 1 )
+        #define portGET_CORE_ID() 0
     #else
         #error configNUMBER_OF_CORES is set to more than 1 then portGET_CORE_ID must also be defined.
     #endif /* configNUMBER_OF_CORES */
@@ -384,8 +389,8 @@
 
 #ifndef portYIELD_CORE
 
-    #if ( configNUMBER_OF_CORES == 1 )
-        #define portYIELD_CORE( x )    portYIELD()
+    #if( configNUMBER_OF_CORES == 1 )
+        #define portYIELD_CORE( x ) portYIELD()
     #else
         #error configNUMBER_OF_CORES is set to more than 1 then portYIELD_CORE must also be defined.
     #endif /* configNUMBER_OF_CORES */
@@ -394,7 +399,7 @@
 
 #ifndef portSET_INTERRUPT_MASK
 
-    #if ( configNUMBER_OF_CORES > 1 )
+    #if( configNUMBER_OF_CORES > 1 )
         #error portSET_INTERRUPT_MASK is required in SMP
     #endif
 
@@ -402,7 +407,7 @@
 
 #ifndef portCLEAR_INTERRUPT_MASK
 
-    #if ( configNUMBER_OF_CORES > 1 )
+    #if( configNUMBER_OF_CORES > 1 )
         #error portCLEAR_INTERRUPT_MASK is required in SMP
     #endif
 
@@ -410,7 +415,7 @@
 
 #ifndef portRELEASE_TASK_LOCK
 
-    #if ( configNUMBER_OF_CORES == 1 )
+    #if( configNUMBER_OF_CORES == 1 )
         #define portRELEASE_TASK_LOCK()
     #else
         #error portRELEASE_TASK_LOCK is required in SMP
@@ -420,7 +425,7 @@
 
 #ifndef portGET_TASK_LOCK
 
-    #if ( configNUMBER_OF_CORES == 1 )
+    #if( configNUMBER_OF_CORES == 1 )
         #define portGET_TASK_LOCK()
     #else
         #error portGET_TASK_LOCK is required in SMP
@@ -430,7 +435,7 @@
 
 #ifndef portRELEASE_ISR_LOCK
 
-    #if ( configNUMBER_OF_CORES == 1 )
+    #if( configNUMBER_OF_CORES == 1 )
         #define portRELEASE_ISR_LOCK()
     #else
         #error portRELEASE_ISR_LOCK is required in SMP
@@ -440,7 +445,7 @@
 
 #ifndef portGET_ISR_LOCK
 
-    #if ( configNUMBER_OF_CORES == 1 )
+    #if( configNUMBER_OF_CORES == 1 )
         #define portGET_ISR_LOCK()
     #else
         #error portGET_ISR_LOCK is required in SMP
@@ -450,7 +455,7 @@
 
 #ifndef portCHECK_IF_IN_ISR
 
-    #if ( configNUMBER_OF_CORES > 1 )
+    #if( configNUMBER_OF_CORES > 1 )
         #error portCHECK_IF_IN_ISR is required in SMP
     #endif
 
@@ -458,7 +463,7 @@
 
 #ifndef portENTER_CRITICAL_FROM_ISR
 
-    #if ( configNUMBER_OF_CORES > 1 )
+    #if( configNUMBER_OF_CORES > 1 )
         #error portENTER_CRITICAL_FROM_ISR is required in SMP
     #endif
 
@@ -466,18 +471,18 @@
 
 #ifndef portEXIT_CRITICAL_FROM_ISR
 
-    #if ( configNUMBER_OF_CORES > 1 )
+    #if( configNUMBER_OF_CORES > 1 )
         #error portEXIT_CRITICAL_FROM_ISR is required in SMP
     #endif
 
 #endif
 
 #ifndef configUSE_CORE_AFFINITY
-    #define configUSE_CORE_AFFINITY    0
+    #define configUSE_CORE_AFFINITY 0
 #endif /* configUSE_CORE_AFFINITY */
 
 #ifndef configUSE_MINIMAL_IDLE_HOOK
-    #define configUSE_MINIMAL_IDLE_HOOK    0
+    #define configUSE_MINIMAL_IDLE_HOOK 0
 #endif /* configUSE_MINIMAL_IDLE_HOOK */
 
 /* The timers module relies on xTaskGetSchedulerState(). */
@@ -502,15 +507,16 @@
 #endif /* configUSE_TIMERS */
 
 #ifndef portSET_INTERRUPT_MASK_FROM_ISR
-    #define portSET_INTERRUPT_MASK_FROM_ISR()    0
+    #define portSET_INTERRUPT_MASK_FROM_ISR() 0
 #endif
 
 #ifndef portCLEAR_INTERRUPT_MASK_FROM_ISR
-    #define portCLEAR_INTERRUPT_MASK_FROM_ISR( uxSavedStatusValue )    ( void ) ( uxSavedStatusValue )
+    #define portCLEAR_INTERRUPT_MASK_FROM_ISR( uxSavedStatusValue ) \
+        ( void ) ( uxSavedStatusValue )
 #endif
 
 #ifndef portCLEAN_UP_TCB
-    #define portCLEAN_UP_TCB( pxTCB )    ( void ) ( pxTCB )
+    #define portCLEAN_UP_TCB( pxTCB ) ( void ) ( pxTCB )
 #endif
 
 #ifndef portPRE_TASK_DELETE_HOOK
@@ -518,53 +524,53 @@
 #endif
 
 #ifndef portSETUP_TCB
-    #define portSETUP_TCB( pxTCB )    ( void ) ( pxTCB )
+    #define portSETUP_TCB( pxTCB ) ( void ) ( pxTCB )
 #endif
 
 #ifndef configQUEUE_REGISTRY_SIZE
-    #define configQUEUE_REGISTRY_SIZE    0U
+    #define configQUEUE_REGISTRY_SIZE 0U
 #endif
 
-#if ( configQUEUE_REGISTRY_SIZE < 1 )
+#if( configQUEUE_REGISTRY_SIZE < 1 )
     #define vQueueAddToRegistry( xQueue, pcName )
     #define vQueueUnregisterQueue( xQueue )
     #define pcQueueGetName( xQueue )
 #endif
 
 #ifndef configUSE_MINI_LIST_ITEM
-    #define configUSE_MINI_LIST_ITEM    1
+    #define configUSE_MINI_LIST_ITEM 1
 #endif
 
 #ifndef portPOINTER_SIZE_TYPE
-    #define portPOINTER_SIZE_TYPE    uint32_t
+    #define portPOINTER_SIZE_TYPE uint32_t
 #endif
 
 /* Remove any unused trace macros. */
 #ifndef traceSTART
 
-/* Used to perform any necessary initialisation - for example, open a file
- * into which trace is to be written. */
+    /* Used to perform any necessary initialisation - for example, open a file
+     * into which trace is to be written. */
     #define traceSTART()
 #endif
 
 #ifndef traceEND
 
-/* Use to close a trace, for example close a file into which trace has been
- * written. */
+    /* Use to close a trace, for example close a file into which trace has been
+     * written. */
     #define traceEND()
 #endif
 
 #ifndef traceTASK_SWITCHED_IN
 
-/* Called after a task has been selected to run.  pxCurrentTCB holds a pointer
- * to the task control block of the selected task. */
+    /* Called after a task has been selected to run.  pxCurrentTCB holds a
+     * pointer to the task control block of the selected task. */
     #define traceTASK_SWITCHED_IN()
 #endif
 
 #ifndef traceINCREASE_TICK_COUNT
 
-/* Called before stepping the tick count after waking from tickless idle
- * sleep. */
+    /* Called before stepping the tick count after waking from tickless idle
+     * sleep. */
     #define traceINCREASE_TICK_COUNT( x )
 #endif
 
@@ -580,67 +586,70 @@
 
 #ifndef traceTASK_SWITCHED_OUT
 
-/* Called before a task has been selected to run.  pxCurrentTCB holds a pointer
- * to the task control block of the task being switched out. */
+    /* Called before a task has been selected to run.  pxCurrentTCB holds a
+     * pointer to the task control block of the task being switched out. */
     #define traceTASK_SWITCHED_OUT()
 #endif
 
 #ifndef traceTASK_PRIORITY_INHERIT
 
-/* Called when a task attempts to take a mutex that is already held by a
- * lower priority task.  pxTCBOfMutexHolder is a pointer to the TCB of the task
- * that holds the mutex.  uxInheritedPriority is the priority the mutex holder
- * will inherit (the priority of the task that is attempting to obtain the
- * muted. */
-    #define traceTASK_PRIORITY_INHERIT( pxTCBOfMutexHolder, uxInheritedPriority )
+    /* Called when a task attempts to take a mutex that is already held by a
+     * lower priority task.  pxTCBOfMutexHolder is a pointer to the TCB of the
+     * task that holds the mutex.  uxInheritedPriority is the priority the mutex
+     * holder will inherit (the priority of the task that is attempting to
+     * obtain the muted. */
+    #define traceTASK_PRIORITY_INHERIT( pxTCBOfMutexHolder, \
+                                        uxInheritedPriority )
 #endif
 
 #ifndef traceTASK_PRIORITY_DISINHERIT
 
-/* Called when a task releases a mutex, the holding of which had resulted in
- * the task inheriting the priority of a higher priority task.
- * pxTCBOfMutexHolder is a pointer to the TCB of the task that is releasing the
- * mutex.  uxOriginalPriority is the task's configured (base) priority. */
-    #define traceTASK_PRIORITY_DISINHERIT( pxTCBOfMutexHolder, uxOriginalPriority )
+    /* Called when a task releases a mutex, the holding of which had resulted in
+     * the task inheriting the priority of a higher priority task.
+     * pxTCBOfMutexHolder is a pointer to the TCB of the task that is releasing
+     * the mutex.  uxOriginalPriority is the task's configured (base) priority.
+     */
+    #define traceTASK_PRIORITY_DISINHERIT( pxTCBOfMutexHolder, \
+                                           uxOriginalPriority )
 #endif
 
 #ifndef traceBLOCKING_ON_QUEUE_RECEIVE
 
-/* Task is about to block because it cannot read from a
- * queue/mutex/semaphore.  pxQueue is a pointer to the queue/mutex/semaphore
- * upon which the read was attempted.  pxCurrentTCB points to the TCB of the
- * task that attempted the read. */
+    /* Task is about to block because it cannot read from a
+     * queue/mutex/semaphore.  pxQueue is a pointer to the queue/mutex/semaphore
+     * upon which the read was attempted.  pxCurrentTCB points to the TCB of the
+     * task that attempted the read. */
     #define traceBLOCKING_ON_QUEUE_RECEIVE( pxQueue )
 #endif
 
 #ifndef traceBLOCKING_ON_QUEUE_PEEK
 
-/* Task is about to block because it cannot read from a
- * queue/mutex/semaphore.  pxQueue is a pointer to the queue/mutex/semaphore
- * upon which the read was attempted.  pxCurrentTCB points to the TCB of the
- * task that attempted the read. */
+    /* Task is about to block because it cannot read from a
+     * queue/mutex/semaphore.  pxQueue is a pointer to the queue/mutex/semaphore
+     * upon which the read was attempted.  pxCurrentTCB points to the TCB of the
+     * task that attempted the read. */
     #define traceBLOCKING_ON_QUEUE_PEEK( pxQueue )
 #endif
 
 #ifndef traceBLOCKING_ON_QUEUE_SEND
 
-/* Task is about to block because it cannot write to a
- * queue/mutex/semaphore.  pxQueue is a pointer to the queue/mutex/semaphore
- * upon which the write was attempted.  pxCurrentTCB points to the TCB of the
- * task that attempted the write. */
+    /* Task is about to block because it cannot write to a
+     * queue/mutex/semaphore.  pxQueue is a pointer to the queue/mutex/semaphore
+     * upon which the write was attempted.  pxCurrentTCB points to the TCB of
+     * the task that attempted the write. */
     #define traceBLOCKING_ON_QUEUE_SEND( pxQueue )
 #endif
 
 #ifndef configCHECK_FOR_STACK_OVERFLOW
-    #define configCHECK_FOR_STACK_OVERFLOW    0
+    #define configCHECK_FOR_STACK_OVERFLOW 0
 #endif
 
 #ifndef configRECORD_STACK_HIGH_ADDRESS
-    #define configRECORD_STACK_HIGH_ADDRESS    0
+    #define configRECORD_STACK_HIGH_ADDRESS 0
 #endif
 
 #ifndef configINCLUDE_FREERTOS_TASK_C_ADDITIONS_H
-    #define configINCLUDE_FREERTOS_TASK_C_ADDITIONS_H    0
+    #define configINCLUDE_FREERTOS_TASK_C_ADDITIONS_H 0
 #endif
 
 /* The following event macros are embedded in the kernel API calls. */
@@ -694,7 +703,7 @@
 #endif
 
 #ifndef traceQUEUE_SET_SEND
-    #define traceQUEUE_SET_SEND    traceQUEUE_SEND
+    #define traceQUEUE_SET_SEND traceQUEUE_SEND
 #endif
 
 #ifndef traceQUEUE_SEND
@@ -798,7 +807,10 @@
 #endif
 
 #ifndef traceTIMER_COMMAND_SEND
-    #define traceTIMER_COMMAND_SEND( xTimer, xMessageID, xMessageValueValue, xReturn )
+    #define traceTIMER_COMMAND_SEND( xTimer,             \
+                                     xMessageID,         \
+                                     xMessageValueValue, \
+                                     xReturn )
 #endif
 
 #ifndef traceTIMER_EXPIRED
@@ -826,11 +838,17 @@
 #endif
 
 #ifndef traceEVENT_GROUP_SYNC_BLOCK
-    #define traceEVENT_GROUP_SYNC_BLOCK( xEventGroup, uxBitsToSet, uxBitsToWaitFor )
+    #define traceEVENT_GROUP_SYNC_BLOCK( xEventGroup, \
+                                         uxBitsToSet, \
+                                         uxBitsToWaitFor )
 #endif
 
 #ifndef traceEVENT_GROUP_SYNC_END
-    #define traceEVENT_GROUP_SYNC_END( xEventGroup, uxBitsToSet, uxBitsToWaitFor, xTimeoutOccurred )    ( void ) ( xTimeoutOccurred )
+    #define traceEVENT_GROUP_SYNC_END( xEventGroup,       \
+                                       uxBitsToSet,       \
+                                       uxBitsToWaitFor,   \
+                                       xTimeoutOccurred ) \
+        ( void ) ( xTimeoutOccurred )
 #endif
 
 #ifndef traceEVENT_GROUP_WAIT_BITS_BLOCK
@@ -838,7 +856,10 @@
 #endif
 
 #ifndef traceEVENT_GROUP_WAIT_BITS_END
-    #define traceEVENT_GROUP_WAIT_BITS_END( xEventGroup, uxBitsToWaitFor, xTimeoutOccurred )    ( void ) ( xTimeoutOccurred )
+    #define traceEVENT_GROUP_WAIT_BITS_END( xEventGroup,       \
+                                            uxBitsToWaitFor,   \
+                                            xTimeoutOccurred ) \
+        ( void ) ( xTimeoutOccurred )
 #endif
 
 #ifndef traceEVENT_GROUP_CLEAR_BITS
@@ -862,11 +883,17 @@
 #endif
 
 #ifndef tracePEND_FUNC_CALL
-    #define tracePEND_FUNC_CALL( xFunctionToPend, pvParameter1, ulParameter2, ret )
+    #define tracePEND_FUNC_CALL( xFunctionToPend, \
+                                 pvParameter1,    \
+                                 ulParameter2,    \
+                                 ret )
 #endif
 
 #ifndef tracePEND_FUNC_CALL_FROM_ISR
-    #define tracePEND_FUNC_CALL_FROM_ISR( xFunctionToPend, pvParameter1, ulParameter2, ret )
+    #define tracePEND_FUNC_CALL_FROM_ISR( xFunctionToPend, \
+                                          pvParameter1,    \
+                                          ulParameter2,    \
+                                          ret )
 #endif
 
 #ifndef traceQUEUE_REGISTRY_ADD
@@ -950,14 +977,15 @@
 #endif
 
 #ifndef traceSTREAM_BUFFER_RECEIVE_FROM_ISR
-    #define traceSTREAM_BUFFER_RECEIVE_FROM_ISR( xStreamBuffer, xReceivedLength )
+    #define traceSTREAM_BUFFER_RECEIVE_FROM_ISR( xStreamBuffer, \
+                                                 xReceivedLength )
 #endif
 
 #ifndef configGENERATE_RUN_TIME_STATS
-    #define configGENERATE_RUN_TIME_STATS    0
+    #define configGENERATE_RUN_TIME_STATS 0
 #endif
 
-#if ( configGENERATE_RUN_TIME_STATS == 1 )
+#if( configGENERATE_RUN_TIME_STATS == 1 )
 
     #ifndef portCONFIGURE_TIMER_FOR_RUN_TIME_STATS
         #error If configGENERATE_RUN_TIME_STATS is defined then portCONFIGURE_TIMER_FOR_RUN_TIME_STATS must also be defined.  portCONFIGURE_TIMER_FOR_RUN_TIME_STATS should call a port layer function to setup a peripheral timer/counter that can then be used as the run time counter time base.
@@ -967,7 +995,7 @@
         #ifndef portALT_GET_RUN_TIME_COUNTER_VALUE
             #error If configGENERATE_RUN_TIME_STATS is defined then either portGET_RUN_TIME_COUNTER_VALUE or portALT_GET_RUN_TIME_COUNTER_VALUE must also be defined.  See the examples provided and the FreeRTOS web site for more information.
         #endif /* portALT_GET_RUN_TIME_COUNTER_VALUE */
-    #endif /* portGET_RUN_TIME_COUNTER_VALUE */
+    #endif     /* portGET_RUN_TIME_COUNTER_VALUE */
 
 #endif /* configGENERATE_RUN_TIME_STATS */
 
@@ -976,15 +1004,15 @@
 #endif
 
 #ifndef configUSE_MALLOC_FAILED_HOOK
-    #define configUSE_MALLOC_FAILED_HOOK    0
+    #define configUSE_MALLOC_FAILED_HOOK 0
 #endif
 
 #ifndef portPRIVILEGE_BIT
-    #define portPRIVILEGE_BIT    ( ( UBaseType_t ) 0x00 )
+    #define portPRIVILEGE_BIT ( ( UBaseType_t ) 0x00 )
 #endif
 
 #ifndef portYIELD_WITHIN_API
-    #define portYIELD_WITHIN_API    portYIELD
+    #define portYIELD_WITHIN_API portYIELD
 #endif
 
 #ifndef portSUPPRESS_TICKS_AND_SLEEP
@@ -992,7 +1020,7 @@
 #endif
 
 #ifndef configEXPECTED_IDLE_TIME_BEFORE_SLEEP
-    #define configEXPECTED_IDLE_TIME_BEFORE_SLEEP    2
+    #define configEXPECTED_IDLE_TIME_BEFORE_SLEEP 2
 #endif
 
 #if configEXPECTED_IDLE_TIME_BEFORE_SLEEP < 2
@@ -1000,7 +1028,7 @@
 #endif
 
 #ifndef configUSE_TICKLESS_IDLE
-    #define configUSE_TICKLESS_IDLE    0
+    #define configUSE_TICKLESS_IDLE 0
 #endif
 
 #ifndef configPRE_SUPPRESS_TICKS_AND_SLEEP_PROCESSING
@@ -1016,7 +1044,7 @@
 #endif
 
 #ifndef configUSE_QUEUE_SETS
-    #define configUSE_QUEUE_SETS    0
+    #define configUSE_QUEUE_SETS 0
 #endif
 
 #ifndef portTASK_USES_FLOATING_POINT
@@ -1032,15 +1060,15 @@
 #endif
 
 #ifndef configUSE_TIME_SLICING
-    #define configUSE_TIME_SLICING    1
+    #define configUSE_TIME_SLICING 1
 #endif
 
 #ifndef configINCLUDE_APPLICATION_DEFINED_PRIVILEGED_FUNCTIONS
-    #define configINCLUDE_APPLICATION_DEFINED_PRIVILEGED_FUNCTIONS    0
+    #define configINCLUDE_APPLICATION_DEFINED_PRIVILEGED_FUNCTIONS 0
 #endif
 
 #ifndef configUSE_STATS_FORMATTING_FUNCTIONS
-    #define configUSE_STATS_FORMATTING_FUNCTIONS    0
+    #define configUSE_STATS_FORMATTING_FUNCTIONS 0
 #endif
 
 #ifndef portASSERT_IF_INTERRUPT_PRIORITY_INVALID
@@ -1048,7 +1076,7 @@
 #endif
 
 #ifndef configUSE_TRACE_FACILITY
-    #define configUSE_TRACE_FACILITY    0
+    #define configUSE_TRACE_FACILITY 0
 #endif
 
 #ifndef mtCOVERAGE_TEST_MARKER
@@ -1064,19 +1092,19 @@
 #endif
 
 #ifndef configUSE_PORT_OPTIMISED_TASK_SELECTION
-    #define configUSE_PORT_OPTIMISED_TASK_SELECTION    0
+    #define configUSE_PORT_OPTIMISED_TASK_SELECTION 0
 #endif
 
 #ifndef configAPPLICATION_ALLOCATED_HEAP
-    #define configAPPLICATION_ALLOCATED_HEAP    0
+    #define configAPPLICATION_ALLOCATED_HEAP 0
 #endif
 
 #ifndef configUSE_TASK_NOTIFICATIONS
-    #define configUSE_TASK_NOTIFICATIONS    1
+    #define configUSE_TASK_NOTIFICATIONS 1
 #endif
 
 #ifndef configTASK_NOTIFICATION_ARRAY_ENTRIES
-    #define configTASK_NOTIFICATION_ARRAY_ENTRIES    1
+    #define configTASK_NOTIFICATION_ARRAY_ENTRIES 1
 #endif
 
 #if configTASK_NOTIFICATION_ARRAY_ENTRIES < 1
@@ -1084,317 +1112,337 @@
 #endif
 
 #ifndef configUSE_POSIX_ERRNO
-    #define configUSE_POSIX_ERRNO    0
+    #define configUSE_POSIX_ERRNO 0
 #endif
 
 #ifndef configUSE_SB_COMPLETED_CALLBACK
 
-/* By default per-instance callbacks are not enabled for stream buffer or message buffer. */
-    #define configUSE_SB_COMPLETED_CALLBACK    0
+    /* By default per-instance callbacks are not enabled for stream buffer or
+     * message buffer. */
+    #define configUSE_SB_COMPLETED_CALLBACK 0
 #endif
 
 #ifndef portTICK_TYPE_IS_ATOMIC
-    #define portTICK_TYPE_IS_ATOMIC    0
+    #define portTICK_TYPE_IS_ATOMIC 0
 #endif
 
 #ifndef configSUPPORT_STATIC_ALLOCATION
     /* Defaults to 0 for backward compatibility. */
-    #define configSUPPORT_STATIC_ALLOCATION    0
+    #define configSUPPORT_STATIC_ALLOCATION 0
 #endif
 
 #ifndef configSUPPORT_DYNAMIC_ALLOCATION
     /* Defaults to 1 for backward compatibility. */
-    #define configSUPPORT_DYNAMIC_ALLOCATION    1
+    #define configSUPPORT_DYNAMIC_ALLOCATION 1
 #endif
 
-#if ( ( configUSE_STATS_FORMATTING_FUNCTIONS > 0 ) && ( configSUPPORT_DYNAMIC_ALLOCATION != 1 ) )
+#if( ( configUSE_STATS_FORMATTING_FUNCTIONS > 0 ) && \
+     ( configSUPPORT_DYNAMIC_ALLOCATION != 1 ) )
     #error configUSE_STATS_FORMATTING_FUNCTIONS cannot be used without dynamic allocation, but configSUPPORT_DYNAMIC_ALLOCATION is not set to 1.
 #endif
 
-#if ( configUSE_STATS_FORMATTING_FUNCTIONS > 0 )
-    #if ( ( configUSE_TRACE_FACILITY != 1 ) && ( configGENERATE_RUN_TIME_STATS != 1 ) )
+#if( configUSE_STATS_FORMATTING_FUNCTIONS > 0 )
+    #if( ( configUSE_TRACE_FACILITY != 1 ) && \
+         ( configGENERATE_RUN_TIME_STATS != 1 ) )
         #error configUSE_STATS_FORMATTING_FUNCTIONS is 1 but the functions it enables are not used because neither configUSE_TRACE_FACILITY or configGENERATE_RUN_TIME_STATS are 1.  Set configUSE_STATS_FORMATTING_FUNCTIONS to 0 in FreeRTOSConfig.h.
     #endif
 #endif
 
 #ifndef configSTACK_DEPTH_TYPE
 
-/* Defaults to uint16_t for backward compatibility, but can be overridden
- * in FreeRTOSConfig.h if uint16_t is too restrictive. */
-    #define configSTACK_DEPTH_TYPE    uint16_t
+    /* Defaults to uint16_t for backward compatibility, but can be overridden
+     * in FreeRTOSConfig.h if uint16_t is too restrictive. */
+    #define configSTACK_DEPTH_TYPE uint16_t
 #endif
 
 #ifndef configRUN_TIME_COUNTER_TYPE
 
-/* Defaults to uint32_t for backward compatibility, but can be overridden in
- * FreeRTOSConfig.h if uint32_t is too restrictive. */
+    /* Defaults to uint32_t for backward compatibility, but can be overridden in
+     * FreeRTOSConfig.h if uint32_t is too restrictive. */
 
-    #define configRUN_TIME_COUNTER_TYPE    uint32_t
+    #define configRUN_TIME_COUNTER_TYPE uint32_t
 #endif
 
 #ifndef configMESSAGE_BUFFER_LENGTH_TYPE
 
-/* Defaults to size_t for backward compatibility, but can be overridden
- * in FreeRTOSConfig.h if lengths will always be less than the number of bytes
- * in a size_t. */
-    #define configMESSAGE_BUFFER_LENGTH_TYPE    size_t
+    /* Defaults to size_t for backward compatibility, but can be overridden
+     * in FreeRTOSConfig.h if lengths will always be less than the number of
+     * bytes in a size_t. */
+    #define configMESSAGE_BUFFER_LENGTH_TYPE size_t
 #endif
 
 /* Sanity check the configuration. */
-#if ( ( configSUPPORT_STATIC_ALLOCATION == 0 ) && ( configSUPPORT_DYNAMIC_ALLOCATION == 0 ) )
+#if( ( configSUPPORT_STATIC_ALLOCATION == 0 ) && \
+     ( configSUPPORT_DYNAMIC_ALLOCATION == 0 ) )
     #error configSUPPORT_STATIC_ALLOCATION and configSUPPORT_DYNAMIC_ALLOCATION cannot both be 0, but can both be 1.
 #endif
 
-#if ( ( configUSE_RECURSIVE_MUTEXES == 1 ) && ( configUSE_MUTEXES != 1 ) )
+#if( ( configUSE_RECURSIVE_MUTEXES == 1 ) && ( configUSE_MUTEXES != 1 ) )
     #error configUSE_MUTEXES must be set to 1 to use recursive mutexes
 #endif
 
-#if ( ( configRUN_MULTIPLE_PRIORITIES == 0 ) && ( configUSE_TASK_PREEMPTION_DISABLE != 0 ) )
+#if( ( configRUN_MULTIPLE_PRIORITIES == 0 ) && \
+     ( configUSE_TASK_PREEMPTION_DISABLE != 0 ) )
     #error configRUN_MULTIPLE_PRIORITIES must be set to 1 to use task preemption disable
 #endif
 
-#if ( ( configUSE_PREEMPTION == 0 ) && ( configUSE_TASK_PREEMPTION_DISABLE != 0 ) )
+#if( ( configUSE_PREEMPTION == 0 ) && \
+     ( configUSE_TASK_PREEMPTION_DISABLE != 0 ) )
     #error configUSE_PREEMPTION must be set to 1 to use task preemption disable
 #endif
 
-#if ( ( configNUMBER_OF_CORES == 1 ) && ( configUSE_TASK_PREEMPTION_DISABLE != 0 ) )
+#if( ( configNUMBER_OF_CORES == 1 ) && \
+     ( configUSE_TASK_PREEMPTION_DISABLE != 0 ) )
     #error configUSE_TASK_PREEMPTION_DISABLE is not supported in single core FreeRTOS
 #endif
 
 #ifndef configINITIAL_TICK_COUNT
-    #define configINITIAL_TICK_COUNT    0
+    #define configINITIAL_TICK_COUNT 0
 #endif
 
-#if ( portTICK_TYPE_IS_ATOMIC == 0 )
+#if( portTICK_TYPE_IS_ATOMIC == 0 )
 
-/* Either variables of tick type cannot be read atomically, or
- * portTICK_TYPE_IS_ATOMIC was not set - map the critical sections used when
- * the tick count is returned to the standard critical section macros. */
-    #define portTICK_TYPE_ENTER_CRITICAL()                      portENTER_CRITICAL()
-    #define portTICK_TYPE_EXIT_CRITICAL()                       portEXIT_CRITICAL()
-    #define portTICK_TYPE_SET_INTERRUPT_MASK_FROM_ISR()         portSET_INTERRUPT_MASK_FROM_ISR()
-    #define portTICK_TYPE_CLEAR_INTERRUPT_MASK_FROM_ISR( x )    portCLEAR_INTERRUPT_MASK_FROM_ISR( ( x ) )
+    /* Either variables of tick type cannot be read atomically, or
+     * portTICK_TYPE_IS_ATOMIC was not set - map the critical sections used when
+     * the tick count is returned to the standard critical section macros. */
+    #define portTICK_TYPE_ENTER_CRITICAL() portENTER_CRITICAL()
+    #define portTICK_TYPE_EXIT_CRITICAL()  portEXIT_CRITICAL()
+    #define portTICK_TYPE_SET_INTERRUPT_MASK_FROM_ISR() \
+        portSET_INTERRUPT_MASK_FROM_ISR()
+    #define portTICK_TYPE_CLEAR_INTERRUPT_MASK_FROM_ISR( x ) \
+        portCLEAR_INTERRUPT_MASK_FROM_ISR( ( x ) )
 #else
 
-/* The tick type can be read atomically, so critical sections used when the
- * tick count is returned can be defined away. */
+    /* The tick type can be read atomically, so critical sections used when the
+     * tick count is returned can be defined away. */
     #define portTICK_TYPE_ENTER_CRITICAL()
     #define portTICK_TYPE_EXIT_CRITICAL()
-    #define portTICK_TYPE_SET_INTERRUPT_MASK_FROM_ISR()         0
-    #define portTICK_TYPE_CLEAR_INTERRUPT_MASK_FROM_ISR( x )    ( void ) ( x )
+    #define portTICK_TYPE_SET_INTERRUPT_MASK_FROM_ISR()      0
+    #define portTICK_TYPE_CLEAR_INTERRUPT_MASK_FROM_ISR( x ) ( void ) ( x )
 #endif /* if ( portTICK_TYPE_IS_ATOMIC == 0 ) */
 
 /* Definitions to allow backward compatibility with FreeRTOS versions prior to
  * V8 if desired. */
 #ifndef configENABLE_BACKWARD_COMPATIBILITY
-    #define configENABLE_BACKWARD_COMPATIBILITY    1
+    #define configENABLE_BACKWARD_COMPATIBILITY 1
 #endif
 
 #ifndef configPRINTF
 
-/* configPRINTF() was not defined, so define it away to nothing.  To use
- * configPRINTF() then define it as follows (where MyPrintFunction() is
- * provided by the application writer):
- *
- * void MyPrintFunction(const char *pcFormat, ... );
- #define configPRINTF( X )   MyPrintFunction X
- *
- * Then call like a standard printf() function, but placing brackets around
- * all parameters so they are passed as a single parameter.  For example:
- * configPRINTF( ("Value = %d", MyVariable) ); */
+    /* configPRINTF() was not defined, so define it away to nothing.  To use
+     * configPRINTF() then define it as follows (where MyPrintFunction() is
+     * provided by the application writer):
+     *
+     * void MyPrintFunction(const char *pcFormat, ... );
+     #define configPRINTF( X )   MyPrintFunction X
+     *
+     * Then call like a standard printf() function, but placing brackets around
+     * all parameters so they are passed as a single parameter.  For example:
+     * configPRINTF( ("Value = %d", MyVariable) ); */
     #define configPRINTF( X )
 #endif
 
 #ifndef configMAX
 
-/* The application writer has not provided their own MAX macro, so define
- * the following generic implementation. */
-    #define configMAX( a, b )    ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
+    /* The application writer has not provided their own MAX macro, so define
+     * the following generic implementation. */
+    #define configMAX( a, b ) ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 #endif
 
 #ifndef configMIN
 
-/* The application writer has not provided their own MIN macro, so define
- * the following generic implementation. */
-    #define configMIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
+    /* The application writer has not provided their own MIN macro, so define
+     * the following generic implementation. */
+    #define configMIN( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 
 #if configENABLE_BACKWARD_COMPATIBILITY == 1
-    #define eTaskStateGet                 eTaskGetState
-    #define portTickType                  TickType_t
-    #define xTaskHandle                   TaskHandle_t
-    #define xQueueHandle                  QueueHandle_t
-    #define xSemaphoreHandle              SemaphoreHandle_t
-    #define xQueueSetHandle               QueueSetHandle_t
-    #define xQueueSetMemberHandle         QueueSetMemberHandle_t
-    #define xTimeOutType                  TimeOut_t
-    #define xMemoryRegion                 MemoryRegion_t
-    #define xTaskParameters               TaskParameters_t
-    #define xTaskStatusType               TaskStatus_t
-    #define xTimerHandle                  TimerHandle_t
-    #define xCoRoutineHandle              CoRoutineHandle_t
-    #define pdTASK_HOOK_CODE              TaskHookFunction_t
-    #define portTICK_RATE_MS              portTICK_PERIOD_MS
-    #define pcTaskGetTaskName             pcTaskGetName
-    #define pcTimerGetTimerName           pcTimerGetName
-    #define pcQueueGetQueueName           pcQueueGetName
-    #define vTaskGetTaskInfo              vTaskGetInfo
-    #define xTaskGetIdleRunTimeCounter    ulTaskGetIdleRunTimeCounter
+    #define eTaskStateGet              eTaskGetState
+    #define portTickType               TickType_t
+    #define xTaskHandle                TaskHandle_t
+    #define xQueueHandle               QueueHandle_t
+    #define xSemaphoreHandle           SemaphoreHandle_t
+    #define xQueueSetHandle            QueueSetHandle_t
+    #define xQueueSetMemberHandle      QueueSetMemberHandle_t
+    #define xTimeOutType               TimeOut_t
+    #define xMemoryRegion              MemoryRegion_t
+    #define xTaskParameters            TaskParameters_t
+    #define xTaskStatusType            TaskStatus_t
+    #define xTimerHandle               TimerHandle_t
+    #define xCoRoutineHandle           CoRoutineHandle_t
+    #define pdTASK_HOOK_CODE           TaskHookFunction_t
+    #define portTICK_RATE_MS           portTICK_PERIOD_MS
+    #define pcTaskGetTaskName          pcTaskGetName
+    #define pcTimerGetTimerName        pcTimerGetName
+    #define pcQueueGetQueueName        pcQueueGetName
+    #define vTaskGetTaskInfo           vTaskGetInfo
+    #define xTaskGetIdleRunTimeCounter ulTaskGetIdleRunTimeCounter
 
-/* Backward compatibility within the scheduler code only - these definitions
- * are not really required but are included for completeness. */
-    #define tmrTIMER_CALLBACK             TimerCallbackFunction_t
-    #define pdTASK_CODE                   TaskFunction_t
-    #define xListItem                     ListItem_t
-    #define xList                         List_t
+    /* Backward compatibility within the scheduler code only - these definitions
+     * are not really required but are included for completeness. */
+    #define tmrTIMER_CALLBACK          TimerCallbackFunction_t
+    #define pdTASK_CODE                TaskFunction_t
+    #define xListItem                  ListItem_t
+    #define xList                      List_t
 
-/* For libraries that break the list data hiding, and access list structure
- * members directly (which is not supposed to be done). */
-    #define pxContainer                   pvContainer
+    /* For libraries that break the list data hiding, and access list structure
+     * members directly (which is not supposed to be done). */
+    #define pxContainer                pvContainer
 #endif /* configENABLE_BACKWARD_COMPATIBILITY */
 
-#if ( configUSE_ALTERNATIVE_API != 0 )
+#if( configUSE_ALTERNATIVE_API != 0 )
     #error The alternative API was deprecated some time ago, and was removed in FreeRTOS V9.0 0
 #endif
 
 /* Set configUSE_TASK_FPU_SUPPORT to 0 to omit floating point support even
- * if floating point hardware is otherwise supported by the FreeRTOS port in use.
- * This constant is not supported by all FreeRTOS ports that include floating
- * point support. */
+ * if floating point hardware is otherwise supported by the FreeRTOS port in
+ * use. This constant is not supported by all FreeRTOS ports that include
+ * floating point support. */
 #ifndef configUSE_TASK_FPU_SUPPORT
-    #define configUSE_TASK_FPU_SUPPORT    1
+    #define configUSE_TASK_FPU_SUPPORT 1
 #endif
 
 /* Set configENABLE_MPU to 1 to enable MPU support and 0 to disable it. This is
  * currently used in ARMv8M ports. */
 #ifndef configENABLE_MPU
-    #define configENABLE_MPU    0
+    #define configENABLE_MPU 0
 #endif
 
 /* Set configENABLE_FPU to 1 to enable FPU support and 0 to disable it. This is
  * currently used in ARMv8M ports. */
 #ifndef configENABLE_FPU
-    #define configENABLE_FPU    1
+    #define configENABLE_FPU 1
 #endif
 
 /* Set configENABLE_MVE to 1 to enable MVE support and 0 to disable it. This is
  * currently used in ARMv8M ports. */
 #ifndef configENABLE_MVE
-    #define configENABLE_MVE    0
+    #define configENABLE_MVE 0
 #endif
 
 /* Set configENABLE_TRUSTZONE to 1 enable TrustZone support and 0 to disable it.
  * This is currently used in ARMv8M ports. */
 #ifndef configENABLE_TRUSTZONE
-    #define configENABLE_TRUSTZONE    1
+    #define configENABLE_TRUSTZONE 1
 #endif
 
 /* Set configRUN_FREERTOS_SECURE_ONLY to 1 to run the FreeRTOS ARMv8M port on
  * the Secure Side only. */
 #ifndef configRUN_FREERTOS_SECURE_ONLY
-    #define configRUN_FREERTOS_SECURE_ONLY    0
+    #define configRUN_FREERTOS_SECURE_ONLY 0
 #endif
 
 #ifndef configRUN_ADDITIONAL_TESTS
-    #define configRUN_ADDITIONAL_TESTS    0
+    #define configRUN_ADDITIONAL_TESTS 0
 #endif
 
 /* Sometimes the FreeRTOSConfig.h settings only allow a task to be created using
  * dynamically allocated RAM, in which case when any task is deleted it is known
  * that both the task's stack and TCB need to be freed.  Sometimes the
  * FreeRTOSConfig.h settings only allow a task to be created using statically
- * allocated RAM, in which case when any task is deleted it is known that neither
- * the task's stack or TCB should be freed.  Sometimes the FreeRTOSConfig.h
- * settings allow a task to be created using either statically or dynamically
- * allocated RAM, in which case a member of the TCB is used to record whether the
- * stack and/or TCB were allocated statically or dynamically, so when a task is
- * deleted the RAM that was allocated dynamically is freed again and no attempt is
- * made to free the RAM that was allocated statically.
- * tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE is only true if it is possible for a
- * task to be created using either statically or dynamically allocated RAM.  Note
- * that if portUSING_MPU_WRAPPERS is 1 then a protected task can be created with
- * a statically allocated stack and a dynamically allocated TCB.
+ * allocated RAM, in which case when any task is deleted it is known that
+ * neither the task's stack or TCB should be freed.  Sometimes the
+ * FreeRTOSConfig.h settings allow a task to be created using either statically
+ * or dynamically allocated RAM, in which case a member of the TCB is used to
+ * record whether the stack and/or TCB were allocated statically or dynamically,
+ * so when a task is deleted the RAM that was allocated dynamically is freed
+ * again and no attempt is made to free the RAM that was allocated statically.
+ * tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE is only true if it is possible for
+ * a task to be created using either statically or dynamically allocated RAM.
+ * Note that if portUSING_MPU_WRAPPERS is 1 then a protected task can be created
+ * with a statically allocated stack and a dynamically allocated TCB.
  *
  * The following table lists various combinations of portUSING_MPU_WRAPPERS,
  * configSUPPORT_DYNAMIC_ALLOCATION and configSUPPORT_STATIC_ALLOCATION and
  * when it is possible to have both static and dynamic allocation:
  *  +-----+---------+--------+-----------------------------+-----------------------------------+------------------+-----------+
- * | MPU | Dynamic | Static |     Available Functions     |       Possible Allocations        | Both Dynamic and | Need Free |
- * |     |         |        |                             |                                   | Static Possible  |           |
+ * | MPU | Dynamic | Static |     Available Functions     |       Possible
+ * Allocations        | Both Dynamic and | Need Free | |     |         | | | |
+ * Static Possible  |           |
  * +-----+---------+--------+-----------------------------+-----------------------------------+------------------+-----------+
- * | 0   | 0       | 1      | xTaskCreateStatic           | TCB - Static, Stack - Static      | No               | No        |
+ * | 0   | 0       | 1      | xTaskCreateStatic           | TCB - Static, Stack
+ * - Static      | No               | No        |
  * +-----|---------|--------|-----------------------------|-----------------------------------|------------------|-----------|
- * | 0   | 1       | 0      | xTaskCreate                 | TCB - Dynamic, Stack - Dynamic    | No               | Yes       |
+ * | 0   | 1       | 0      | xTaskCreate                 | TCB - Dynamic, Stack
+ * - Dynamic    | No               | Yes       |
  * +-----|---------|--------|-----------------------------|-----------------------------------|------------------|-----------|
- * | 0   | 1       | 1      | xTaskCreate,                | 1. TCB - Dynamic, Stack - Dynamic | Yes              | Yes       |
- * |     |         |        | xTaskCreateStatic           | 2. TCB - Static, Stack - Static   |                  |           |
+ * | 0   | 1       | 1      | xTaskCreate,                | 1. TCB - Dynamic,
+ * Stack - Dynamic | Yes              | Yes       | |     |         |        |
+ * xTaskCreateStatic           | 2. TCB - Static, Stack - Static   | | |
  * +-----|---------|--------|-----------------------------|-----------------------------------|------------------|-----------|
- * | 1   | 0       | 1      | xTaskCreateStatic,          | TCB - Static, Stack - Static      | No               | No        |
- * |     |         |        | xTaskCreateRestrictedStatic |                                   |                  |           |
+ * | 1   | 0       | 1      | xTaskCreateStatic,          | TCB - Static, Stack
+ * - Static      | No               | No        | |     |         |        |
+ * xTaskCreateRestrictedStatic |                                   | | |
  * +-----|---------|--------|-----------------------------|-----------------------------------|------------------|-----------|
- * | 1   | 1       | 0      | xTaskCreate,                | 1. TCB - Dynamic, Stack - Dynamic | Yes              | Yes       |
- * |     |         |        | xTaskCreateRestricted       | 2. TCB - Dynamic, Stack - Static  |                  |           |
+ * | 1   | 1       | 0      | xTaskCreate,                | 1. TCB - Dynamic,
+ * Stack - Dynamic | Yes              | Yes       | |     |         |        |
+ * xTaskCreateRestricted       | 2. TCB - Dynamic, Stack - Static  | | |
  * +-----|---------|--------|-----------------------------|-----------------------------------|------------------|-----------|
- * | 1   | 1       | 1      | xTaskCreate,                | 1. TCB - Dynamic, Stack - Dynamic | Yes              | Yes       |
- * |     |         |        | xTaskCreateStatic,          | 2. TCB - Dynamic, Stack - Static  |                  |           |
- * |     |         |        | xTaskCreateRestricted,      | 3. TCB - Static, Stack - Static   |                  |           |
- * |     |         |        | xTaskCreateRestrictedStatic |                                   |                  |           |
+ * | 1   | 1       | 1      | xTaskCreate,                | 1. TCB - Dynamic,
+ * Stack - Dynamic | Yes              | Yes       | |     |         |        |
+ * xTaskCreateStatic,          | 2. TCB - Dynamic, Stack - Static  | | | |     |
+ * |        | xTaskCreateRestricted,      | 3. TCB - Static, Stack - Static   |
+ * |           | |     |         |        | xTaskCreateRestrictedStatic | | | |
  * +-----+---------+--------+-----------------------------+-----------------------------------+------------------+-----------+
  */
-#define tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE                                                                                     \
-    ( ( ( portUSING_MPU_WRAPPERS == 0 ) && ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) && ( configSUPPORT_STATIC_ALLOCATION == 1 ) ) || \
-      ( ( portUSING_MPU_WRAPPERS == 1 ) && ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) ) )
+#define tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE     \
+    ( ( ( portUSING_MPU_WRAPPERS == 0 ) &&            \
+        ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) &&  \
+        ( configSUPPORT_STATIC_ALLOCATION == 1 ) ) || \
+      ( ( portUSING_MPU_WRAPPERS == 1 ) &&            \
+        ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) ) )
 
 /*
  * In line with software engineering best practice, FreeRTOS implements a strict
  * data hiding policy, so the real structures used by FreeRTOS to maintain the
- * state of tasks, queues, semaphores, etc. are not accessible to the application
- * code.  However, if the application writer wants to statically allocate such
- * an object then the size of the object needs to be known.  Dummy structures
- * that are guaranteed to have the same size and alignment requirements of the
- * real objects are used for this purpose.  The dummy list and list item
- * structures below are used for inclusion in such a dummy structure.
+ * state of tasks, queues, semaphores, etc. are not accessible to the
+ * application code.  However, if the application writer wants to statically
+ * allocate such an object then the size of the object needs to be known.  Dummy
+ * structures that are guaranteed to have the same size and alignment
+ * requirements of the real objects are used for this purpose.  The dummy list
+ * and list item structures below are used for inclusion in such a dummy
+ * structure.
  */
 struct xSTATIC_LIST_ITEM
 {
-    #if ( configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES == 1 )
-        TickType_t xDummy1;
-    #endif
+#if( configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES == 1 )
+    TickType_t xDummy1;
+#endif
     TickType_t xDummy2;
     void * pvDummy3[ 4 ];
-    #if ( configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES == 1 )
-        TickType_t xDummy4;
-    #endif
+#if( configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES == 1 )
+    TickType_t xDummy4;
+#endif
 };
 typedef struct xSTATIC_LIST_ITEM StaticListItem_t;
 
-#if ( configUSE_MINI_LIST_ITEM == 1 )
-    /* See the comments above the struct xSTATIC_LIST_ITEM definition. */
-    struct xSTATIC_MINI_LIST_ITEM
-    {
-        #if ( configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES == 1 )
-            TickType_t xDummy1;
-        #endif
-        TickType_t xDummy2;
-        void * pvDummy3[ 2 ];
-    };
-    typedef struct xSTATIC_MINI_LIST_ITEM StaticMiniListItem_t;
-#else /* if ( configUSE_MINI_LIST_ITEM == 1 ) */
-    typedef struct xSTATIC_LIST_ITEM      StaticMiniListItem_t;
+#if( configUSE_MINI_LIST_ITEM == 1 )
+/* See the comments above the struct xSTATIC_LIST_ITEM definition. */
+struct xSTATIC_MINI_LIST_ITEM
+{
+    #if( configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES == 1 )
+    TickType_t xDummy1;
+    #endif
+    TickType_t xDummy2;
+    void * pvDummy3[ 2 ];
+};
+typedef struct xSTATIC_MINI_LIST_ITEM StaticMiniListItem_t;
+#else  /* if ( configUSE_MINI_LIST_ITEM == 1 ) */
+typedef struct xSTATIC_LIST_ITEM StaticMiniListItem_t;
 #endif /* if ( configUSE_MINI_LIST_ITEM == 1 ) */
 
 /* See the comments above the struct xSTATIC_LIST_ITEM definition. */
 typedef struct xSTATIC_LIST
 {
-    #if ( configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES == 1 )
-        TickType_t xDummy1;
-    #endif
+#if( configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES == 1 )
+    TickType_t xDummy1;
+#endif
     UBaseType_t uxDummy2;
     void * pvDummy3;
     StaticMiniListItem_t xDummy4;
-    #if ( configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES == 1 )
-        TickType_t xDummy5;
-    #endif
+#if( configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES == 1 )
+    TickType_t xDummy5;
+#endif
 } StaticList_t;
 
 /*
@@ -1408,66 +1456,67 @@ typedef struct xSTATIC_LIST
  * guaranteed to match those of the genuine structure, no matter which
  * architecture is being used, and no matter how the values in FreeRTOSConfig.h
  * are set.  Its contents are somewhat obfuscated in the hope users will
- * recognise that it would be unwise to make direct use of the structure members.
+ * recognise that it would be unwise to make direct use of the structure
+ * members.
  */
 typedef struct xSTATIC_TCB
 {
     void * pxDummy1;
-    #if ( portUSING_MPU_WRAPPERS == 1 )
-        xMPU_SETTINGS xDummy2;
-    #endif
-    #if ( configUSE_CORE_AFFINITY == 1 ) && ( configNUMBER_OF_CORES > 1 )
-        UBaseType_t uxDummy26;
-    #endif
+#if( portUSING_MPU_WRAPPERS == 1 )
+    xMPU_SETTINGS xDummy2;
+#endif
+#if( configUSE_CORE_AFFINITY == 1 ) && ( configNUMBER_OF_CORES > 1 )
+    UBaseType_t uxDummy26;
+#endif
     StaticListItem_t xDummy3[ 2 ];
     UBaseType_t uxDummy5;
     void * pxDummy6;
-    #if ( configNUMBER_OF_CORES > 1 )
-        BaseType_t xDummy23;
-        UBaseType_t uxDummy24;
-    #endif
+#if( configNUMBER_OF_CORES > 1 )
+    BaseType_t xDummy23;
+    UBaseType_t uxDummy24;
+#endif
     uint8_t ucDummy7[ configMAX_TASK_NAME_LEN ];
-    #if ( configUSE_TASK_PREEMPTION_DISABLE == 1 )
-        BaseType_t xDummy25;
-    #endif
-    #if ( ( portSTACK_GROWTH > 0 ) || ( configRECORD_STACK_HIGH_ADDRESS == 1 ) )
-        void * pxDummy8;
-    #endif
-    #if ( portCRITICAL_NESTING_IN_TCB == 1 )
-        UBaseType_t uxDummy9;
-    #endif
-    #if ( configUSE_TRACE_FACILITY == 1 )
-        UBaseType_t uxDummy10[ 2 ];
-    #endif
-    #if ( configUSE_MUTEXES == 1 )
-        UBaseType_t uxDummy12[ 2 ];
-    #endif
-    #if ( configUSE_APPLICATION_TASK_TAG == 1 )
-        void * pxDummy14;
-    #endif
-    #if ( configNUM_THREAD_LOCAL_STORAGE_POINTERS > 0 )
-        void * pvDummy15[ configNUM_THREAD_LOCAL_STORAGE_POINTERS ];
-    #endif
-    #if ( configGENERATE_RUN_TIME_STATS == 1 )
-        configRUN_TIME_COUNTER_TYPE ulDummy16;
-    #endif
-    #if ( configUSE_C_RUNTIME_TLS_SUPPORT == 1 )
-        configTLS_BLOCK_TYPE xDummy17;
-    #endif
-    #if ( configUSE_TASK_NOTIFICATIONS == 1 )
-        uint32_t ulDummy18[ configTASK_NOTIFICATION_ARRAY_ENTRIES ];
-        uint8_t ucDummy19[ configTASK_NOTIFICATION_ARRAY_ENTRIES ];
-    #endif
-    #if ( tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE != 0 )
-        uint8_t uxDummy20;
-    #endif
+#if( configUSE_TASK_PREEMPTION_DISABLE == 1 )
+    BaseType_t xDummy25;
+#endif
+#if( ( portSTACK_GROWTH > 0 ) || ( configRECORD_STACK_HIGH_ADDRESS == 1 ) )
+    void * pxDummy8;
+#endif
+#if( portCRITICAL_NESTING_IN_TCB == 1 )
+    UBaseType_t uxDummy9;
+#endif
+#if( configUSE_TRACE_FACILITY == 1 )
+    UBaseType_t uxDummy10[ 2 ];
+#endif
+#if( configUSE_MUTEXES == 1 )
+    UBaseType_t uxDummy12[ 2 ];
+#endif
+#if( configUSE_APPLICATION_TASK_TAG == 1 )
+    void * pxDummy14;
+#endif
+#if( configNUM_THREAD_LOCAL_STORAGE_POINTERS > 0 )
+    void * pvDummy15[ configNUM_THREAD_LOCAL_STORAGE_POINTERS ];
+#endif
+#if( configGENERATE_RUN_TIME_STATS == 1 )
+    configRUN_TIME_COUNTER_TYPE ulDummy16;
+#endif
+#if( configUSE_C_RUNTIME_TLS_SUPPORT == 1 )
+    configTLS_BLOCK_TYPE xDummy17;
+#endif
+#if( configUSE_TASK_NOTIFICATIONS == 1 )
+    uint32_t ulDummy18[ configTASK_NOTIFICATION_ARRAY_ENTRIES ];
+    uint8_t ucDummy19[ configTASK_NOTIFICATION_ARRAY_ENTRIES ];
+#endif
+#if( tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE != 0 )
+    uint8_t uxDummy20;
+#endif
 
-    #if ( INCLUDE_xTaskAbortDelay == 1 )
-        uint8_t ucDummy21;
-    #endif
-    #if ( configUSE_POSIX_ERRNO == 1 )
-        int iDummy22;
-    #endif
+#if( INCLUDE_xTaskAbortDelay == 1 )
+    uint8_t ucDummy21;
+#endif
+#if( configUSE_POSIX_ERRNO == 1 )
+    int iDummy22;
+#endif
 } StaticTask_t;
 
 /*
@@ -1498,18 +1547,19 @@ typedef struct xSTATIC_QUEUE
     UBaseType_t uxDummy4[ 3 ];
     uint8_t ucDummy5[ 2 ];
 
-    #if ( ( configSUPPORT_STATIC_ALLOCATION == 1 ) && ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) )
-        uint8_t ucDummy6;
-    #endif
+#if( ( configSUPPORT_STATIC_ALLOCATION == 1 ) && \
+     ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) )
+    uint8_t ucDummy6;
+#endif
 
-    #if ( configUSE_QUEUE_SETS == 1 )
-        void * pvDummy7;
-    #endif
+#if( configUSE_QUEUE_SETS == 1 )
+    void * pvDummy7;
+#endif
 
-    #if ( configUSE_TRACE_FACILITY == 1 )
-        UBaseType_t uxDummy8;
-        uint8_t ucDummy9;
-    #endif
+#if( configUSE_TRACE_FACILITY == 1 )
+    UBaseType_t uxDummy8;
+    uint8_t ucDummy9;
+#endif
 } StaticQueue_t;
 typedef StaticQueue_t StaticSemaphore_t;
 
@@ -1532,13 +1582,14 @@ typedef struct xSTATIC_EVENT_GROUP
     TickType_t xDummy1;
     StaticList_t xDummy2;
 
-    #if ( configUSE_TRACE_FACILITY == 1 )
-        UBaseType_t uxDummy3;
-    #endif
+#if( configUSE_TRACE_FACILITY == 1 )
+    UBaseType_t uxDummy3;
+#endif
 
-    #if ( ( configSUPPORT_STATIC_ALLOCATION == 1 ) && ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) )
-        uint8_t ucDummy4;
-    #endif
+#if( ( configSUPPORT_STATIC_ALLOCATION == 1 ) && \
+     ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) )
+    uint8_t ucDummy4;
+#endif
 } StaticEventGroup_t;
 
 /*
@@ -1562,9 +1613,9 @@ typedef struct xSTATIC_TIMER
     TickType_t xDummy3;
     void * pvDummy5;
     TaskFunction_t pvDummy6;
-    #if ( configUSE_TRACE_FACILITY == 1 )
-        UBaseType_t uxDummy7;
-    #endif
+#if( configUSE_TRACE_FACILITY == 1 )
+    UBaseType_t uxDummy7;
+#endif
     uint8_t ucDummy8;
 } StaticTimer_t;
 
@@ -1587,12 +1638,12 @@ typedef struct xSTATIC_STREAM_BUFFER
     size_t uxDummy1[ 4 ];
     void * pvDummy2[ 3 ];
     uint8_t ucDummy3;
-    #if ( configUSE_TRACE_FACILITY == 1 )
-        UBaseType_t uxDummy4;
-    #endif
-    #if ( configUSE_SB_COMPLETED_CALLBACK == 1 )
-        void * pvDummy5[ 2 ];
-    #endif
+#if( configUSE_TRACE_FACILITY == 1 )
+    UBaseType_t uxDummy4;
+#endif
+#if( configUSE_SB_COMPLETED_CALLBACK == 1 )
+    void * pvDummy5[ 2 ];
+#endif
 } StaticStreamBuffer_t;
 
 /* Message buffers are built on stream buffers. */
@@ -1600,7 +1651,7 @@ typedef StaticStreamBuffer_t StaticMessageBuffer_t;
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    }
+}
 #endif
 /* *INDENT-ON* */
 

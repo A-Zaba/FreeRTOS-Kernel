@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -36,48 +37,53 @@
 
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
+#include "event_groups.h"
 #include "task.h"
 #include "timers.h"
-#include "event_groups.h"
 
 /* Lint e961, e750 and e9021 are suppressed as a MISRA exception justified
- * because the MPU ports require MPU_WRAPPERS_INCLUDED_FROM_API_FILE to be defined
- * for the header files above, but not in this file, in order to generate the
- * correct privileged Vs unprivileged linkage and placement. */
-#undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE /*lint !e961 !e750 !e9021 See comment above. */
+ * because the MPU ports require MPU_WRAPPERS_INCLUDED_FROM_API_FILE to be
+ * defined for the header files above, but not in this file, in order to
+ * generate the correct privileged Vs unprivileged linkage and placement. */
+#undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE /*lint !e961 !e750 !e9021 See \
+                                              comment above. */
 
 /* The following bit fields convey control information in a task's event list
  * item value.  It is important they don't clash with the
  * taskEVENT_LIST_ITEM_VALUE_IN_USE definition. */
-#if ( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_16_BITS )
-    #define eventCLEAR_EVENTS_ON_EXIT_BIT    0x0100U
-    #define eventUNBLOCKED_DUE_TO_BIT_SET    0x0200U
-    #define eventWAIT_FOR_ALL_BITS           0x0400U
-    #define eventEVENT_BITS_CONTROL_BYTES    0xff00U
-#elif ( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS )
-    #define eventCLEAR_EVENTS_ON_EXIT_BIT    0x01000000UL
-    #define eventUNBLOCKED_DUE_TO_BIT_SET    0x02000000UL
-    #define eventWAIT_FOR_ALL_BITS           0x04000000UL
-    #define eventEVENT_BITS_CONTROL_BYTES    0xff000000UL
-#elif ( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_64_BITS )
-    #define eventCLEAR_EVENTS_ON_EXIT_BIT    0x0100000000000000ULL
-    #define eventUNBLOCKED_DUE_TO_BIT_SET    0x0200000000000000ULL
-    #define eventWAIT_FOR_ALL_BITS           0x0400000000000000ULL
-    #define eventEVENT_BITS_CONTROL_BYTES    0xff00000000000000ULL
+#if( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_16_BITS )
+    #define eventCLEAR_EVENTS_ON_EXIT_BIT 0x0100U
+    #define eventUNBLOCKED_DUE_TO_BIT_SET 0x0200U
+    #define eventWAIT_FOR_ALL_BITS        0x0400U
+    #define eventEVENT_BITS_CONTROL_BYTES 0xff00U
+#elif( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS )
+    #define eventCLEAR_EVENTS_ON_EXIT_BIT 0x01000000UL
+    #define eventUNBLOCKED_DUE_TO_BIT_SET 0x02000000UL
+    #define eventWAIT_FOR_ALL_BITS        0x04000000UL
+    #define eventEVENT_BITS_CONTROL_BYTES 0xff000000UL
+#elif( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_64_BITS )
+    #define eventCLEAR_EVENTS_ON_EXIT_BIT 0x0100000000000000ULL
+    #define eventUNBLOCKED_DUE_TO_BIT_SET 0x0200000000000000ULL
+    #define eventWAIT_FOR_ALL_BITS        0x0400000000000000ULL
+    #define eventEVENT_BITS_CONTROL_BYTES 0xff00000000000000ULL
 #endif /* if ( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_16_BITS ) */
 
 typedef struct EventGroupDef_t
 {
     EventBits_t uxEventBits;
-    List_t xTasksWaitingForBits; /**< List of tasks waiting for a bit to be set. */
+    List_t xTasksWaitingForBits; /**< List of tasks waiting for a bit to be set.
+                                  */
 
-    #if ( configUSE_TRACE_FACILITY == 1 )
-        UBaseType_t uxEventGroupNumber;
-    #endif
+#if( configUSE_TRACE_FACILITY == 1 )
+    UBaseType_t uxEventGroupNumber;
+#endif
 
-    #if ( ( configSUPPORT_STATIC_ALLOCATION == 1 ) && ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) )
-        uint8_t ucStaticallyAllocated; /**< Set to pdTRUE if the event group is statically allocated to ensure no attempt is made to free the memory. */
-    #endif
+#if( ( configSUPPORT_STATIC_ALLOCATION == 1 ) && \
+     ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) )
+    uint8_t ucStaticallyAllocated; /**< Set to pdTRUE if the event group is
+                                      statically allocated to ensure no attempt
+                                      is made to free the memory. */
+#endif
 } EventGroup_t;
 
 /*-----------------------------------------------------------*/
@@ -92,106 +98,117 @@ typedef struct EventGroupDef_t
  */
 static BaseType_t prvTestWaitCondition( const EventBits_t uxCurrentEventBits,
                                         const EventBits_t uxBitsToWaitFor,
-                                        const BaseType_t xWaitForAllBits ) PRIVILEGED_FUNCTION;
+                                        const BaseType_t xWaitForAllBits )
+    PRIVILEGED_FUNCTION;
 
 /*-----------------------------------------------------------*/
 
-#if ( configSUPPORT_STATIC_ALLOCATION == 1 )
+#if( configSUPPORT_STATIC_ALLOCATION == 1 )
 
-    EventGroupHandle_t xEventGroupCreateStatic( StaticEventGroup_t * pxEventGroupBuffer )
+EventGroupHandle_t xEventGroupCreateStatic(
+    StaticEventGroup_t * pxEventGroupBuffer )
+{
+    EventGroup_t * pxEventBits;
+
+    /* A StaticEventGroup_t object must be provided. */
+    configASSERT( pxEventGroupBuffer );
+
+    #if( configASSERT_DEFINED == 1 )
     {
-        EventGroup_t * pxEventBits;
+        /* Sanity check that the size of the structure used to declare a
+         * variable of type StaticEventGroup_t equals the size of the real
+         * event group structure. */
+        volatile size_t xSize = sizeof( StaticEventGroup_t );
+        configASSERT( xSize == sizeof( EventGroup_t ) );
+    }      /*lint !e529 xSize is referenced if configASSERT() is defined. */
+    #endif /* configASSERT_DEFINED */
 
-        /* A StaticEventGroup_t object must be provided. */
-        configASSERT( pxEventGroupBuffer );
+    /* The user has provided a statically allocated event group - use it. */
+    pxEventBits = ( EventGroup_t * )
+        pxEventGroupBuffer; /*lint !e740 !e9087 EventGroup_t and
+                               StaticEventGroup_t are deliberately aliased for
+                               data hiding purposes and guaranteed to have the
+                               same size and alignment requirement - checked by
+                               configASSERT(). */
 
-        #if ( configASSERT_DEFINED == 1 )
+    if( pxEventBits != NULL )
+    {
+        pxEventBits->uxEventBits = 0;
+        vListInitialise( &( pxEventBits->xTasksWaitingForBits ) );
+
+    #if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
         {
-            /* Sanity check that the size of the structure used to declare a
-             * variable of type StaticEventGroup_t equals the size of the real
-             * event group structure. */
-            volatile size_t xSize = sizeof( StaticEventGroup_t );
-            configASSERT( xSize == sizeof( EventGroup_t ) );
-        } /*lint !e529 xSize is referenced if configASSERT() is defined. */
-        #endif /* configASSERT_DEFINED */
-
-        /* The user has provided a statically allocated event group - use it. */
-        pxEventBits = ( EventGroup_t * ) pxEventGroupBuffer; /*lint !e740 !e9087 EventGroup_t and StaticEventGroup_t are deliberately aliased for data hiding purposes and guaranteed to have the same size and alignment requirement - checked by configASSERT(). */
-
-        if( pxEventBits != NULL )
-        {
-            pxEventBits->uxEventBits = 0;
-            vListInitialise( &( pxEventBits->xTasksWaitingForBits ) );
-
-            #if ( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
-            {
-                /* Both static and dynamic allocation can be used, so note that
-                 * this event group was created statically in case the event group
-                 * is later deleted. */
-                pxEventBits->ucStaticallyAllocated = pdTRUE;
-            }
-            #endif /* configSUPPORT_DYNAMIC_ALLOCATION */
-
-            traceEVENT_GROUP_CREATE( pxEventBits );
+            /* Both static and dynamic allocation can be used, so note that
+             * this event group was created statically in case the event group
+             * is later deleted. */
+            pxEventBits->ucStaticallyAllocated = pdTRUE;
         }
-        else
-        {
-            /* xEventGroupCreateStatic should only ever be called with
-             * pxEventGroupBuffer pointing to a pre-allocated (compile time
-             * allocated) StaticEventGroup_t variable. */
-            traceEVENT_GROUP_CREATE_FAILED();
-        }
+    #endif /* configSUPPORT_DYNAMIC_ALLOCATION */
 
-        return pxEventBits;
+        traceEVENT_GROUP_CREATE( pxEventBits );
     }
+    else
+    {
+        /* xEventGroupCreateStatic should only ever be called with
+         * pxEventGroupBuffer pointing to a pre-allocated (compile time
+         * allocated) StaticEventGroup_t variable. */
+        traceEVENT_GROUP_CREATE_FAILED();
+    }
+
+    return pxEventBits;
+}
 
 #endif /* configSUPPORT_STATIC_ALLOCATION */
 /*-----------------------------------------------------------*/
 
-#if ( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
+#if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
 
-    EventGroupHandle_t xEventGroupCreate( void )
+EventGroupHandle_t xEventGroupCreate( void )
+{
+    EventGroup_t * pxEventBits;
+
+    /* Allocate the event group.  Justification for MISRA deviation as
+     * follows:  pvPortMalloc() always ensures returned memory blocks are
+     * aligned per the requirements of the MCU stack.  In this case
+     * pvPortMalloc() must return a pointer that is guaranteed to meet the
+     * alignment requirements of the EventGroup_t structure - which (if you
+     * follow it through) is the alignment requirements of the TickType_t type
+     * (EventBits_t being of TickType_t itself).  Therefore, whenever the
+     * stack alignment requirements are greater than or equal to the
+     * TickType_t alignment requirements the cast is safe.  In other cases,
+     * where the natural word size of the architecture is less than
+     * sizeof( TickType_t ), the TickType_t variables will be accessed in two
+     * or more reads operations, and the alignment requirements is only that
+     * of each individual read. */
+    pxEventBits = ( EventGroup_t * ) pvPortMalloc(
+        sizeof( EventGroup_t ) ); /*lint !e9087 !e9079 see comment above. */
+
+    if( pxEventBits != NULL )
     {
-        EventGroup_t * pxEventBits;
+        pxEventBits->uxEventBits = 0;
+        vListInitialise( &( pxEventBits->xTasksWaitingForBits ) );
 
-        /* Allocate the event group.  Justification for MISRA deviation as
-         * follows:  pvPortMalloc() always ensures returned memory blocks are
-         * aligned per the requirements of the MCU stack.  In this case
-         * pvPortMalloc() must return a pointer that is guaranteed to meet the
-         * alignment requirements of the EventGroup_t structure - which (if you
-         * follow it through) is the alignment requirements of the TickType_t type
-         * (EventBits_t being of TickType_t itself).  Therefore, whenever the
-         * stack alignment requirements are greater than or equal to the
-         * TickType_t alignment requirements the cast is safe.  In other cases,
-         * where the natural word size of the architecture is less than
-         * sizeof( TickType_t ), the TickType_t variables will be accessed in two
-         * or more reads operations, and the alignment requirements is only that
-         * of each individual read. */
-        pxEventBits = ( EventGroup_t * ) pvPortMalloc( sizeof( EventGroup_t ) ); /*lint !e9087 !e9079 see comment above. */
-
-        if( pxEventBits != NULL )
+    #if( configSUPPORT_STATIC_ALLOCATION == 1 )
         {
-            pxEventBits->uxEventBits = 0;
-            vListInitialise( &( pxEventBits->xTasksWaitingForBits ) );
-
-            #if ( configSUPPORT_STATIC_ALLOCATION == 1 )
-            {
-                /* Both static and dynamic allocation can be used, so note this
-                 * event group was allocated statically in case the event group is
-                 * later deleted. */
-                pxEventBits->ucStaticallyAllocated = pdFALSE;
-            }
-            #endif /* configSUPPORT_STATIC_ALLOCATION */
-
-            traceEVENT_GROUP_CREATE( pxEventBits );
+            /* Both static and dynamic allocation can be used, so note this
+             * event group was allocated statically in case the event group is
+             * later deleted. */
+            pxEventBits->ucStaticallyAllocated = pdFALSE;
         }
-        else
-        {
-            traceEVENT_GROUP_CREATE_FAILED(); /*lint !e9063 Else branch only exists to allow tracing and does not generate code if trace macros are not defined. */
-        }
+    #endif /* configSUPPORT_STATIC_ALLOCATION */
 
-        return pxEventBits;
+        traceEVENT_GROUP_CREATE( pxEventBits );
     }
+    else
+    {
+        traceEVENT_GROUP_CREATE_FAILED(); /*lint !e9063 Else branch only exists
+                                             to allow tracing and does not
+                                             generate code if trace macros are
+                                             not defined. */
+    }
+
+    return pxEventBits;
+}
 
 #endif /* configSUPPORT_DYNAMIC_ALLOCATION */
 /*-----------------------------------------------------------*/
@@ -208,11 +225,13 @@ EventBits_t xEventGroupSync( EventGroupHandle_t xEventGroup,
 
     configASSERT( ( uxBitsToWaitFor & eventEVENT_BITS_CONTROL_BYTES ) == 0 );
     configASSERT( uxBitsToWaitFor != 0 );
-    #if ( ( INCLUDE_xTaskGetSchedulerState == 1 ) || ( configUSE_TIMERS == 1 ) )
+#if( ( INCLUDE_xTaskGetSchedulerState == 1 ) || ( configUSE_TIMERS == 1 ) )
     {
-        configASSERT( !( ( xTaskGetSchedulerState() == taskSCHEDULER_SUSPENDED ) && ( xTicksToWait != 0 ) ) );
+        configASSERT(
+            !( ( xTaskGetSchedulerState() == taskSCHEDULER_SUSPENDED ) &&
+               ( xTicksToWait != 0 ) ) );
     }
-    #endif
+#endif
 
     vTaskSuspendAll();
     {
@@ -220,7 +239,8 @@ EventBits_t xEventGroupSync( EventGroupHandle_t xEventGroup,
 
         ( void ) xEventGroupSetBits( xEventGroup, uxBitsToSet );
 
-        if( ( ( uxOriginalBitValue | uxBitsToSet ) & uxBitsToWaitFor ) == uxBitsToWaitFor )
+        if( ( ( uxOriginalBitValue | uxBitsToSet ) & uxBitsToWaitFor ) ==
+            uxBitsToWaitFor )
         {
             /* All the rendezvous bits are now set - no need to block. */
             uxReturn = ( uxOriginalBitValue | uxBitsToSet );
@@ -235,17 +255,23 @@ EventBits_t xEventGroupSync( EventGroupHandle_t xEventGroup,
         {
             if( xTicksToWait != ( TickType_t ) 0 )
             {
-                traceEVENT_GROUP_SYNC_BLOCK( xEventGroup, uxBitsToSet, uxBitsToWaitFor );
+                traceEVENT_GROUP_SYNC_BLOCK( xEventGroup,
+                                             uxBitsToSet,
+                                             uxBitsToWaitFor );
 
                 /* Store the bits that the calling task is waiting for in the
                  * task's event list item so the kernel knows when a match is
                  * found.  Then enter the blocked state. */
-                vTaskPlaceOnUnorderedEventList( &( pxEventBits->xTasksWaitingForBits ), ( uxBitsToWaitFor | eventCLEAR_EVENTS_ON_EXIT_BIT | eventWAIT_FOR_ALL_BITS ), xTicksToWait );
+                vTaskPlaceOnUnorderedEventList(
+                    &( pxEventBits->xTasksWaitingForBits ),
+                    ( uxBitsToWaitFor | eventCLEAR_EVENTS_ON_EXIT_BIT |
+                      eventWAIT_FOR_ALL_BITS ),
+                    xTicksToWait );
 
                 /* This assignment is obsolete as uxReturn will get set after
                  * the task unblocks, but some compilers mistakenly generate a
-                 * warning about uxReturn being returned without being set if the
-                 * assignment is omitted. */
+                 * warning about uxReturn being returned without being set if
+                 * the assignment is omitted. */
                 uxReturn = 0;
             }
             else
@@ -263,15 +289,15 @@ EventBits_t xEventGroupSync( EventGroupHandle_t xEventGroup,
     {
         if( xAlreadyYielded == pdFALSE )
         {
-            #if ( configNUMBER_OF_CORES == 1 )
+#if( configNUMBER_OF_CORES == 1 )
             {
                 portYIELD_WITHIN_API();
             }
-            #else /* #if ( configNUMBER_OF_CORES == 1 ) */
+#else  /* #if ( configNUMBER_OF_CORES == 1 ) */
             {
                 vTaskYieldWithinAPI();
             }
-            #endif /* #if ( configNUMBER_OF_CORES == 1 ) */
+#endif /* #if ( configNUMBER_OF_CORES == 1 ) */
         }
         else
         {
@@ -279,7 +305,7 @@ EventBits_t xEventGroupSync( EventGroupHandle_t xEventGroup,
         }
 
         /* The task blocked to wait for its required bits to be set - at this
-         * point either the required bits were set or the block time expired.  If
+         * point either the required bits were set or the block time expired. If
          * the required bits were set they will have been stored in the task's
          * event list item, and they should now be retrieved then cleared. */
         uxReturn = uxTaskResetEventItemValue();
@@ -292,9 +318,9 @@ EventBits_t xEventGroupSync( EventGroupHandle_t xEventGroup,
                 uxReturn = pxEventBits->uxEventBits;
 
                 /* Although the task got here because it timed out before the
-                 * bits it was waiting for were set, it is possible that since it
-                 * unblocked another task has set the bits.  If this is the case
-                 * then it needs to clear the bits before exiting. */
+                 * bits it was waiting for were set, it is possible that since
+                 * it unblocked another task has set the bits.  If this is the
+                 * case then it needs to clear the bits before exiting. */
                 if( ( uxReturn & uxBitsToWaitFor ) == uxBitsToWaitFor )
                 {
                     pxEventBits->uxEventBits &= ~uxBitsToWaitFor;
@@ -318,7 +344,10 @@ EventBits_t xEventGroupSync( EventGroupHandle_t xEventGroup,
         uxReturn &= ~eventEVENT_BITS_CONTROL_BYTES;
     }
 
-    traceEVENT_GROUP_SYNC_END( xEventGroup, uxBitsToSet, uxBitsToWaitFor, xTimeoutOccurred );
+    traceEVENT_GROUP_SYNC_END( xEventGroup,
+                               uxBitsToSet,
+                               uxBitsToWaitFor,
+                               xTimeoutOccurred );
 
     /* Prevent compiler warnings when trace macros are not used. */
     ( void ) xTimeoutOccurred;
@@ -343,18 +372,22 @@ EventBits_t xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
     configASSERT( xEventGroup );
     configASSERT( ( uxBitsToWaitFor & eventEVENT_BITS_CONTROL_BYTES ) == 0 );
     configASSERT( uxBitsToWaitFor != 0 );
-    #if ( ( INCLUDE_xTaskGetSchedulerState == 1 ) || ( configUSE_TIMERS == 1 ) )
+#if( ( INCLUDE_xTaskGetSchedulerState == 1 ) || ( configUSE_TIMERS == 1 ) )
     {
-        configASSERT( !( ( xTaskGetSchedulerState() == taskSCHEDULER_SUSPENDED ) && ( xTicksToWait != 0 ) ) );
+        configASSERT(
+            !( ( xTaskGetSchedulerState() == taskSCHEDULER_SUSPENDED ) &&
+               ( xTicksToWait != 0 ) ) );
     }
-    #endif
+#endif
 
     vTaskSuspendAll();
     {
         const EventBits_t uxCurrentEventBits = pxEventBits->uxEventBits;
 
         /* Check to see if the wait condition is already met or not. */
-        xWaitConditionMet = prvTestWaitCondition( uxCurrentEventBits, uxBitsToWaitFor, xWaitForAllBits );
+        xWaitConditionMet = prvTestWaitCondition( uxCurrentEventBits,
+                                                  uxBitsToWaitFor,
+                                                  xWaitForAllBits );
 
         if( xWaitConditionMet != pdFALSE )
         {
@@ -383,9 +416,9 @@ EventBits_t xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
         else
         {
             /* The task is going to block to wait for its required bits to be
-             * set.  uxControlBits are used to remember the specified behaviour of
-             * this call to xEventGroupWaitBits() - for use when the event bits
-             * unblock the task. */
+             * set.  uxControlBits are used to remember the specified behaviour
+             * of this call to xEventGroupWaitBits() - for use when the event
+             * bits unblock the task. */
             if( xClearOnExit != pdFALSE )
             {
                 uxControlBits |= eventCLEAR_EVENTS_ON_EXIT_BIT;
@@ -407,7 +440,10 @@ EventBits_t xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
             /* Store the bits that the calling task is waiting for in the
              * task's event list item so the kernel knows when a match is
              * found.  Then enter the blocked state. */
-            vTaskPlaceOnUnorderedEventList( &( pxEventBits->xTasksWaitingForBits ), ( uxBitsToWaitFor | uxControlBits ), xTicksToWait );
+            vTaskPlaceOnUnorderedEventList( &( pxEventBits
+                                                   ->xTasksWaitingForBits ),
+                                            ( uxBitsToWaitFor | uxControlBits ),
+                                            xTicksToWait );
 
             /* This is obsolete as it will get set after the task unblocks, but
              * some compilers mistakenly generate a warning about the variable
@@ -423,15 +459,15 @@ EventBits_t xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
     {
         if( xAlreadyYielded == pdFALSE )
         {
-            #if ( configNUMBER_OF_CORES == 1 )
+#if( configNUMBER_OF_CORES == 1 )
             {
                 portYIELD_WITHIN_API();
             }
-            #else /* #if ( configNUMBER_OF_CORES == 1 ) */
+#else  /* #if ( configNUMBER_OF_CORES == 1 ) */
             {
                 vTaskYieldWithinAPI();
             }
-            #endif /* #if ( configNUMBER_OF_CORES == 1 ) */
+#endif /* #if ( configNUMBER_OF_CORES == 1 ) */
         }
         else
         {
@@ -439,7 +475,7 @@ EventBits_t xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
         }
 
         /* The task blocked to wait for its required bits to be set - at this
-         * point either the required bits were set or the block time expired.  If
+         * point either the required bits were set or the block time expired. If
          * the required bits were set they will have been stored in the task's
          * event list item, and they should now be retrieved then cleared. */
         uxReturn = uxTaskResetEventItemValue();
@@ -448,12 +484,15 @@ EventBits_t xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
         {
             taskENTER_CRITICAL();
             {
-                /* The task timed out, just return the current event bit value. */
+                /* The task timed out, just return the current event bit value.
+                 */
                 uxReturn = pxEventBits->uxEventBits;
 
                 /* It is possible that the event bits were updated between this
                  * task leaving the Blocked state and running again. */
-                if( prvTestWaitCondition( uxReturn, uxBitsToWaitFor, xWaitForAllBits ) != pdFALSE )
+                if( prvTestWaitCondition( uxReturn,
+                                          uxBitsToWaitFor,
+                                          xWaitForAllBits ) != pdFALSE )
                 {
                     if( xClearOnExit != pdFALSE )
                     {
@@ -482,7 +521,9 @@ EventBits_t xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
         uxReturn &= ~eventEVENT_BITS_CONTROL_BYTES;
     }
 
-    traceEVENT_GROUP_WAIT_BITS_END( xEventGroup, uxBitsToWaitFor, xTimeoutOccurred );
+    traceEVENT_GROUP_WAIT_BITS_END( xEventGroup,
+                                    uxBitsToWaitFor,
+                                    xTimeoutOccurred );
 
     /* Prevent compiler warnings when trace macros are not used. */
     ( void ) xTimeoutOccurred;
@@ -519,20 +560,32 @@ EventBits_t xEventGroupClearBits( EventGroupHandle_t xEventGroup,
 }
 /*-----------------------------------------------------------*/
 
-#if ( ( configUSE_TRACE_FACILITY == 1 ) && ( INCLUDE_xTimerPendFunctionCall == 1 ) && ( configUSE_TIMERS == 1 ) )
+#if( ( configUSE_TRACE_FACILITY == 1 ) && \
+     ( INCLUDE_xTimerPendFunctionCall == 1 ) && ( configUSE_TIMERS == 1 ) )
 
-    BaseType_t xEventGroupClearBitsFromISR( EventGroupHandle_t xEventGroup,
-                                            const EventBits_t uxBitsToClear )
-    {
-        BaseType_t xReturn;
+BaseType_t xEventGroupClearBitsFromISR( EventGroupHandle_t xEventGroup,
+                                        const EventBits_t uxBitsToClear )
+{
+    BaseType_t xReturn;
 
-        traceEVENT_GROUP_CLEAR_BITS_FROM_ISR( xEventGroup, uxBitsToClear );
-        xReturn = xTimerPendFunctionCallFromISR( vEventGroupClearBitsCallback, ( void * ) xEventGroup, ( uint32_t ) uxBitsToClear, NULL ); /*lint !e9087 Can't avoid cast to void* as a generic callback function not specific to this use case. Callback casts back to original type so safe. */
+    traceEVENT_GROUP_CLEAR_BITS_FROM_ISR( xEventGroup, uxBitsToClear );
+    xReturn = xTimerPendFunctionCallFromISR( vEventGroupClearBitsCallback,
+                                             ( void * ) xEventGroup,
+                                             ( uint32_t ) uxBitsToClear,
+                                             NULL ); /*lint !e9087 Can't avoid
+                                                        cast to void* as a
+                                                        generic callback
+                                                        function not specific to
+                                                        this use case. Callback
+                                                        casts back to original
+                                                        type so safe. */
 
-        return xReturn;
-    }
+    return xReturn;
+}
 
-#endif /* if ( ( configUSE_TRACE_FACILITY == 1 ) && ( INCLUDE_xTimerPendFunctionCall == 1 ) && ( configUSE_TIMERS == 1 ) ) */
+#endif /* if ( ( configUSE_TRACE_FACILITY == 1 ) && (                          \
+          INCLUDE_xTimerPendFunctionCall == 1 ) && ( configUSE_TIMERS == 1 ) ) \
+        */
 /*-----------------------------------------------------------*/
 
 EventBits_t xEventGroupGetBitsFromISR( EventGroupHandle_t xEventGroup )
@@ -548,7 +601,8 @@ EventBits_t xEventGroupGetBitsFromISR( EventGroupHandle_t xEventGroup )
     taskEXIT_CRITICAL_FROM_ISR( uxSavedInterruptStatus );
 
     return uxReturn;
-} /*lint !e818 EventGroupHandle_t is a typedef used in other functions to so can't be pointer to const. */
+} /*lint !e818 EventGroupHandle_t is a typedef used in other functions to so
+     can't be pointer to const. */
 /*-----------------------------------------------------------*/
 
 EventBits_t xEventGroupSetBits( EventGroupHandle_t xEventGroup,
@@ -568,7 +622,9 @@ EventBits_t xEventGroupSetBits( EventGroupHandle_t xEventGroup,
     configASSERT( ( uxBitsToSet & eventEVENT_BITS_CONTROL_BYTES ) == 0 );
 
     pxList = &( pxEventBits->xTasksWaitingForBits );
-    pxListEnd = listGET_END_MARKER( pxList ); /*lint !e826 !e740 !e9087 The mini list structure is used as the list end to save RAM.  This is checked and valid. */
+    pxListEnd = listGET_END_MARKER(
+        pxList ); /*lint !e826 !e740 !e9087 The mini list structure is used as
+                     the list end to save RAM.  This is checked and valid. */
     vTaskSuspendAll();
     {
         traceEVENT_GROUP_SET_BITS( xEventGroup, uxBitsToSet );
@@ -589,10 +645,12 @@ EventBits_t xEventGroupSetBits( EventGroupHandle_t xEventGroup,
             uxControlBits = uxBitsWaitedFor & eventEVENT_BITS_CONTROL_BYTES;
             uxBitsWaitedFor &= ~eventEVENT_BITS_CONTROL_BYTES;
 
-            if( ( uxControlBits & eventWAIT_FOR_ALL_BITS ) == ( EventBits_t ) 0 )
+            if( ( uxControlBits & eventWAIT_FOR_ALL_BITS ) ==
+                ( EventBits_t ) 0 )
             {
                 /* Just looking for single bit being set. */
-                if( ( uxBitsWaitedFor & pxEventBits->uxEventBits ) != ( EventBits_t ) 0 )
+                if( ( uxBitsWaitedFor & pxEventBits->uxEventBits ) !=
+                    ( EventBits_t ) 0 )
                 {
                     xMatchFound = pdTRUE;
                 }
@@ -601,7 +659,8 @@ EventBits_t xEventGroupSetBits( EventGroupHandle_t xEventGroup,
                     mtCOVERAGE_TEST_MARKER();
                 }
             }
-            else if( ( uxBitsWaitedFor & pxEventBits->uxEventBits ) == uxBitsWaitedFor )
+            else if( ( uxBitsWaitedFor & pxEventBits->uxEventBits ) ==
+                     uxBitsWaitedFor )
             {
                 /* All bits are set. */
                 xMatchFound = pdTRUE;
@@ -614,7 +673,8 @@ EventBits_t xEventGroupSetBits( EventGroupHandle_t xEventGroup,
             if( xMatchFound != pdFALSE )
             {
                 /* The bits match.  Should the bits be cleared on exit? */
-                if( ( uxControlBits & eventCLEAR_EVENTS_ON_EXIT_BIT ) != ( EventBits_t ) 0 )
+                if( ( uxControlBits & eventCLEAR_EVENTS_ON_EXIT_BIT ) !=
+                    ( EventBits_t ) 0 )
                 {
                     uxBitsToClear |= uxBitsWaitedFor;
                 }
@@ -626,14 +686,16 @@ EventBits_t xEventGroupSetBits( EventGroupHandle_t xEventGroup,
                 /* Store the actual event flag value in the task's event list
                  * item before removing the task from the event list.  The
                  * eventUNBLOCKED_DUE_TO_BIT_SET bit is set so the task knows
-                 * that is was unblocked due to its required bits matching, rather
-                 * than because it timed out. */
-                vTaskRemoveFromUnorderedEventList( pxListItem, pxEventBits->uxEventBits | eventUNBLOCKED_DUE_TO_BIT_SET );
+                 * that is was unblocked due to its required bits matching,
+                 * rather than because it timed out. */
+                vTaskRemoveFromUnorderedEventList(
+                    pxListItem,
+                    pxEventBits->uxEventBits | eventUNBLOCKED_DUE_TO_BIT_SET );
             }
 
             /* Move onto the next list item.  Note pxListItem->pxNext is not
-             * used here as the list item may have been removed from the event list
-             * and inserted into the ready/pending reading list. */
+             * used here as the list item may have been removed from the event
+             * list and inserted into the ready/pending reading list. */
             pxListItem = pxNext;
         }
 
@@ -660,23 +722,30 @@ void vEventGroupDelete( EventGroupHandle_t xEventGroup )
     {
         traceEVENT_GROUP_DELETE( xEventGroup );
 
-        while( listCURRENT_LIST_LENGTH( pxTasksWaitingForBits ) > ( UBaseType_t ) 0 )
+        while( listCURRENT_LIST_LENGTH( pxTasksWaitingForBits ) >
+               ( UBaseType_t ) 0 )
         {
             /* Unblock the task, returning 0 as the event list is being deleted
              * and cannot therefore have any bits set. */
-            configASSERT( pxTasksWaitingForBits->xListEnd.pxNext != ( const ListItem_t * ) &( pxTasksWaitingForBits->xListEnd ) );
-            vTaskRemoveFromUnorderedEventList( pxTasksWaitingForBits->xListEnd.pxNext, eventUNBLOCKED_DUE_TO_BIT_SET );
+            configASSERT(
+                pxTasksWaitingForBits->xListEnd.pxNext !=
+                ( const ListItem_t * ) &( pxTasksWaitingForBits->xListEnd ) );
+            vTaskRemoveFromUnorderedEventList( pxTasksWaitingForBits->xListEnd
+                                                   .pxNext,
+                                               eventUNBLOCKED_DUE_TO_BIT_SET );
         }
     }
     ( void ) xTaskResumeAll();
 
-    #if ( ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) && ( configSUPPORT_STATIC_ALLOCATION == 0 ) )
+#if( ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) && \
+     ( configSUPPORT_STATIC_ALLOCATION == 0 ) )
     {
         /* The event group can only have been allocated dynamically - free
          * it again. */
         vPortFree( pxEventBits );
     }
-    #elif ( ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) && ( configSUPPORT_STATIC_ALLOCATION == 1 ) )
+#elif( ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) && \
+       ( configSUPPORT_STATIC_ALLOCATION == 1 ) )
     {
         /* The event group could have been allocated statically or
          * dynamically, so check before attempting to free the memory. */
@@ -689,43 +758,44 @@ void vEventGroupDelete( EventGroupHandle_t xEventGroup )
             mtCOVERAGE_TEST_MARKER();
         }
     }
-    #endif /* configSUPPORT_DYNAMIC_ALLOCATION */
+#endif /* configSUPPORT_DYNAMIC_ALLOCATION */
 }
 /*-----------------------------------------------------------*/
 
-#if ( configSUPPORT_STATIC_ALLOCATION == 1 )
-    BaseType_t xEventGroupGetStaticBuffer( EventGroupHandle_t xEventGroup,
-                                           StaticEventGroup_t ** ppxEventGroupBuffer )
+#if( configSUPPORT_STATIC_ALLOCATION == 1 )
+BaseType_t xEventGroupGetStaticBuffer(
+    EventGroupHandle_t xEventGroup,
+    StaticEventGroup_t ** ppxEventGroupBuffer )
+{
+    BaseType_t xReturn;
+    EventGroup_t * pxEventBits = xEventGroup;
+
+    configASSERT( pxEventBits );
+    configASSERT( ppxEventGroupBuffer );
+
+    #if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
     {
-        BaseType_t xReturn;
-        EventGroup_t * pxEventBits = xEventGroup;
-
-        configASSERT( pxEventBits );
-        configASSERT( ppxEventGroupBuffer );
-
-        #if ( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
+        /* Check if the event group was statically allocated. */
+        if( pxEventBits->ucStaticallyAllocated == ( uint8_t ) pdTRUE )
         {
-            /* Check if the event group was statically allocated. */
-            if( pxEventBits->ucStaticallyAllocated == ( uint8_t ) pdTRUE )
-            {
-                *ppxEventGroupBuffer = ( StaticEventGroup_t * ) pxEventBits;
-                xReturn = pdTRUE;
-            }
-            else
-            {
-                xReturn = pdFALSE;
-            }
-        }
-        #else /* configSUPPORT_DYNAMIC_ALLOCATION */
-        {
-            /* Event group must have been statically allocated. */
             *ppxEventGroupBuffer = ( StaticEventGroup_t * ) pxEventBits;
             xReturn = pdTRUE;
         }
-        #endif /* configSUPPORT_DYNAMIC_ALLOCATION */
-
-        return xReturn;
+        else
+        {
+            xReturn = pdFALSE;
+        }
     }
+    #else  /* configSUPPORT_DYNAMIC_ALLOCATION */
+    {
+        /* Event group must have been statically allocated. */
+        *ppxEventGroupBuffer = ( StaticEventGroup_t * ) pxEventBits;
+        xReturn = pdTRUE;
+    }
+    #endif /* configSUPPORT_DYNAMIC_ALLOCATION */
+
+    return xReturn;
+}
 #endif /* configSUPPORT_STATIC_ALLOCATION */
 /*-----------------------------------------------------------*/
 
@@ -734,7 +804,14 @@ void vEventGroupDelete( EventGroupHandle_t xEventGroup )
 void vEventGroupSetBitsCallback( void * pvEventGroup,
                                  const uint32_t ulBitsToSet )
 {
-    ( void ) xEventGroupSetBits( pvEventGroup, ( EventBits_t ) ulBitsToSet ); /*lint !e9079 Can't avoid cast to void* as a generic timer callback prototype. Callback casts back to original type so safe. */
+    ( void ) xEventGroupSetBits( pvEventGroup,
+                                 ( EventBits_t )
+                                     ulBitsToSet ); /*lint !e9079 Can't avoid
+                                                       cast to void* as a
+                                                       generic timer callback
+                                                       prototype. Callback casts
+                                                       back to original type so
+                                                       safe. */
 }
 /*-----------------------------------------------------------*/
 
@@ -743,7 +820,12 @@ void vEventGroupSetBitsCallback( void * pvEventGroup,
 void vEventGroupClearBitsCallback( void * pvEventGroup,
                                    const uint32_t ulBitsToClear )
 {
-    ( void ) xEventGroupClearBits( pvEventGroup, ( EventBits_t ) ulBitsToClear ); /*lint !e9079 Can't avoid cast to void* as a generic timer callback prototype. Callback casts back to original type so safe. */
+    ( void ) xEventGroupClearBits(
+        pvEventGroup,
+        ( EventBits_t ) ulBitsToClear ); /*lint !e9079 Can't avoid cast to void*
+                                            as a generic timer callback
+                                            prototype. Callback casts back to
+                                            original type so safe. */
 }
 /*-----------------------------------------------------------*/
 
@@ -784,52 +866,72 @@ static BaseType_t prvTestWaitCondition( const EventBits_t uxCurrentEventBits,
 }
 /*-----------------------------------------------------------*/
 
-#if ( ( configUSE_TRACE_FACILITY == 1 ) && ( INCLUDE_xTimerPendFunctionCall == 1 ) && ( configUSE_TIMERS == 1 ) )
+#if( ( configUSE_TRACE_FACILITY == 1 ) && \
+     ( INCLUDE_xTimerPendFunctionCall == 1 ) && ( configUSE_TIMERS == 1 ) )
 
-    BaseType_t xEventGroupSetBitsFromISR( EventGroupHandle_t xEventGroup,
-                                          const EventBits_t uxBitsToSet,
-                                          BaseType_t * pxHigherPriorityTaskWoken )
-    {
-        BaseType_t xReturn;
+BaseType_t xEventGroupSetBitsFromISR( EventGroupHandle_t xEventGroup,
+                                      const EventBits_t uxBitsToSet,
+                                      BaseType_t * pxHigherPriorityTaskWoken )
+{
+    BaseType_t xReturn;
 
-        traceEVENT_GROUP_SET_BITS_FROM_ISR( xEventGroup, uxBitsToSet );
-        xReturn = xTimerPendFunctionCallFromISR( vEventGroupSetBitsCallback, ( void * ) xEventGroup, ( uint32_t ) uxBitsToSet, pxHigherPriorityTaskWoken ); /*lint !e9087 Can't avoid cast to void* as a generic callback function not specific to this use case. Callback casts back to original type so safe. */
+    traceEVENT_GROUP_SET_BITS_FROM_ISR( xEventGroup, uxBitsToSet );
+    xReturn = xTimerPendFunctionCallFromISR(
+        vEventGroupSetBitsCallback,
+        ( void * ) xEventGroup,
+        ( uint32_t ) uxBitsToSet,
+        pxHigherPriorityTaskWoken ); /*lint !e9087 Can't avoid cast to void* as
+                                        a generic callback function not specific
+                                        to this use case. Callback casts back to
+                                        original type so safe. */
 
-        return xReturn;
-    }
+    return xReturn;
+}
 
-#endif /* if ( ( configUSE_TRACE_FACILITY == 1 ) && ( INCLUDE_xTimerPendFunctionCall == 1 ) && ( configUSE_TIMERS == 1 ) ) */
+#endif /* if ( ( configUSE_TRACE_FACILITY == 1 ) && (                          \
+          INCLUDE_xTimerPendFunctionCall == 1 ) && ( configUSE_TIMERS == 1 ) ) \
+        */
 /*-----------------------------------------------------------*/
 
-#if ( configUSE_TRACE_FACILITY == 1 )
+#if( configUSE_TRACE_FACILITY == 1 )
 
-    UBaseType_t uxEventGroupGetNumber( void * xEventGroup )
+UBaseType_t uxEventGroupGetNumber( void * xEventGroup )
+{
+    UBaseType_t xReturn;
+    EventGroup_t const * pxEventBits = ( EventGroup_t * )
+        xEventGroup; /*lint !e9087 !e9079 EventGroupHandle_t is a pointer to an
+                        EventGroup_t, but EventGroupHandle_t is kept opaque
+                        outside of this file for data hiding purposes. */
+
+    if( xEventGroup == NULL )
     {
-        UBaseType_t xReturn;
-        EventGroup_t const * pxEventBits = ( EventGroup_t * ) xEventGroup; /*lint !e9087 !e9079 EventGroupHandle_t is a pointer to an EventGroup_t, but EventGroupHandle_t is kept opaque outside of this file for data hiding purposes. */
-
-        if( xEventGroup == NULL )
-        {
-            xReturn = 0;
-        }
-        else
-        {
-            xReturn = pxEventBits->uxEventGroupNumber;
-        }
-
-        return xReturn;
+        xReturn = 0;
     }
+    else
+    {
+        xReturn = pxEventBits->uxEventGroupNumber;
+    }
+
+    return xReturn;
+}
 
 #endif /* configUSE_TRACE_FACILITY */
 /*-----------------------------------------------------------*/
 
-#if ( configUSE_TRACE_FACILITY == 1 )
+#if( configUSE_TRACE_FACILITY == 1 )
 
-    void vEventGroupSetNumber( void * xEventGroup,
-                               UBaseType_t uxEventGroupNumber )
-    {
-        ( ( EventGroup_t * ) xEventGroup )->uxEventGroupNumber = uxEventGroupNumber; /*lint !e9087 !e9079 EventGroupHandle_t is a pointer to an EventGroup_t, but EventGroupHandle_t is kept opaque outside of this file for data hiding purposes. */
-    }
+void vEventGroupSetNumber( void * xEventGroup, UBaseType_t uxEventGroupNumber )
+{
+    ( ( EventGroup_t * ) xEventGroup )
+        ->uxEventGroupNumber = uxEventGroupNumber; /*lint !e9087 !e9079
+                                                      EventGroupHandle_t is a
+                                                      pointer to an
+                                                      EventGroup_t, but
+                                                      EventGroupHandle_t is kept
+                                                      opaque outside of this
+                                                      file for data hiding
+                                                      purposes. */
+}
 
 #endif /* configUSE_TRACE_FACILITY */
 /*-----------------------------------------------------------*/
