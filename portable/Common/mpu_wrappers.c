@@ -52,13 +52,14 @@
 #if( ( portUSING_MPU_WRAPPERS == 1 ) && ( configUSE_MPU_WRAPPERS_V1 == 1 ) )
 
     #if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
-BaseType_t MPU_xTaskCreate( TaskFunction_t pvTaskCode,
-                            const char * const pcName,
-                            uint16_t usStackDepth,
-                            void * pvParameters,
-                            UBaseType_t uxPriority,
-                            TaskHandle_t * pxCreatedTask ) /* FREERTOS_SYSTEM_CALL
-                                                            */
+BaseType_t MPU_xTaskCreate(
+    TaskFunction_t pvTaskCode,
+    const char * const pcName,
+    uint16_t usStackDepth,
+    void * pvParameters,
+    UBaseType_t uxPriority,
+    TaskHandle_t * pxCreatedTask ) /* FREERTOS_SYSTEM_CALL
+                                    */
 {
     BaseType_t xReturn;
 
@@ -97,14 +98,15 @@ BaseType_t MPU_xTaskCreate( TaskFunction_t pvTaskCode,
            /*-----------------------------------------------------------*/
 
     #if( configSUPPORT_STATIC_ALLOCATION == 1 )
-TaskHandle_t MPU_xTaskCreateStatic( TaskFunction_t pxTaskCode,
-                                    const char * const pcName,
-                                    const uint32_t ulStackDepth,
-                                    void * const pvParameters,
-                                    UBaseType_t uxPriority,
-                                    StackType_t * const puxStackBuffer,
-                                    StaticTask_t * const pxTaskBuffer ) /* FREERTOS_SYSTEM_CALL
-                                                                         */
+TaskHandle_t MPU_xTaskCreateStatic(
+    TaskFunction_t pxTaskCode,
+    const char * const pcName,
+    const uint32_t ulStackDepth,
+    void * const pvParameters,
+    UBaseType_t uxPriority,
+    StackType_t * const puxStackBuffer,
+    StaticTask_t * const pxTaskBuffer ) /* FREERTOS_SYSTEM_CALL
+                                         */
 {
     TaskHandle_t xReturn;
 
@@ -167,9 +169,10 @@ void MPU_vTaskDelete( TaskHandle_t pxTaskToDelete ) /* FREERTOS_SYSTEM_CALL */
            /*-----------------------------------------------------------*/
 
     #if( INCLUDE_xTaskDelayUntil == 1 )
-BaseType_t MPU_xTaskDelayUntil( TickType_t * const pxPreviousWakeTime,
-                                TickType_t xTimeIncrement ) /* FREERTOS_SYSTEM_CALL
-                                                             */
+BaseType_t MPU_xTaskDelayUntil(
+    TickType_t * const pxPreviousWakeTime,
+    TickType_t xTimeIncrement ) /* FREERTOS_SYSTEM_CALL
+                                 */
 {
     BaseType_t xReturn;
 
@@ -243,8 +246,9 @@ void MPU_vTaskDelay( TickType_t xTicksToDelay ) /* FREERTOS_SYSTEM_CALL */
            /*-----------------------------------------------------------*/
 
     #if( INCLUDE_uxTaskPriorityGet == 1 )
-UBaseType_t MPU_uxTaskPriorityGet( const TaskHandle_t pxTask ) /* FREERTOS_SYSTEM_CALL
-                                                                */
+UBaseType_t MPU_uxTaskPriorityGet(
+    const TaskHandle_t pxTask ) /* FREERTOS_SYSTEM_CALL
+                                 */
 {
     UBaseType_t uxReturn;
 
@@ -506,8 +510,9 @@ UBaseType_t MPU_uxTaskGetNumberOfTasks( void ) /* FREERTOS_SYSTEM_CALL */
 /*-----------------------------------------------------------*/
 
     #if( INCLUDE_xTaskGetHandle == 1 )
-TaskHandle_t MPU_xTaskGetHandle( const char * pcNameToQuery ) /* FREERTOS_SYSTEM_CALL
-                                                               */
+TaskHandle_t MPU_xTaskGetHandle(
+    const char * pcNameToQuery ) /* FREERTOS_SYSTEM_CALL
+                                  */
 {
     TaskHandle_t xReturn;
 
@@ -586,8 +591,9 @@ void MPU_vTaskGetRunTimeStats( char * pcWriteBuffer ) /* FREERTOS_SYSTEM_CALL */
 
     #if( ( configGENERATE_RUN_TIME_STATS == 1 ) && \
          ( INCLUDE_xTaskGetIdleTaskHandle == 1 ) )
-configRUN_TIME_COUNTER_TYPE MPU_ulTaskGetIdleRunTimePercent( void ) /* FREERTOS_SYSTEM_CALL
-                                                                     */
+configRUN_TIME_COUNTER_TYPE MPU_ulTaskGetIdleRunTimePercent(
+    void ) /* FREERTOS_SYSTEM_CALL
+            */
 {
     configRUN_TIME_COUNTER_TYPE xReturn;
 
@@ -615,8 +621,9 @@ configRUN_TIME_COUNTER_TYPE MPU_ulTaskGetIdleRunTimePercent( void ) /* FREERTOS_
 
     #if( ( configGENERATE_RUN_TIME_STATS == 1 ) && \
          ( INCLUDE_xTaskGetIdleTaskHandle == 1 ) )
-configRUN_TIME_COUNTER_TYPE MPU_ulTaskGetIdleRunTimeCounter( void ) /* FREERTOS_SYSTEM_CALL
-                                                                     */
+configRUN_TIME_COUNTER_TYPE MPU_ulTaskGetIdleRunTimeCounter(
+    void ) /* FREERTOS_SYSTEM_CALL
+            */
 {
     configRUN_TIME_COUNTER_TYPE xReturn;
 
@@ -643,9 +650,10 @@ configRUN_TIME_COUNTER_TYPE MPU_ulTaskGetIdleRunTimeCounter( void ) /* FREERTOS_
            /*-----------------------------------------------------------*/
 
     #if( configUSE_APPLICATION_TASK_TAG == 1 )
-void MPU_vTaskSetApplicationTaskTag( TaskHandle_t xTask,
-                                     TaskHookFunction_t pxTagValue ) /* FREERTOS_SYSTEM_CALL
-                                                                      */
+void MPU_vTaskSetApplicationTaskTag(
+    TaskHandle_t xTask,
+    TaskHookFunction_t pxTagValue ) /* FREERTOS_SYSTEM_CALL
+                                     */
 {
     if( portIS_PRIVILEGED() == pdFALSE )
     {
@@ -667,8 +675,9 @@ void MPU_vTaskSetApplicationTaskTag( TaskHandle_t xTask,
            /*-----------------------------------------------------------*/
 
     #if( configUSE_APPLICATION_TASK_TAG == 1 )
-TaskHookFunction_t MPU_xTaskGetApplicationTaskTag( TaskHandle_t xTask ) /* FREERTOS_SYSTEM_CALL
-                                                                         */
+TaskHookFunction_t MPU_xTaskGetApplicationTaskTag(
+    TaskHandle_t xTask ) /* FREERTOS_SYSTEM_CALL
+                          */
 {
     TaskHookFunction_t xReturn;
 
@@ -694,10 +703,11 @@ TaskHookFunction_t MPU_xTaskGetApplicationTaskTag( TaskHandle_t xTask ) /* FREER
            /*-----------------------------------------------------------*/
 
     #if( configNUM_THREAD_LOCAL_STORAGE_POINTERS != 0 )
-void MPU_vTaskSetThreadLocalStoragePointer( TaskHandle_t xTaskToSet,
-                                            BaseType_t xIndex,
-                                            void * pvValue ) /* FREERTOS_SYSTEM_CALL
-                                                              */
+void MPU_vTaskSetThreadLocalStoragePointer(
+    TaskHandle_t xTaskToSet,
+    BaseType_t xIndex,
+    void * pvValue ) /* FREERTOS_SYSTEM_CALL
+                      */
 {
     if( portIS_PRIVILEGED() == pdFALSE )
     {
@@ -719,9 +729,10 @@ void MPU_vTaskSetThreadLocalStoragePointer( TaskHandle_t xTaskToSet,
            /*-----------------------------------------------------------*/
 
     #if( configNUM_THREAD_LOCAL_STORAGE_POINTERS != 0 )
-void * MPU_pvTaskGetThreadLocalStoragePointer( TaskHandle_t xTaskToQuery,
-                                               BaseType_t xIndex ) /* FREERTOS_SYSTEM_CALL
-                                                                    */
+void * MPU_pvTaskGetThreadLocalStoragePointer(
+    TaskHandle_t xTaskToQuery,
+    BaseType_t xIndex ) /* FREERTOS_SYSTEM_CALL
+                         */
 {
     void * pvReturn;
 
@@ -747,9 +758,10 @@ void * MPU_pvTaskGetThreadLocalStoragePointer( TaskHandle_t xTaskToQuery,
            /*-----------------------------------------------------------*/
 
     #if( configUSE_APPLICATION_TASK_TAG == 1 )
-BaseType_t MPU_xTaskCallApplicationTaskHook( TaskHandle_t xTask,
-                                             void * pvParameter ) /* FREERTOS_SYSTEM_CALL
-                                                                   */
+BaseType_t MPU_xTaskCallApplicationTaskHook(
+    TaskHandle_t xTask,
+    void * pvParameter ) /* FREERTOS_SYSTEM_CALL
+                          */
 {
     BaseType_t xReturn;
 
@@ -807,8 +819,9 @@ UBaseType_t MPU_uxTaskGetSystemState(
     #endif /* if ( configUSE_TRACE_FACILITY == 1 ) */
            /*-----------------------------------------------------------*/
 
-BaseType_t MPU_xTaskCatchUpTicks( TickType_t xTicksToCatchUp ) /* FREERTOS_SYSTEM_CALL
-                                                                */
+BaseType_t MPU_xTaskCatchUpTicks(
+    TickType_t xTicksToCatchUp ) /* FREERTOS_SYSTEM_CALL
+                                  */
 {
     BaseType_t xReturn;
 
@@ -833,8 +846,9 @@ BaseType_t MPU_xTaskCatchUpTicks( TickType_t xTicksToCatchUp ) /* FREERTOS_SYSTE
 /*-----------------------------------------------------------*/
 
     #if( INCLUDE_uxTaskGetStackHighWaterMark == 1 )
-UBaseType_t MPU_uxTaskGetStackHighWaterMark( TaskHandle_t xTask ) /* FREERTOS_SYSTEM_CALL
-                                                                   */
+UBaseType_t MPU_uxTaskGetStackHighWaterMark(
+    TaskHandle_t xTask ) /* FREERTOS_SYSTEM_CALL
+                          */
 {
     UBaseType_t uxReturn;
 
@@ -939,8 +953,9 @@ BaseType_t MPU_xTaskGetSchedulerState( void ) /* FREERTOS_SYSTEM_CALL */
     #endif /* if ( INCLUDE_xTaskGetSchedulerState == 1 ) */
            /*-----------------------------------------------------------*/
 
-void MPU_vTaskSetTimeOutState( TimeOut_t * const pxTimeOut ) /* FREERTOS_SYSTEM_CALL
-                                                              */
+void MPU_vTaskSetTimeOutState(
+    TimeOut_t * const pxTimeOut ) /* FREERTOS_SYSTEM_CALL
+                                   */
 {
     if( portIS_PRIVILEGED() == pdFALSE )
     {
@@ -960,9 +975,10 @@ void MPU_vTaskSetTimeOutState( TimeOut_t * const pxTimeOut ) /* FREERTOS_SYSTEM_
 }
 /*-----------------------------------------------------------*/
 
-BaseType_t MPU_xTaskCheckForTimeOut( TimeOut_t * const pxTimeOut,
-                                     TickType_t * const pxTicksToWait ) /* FREERTOS_SYSTEM_CALL
-                                                                         */
+BaseType_t MPU_xTaskCheckForTimeOut(
+    TimeOut_t * const pxTimeOut,
+    TickType_t * const pxTicksToWait ) /* FREERTOS_SYSTEM_CALL
+                                        */
 {
     BaseType_t xReturn;
 
@@ -1026,12 +1042,13 @@ BaseType_t MPU_xTaskGenericNotify(
            /*-----------------------------------------------------------*/
 
     #if( configUSE_TASK_NOTIFICATIONS == 1 )
-BaseType_t MPU_xTaskGenericNotifyWait( UBaseType_t uxIndexToWaitOn,
-                                       uint32_t ulBitsToClearOnEntry,
-                                       uint32_t ulBitsToClearOnExit,
-                                       uint32_t * pulNotificationValue,
-                                       TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
-                                                                  */
+BaseType_t MPU_xTaskGenericNotifyWait(
+    UBaseType_t uxIndexToWaitOn,
+    uint32_t ulBitsToClearOnEntry,
+    uint32_t ulBitsToClearOnExit,
+    uint32_t * pulNotificationValue,
+    TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
+                               */
 {
     BaseType_t xReturn;
 
@@ -1065,10 +1082,11 @@ BaseType_t MPU_xTaskGenericNotifyWait( UBaseType_t uxIndexToWaitOn,
            /*-----------------------------------------------------------*/
 
     #if( configUSE_TASK_NOTIFICATIONS == 1 )
-uint32_t MPU_ulTaskGenericNotifyTake( UBaseType_t uxIndexToWaitOn,
-                                      BaseType_t xClearCountOnExit,
-                                      TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
-                                                                 */
+uint32_t MPU_ulTaskGenericNotifyTake(
+    UBaseType_t uxIndexToWaitOn,
+    BaseType_t xClearCountOnExit,
+    TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
+                               */
 {
     uint32_t ulReturn;
 
@@ -1098,9 +1116,10 @@ uint32_t MPU_ulTaskGenericNotifyTake( UBaseType_t uxIndexToWaitOn,
            /*-----------------------------------------------------------*/
 
     #if( configUSE_TASK_NOTIFICATIONS == 1 )
-BaseType_t MPU_xTaskGenericNotifyStateClear( TaskHandle_t xTask,
-                                             UBaseType_t uxIndexToClear ) /* FREERTOS_SYSTEM_CALL
-                                                                           */
+BaseType_t MPU_xTaskGenericNotifyStateClear(
+    TaskHandle_t xTask,
+    UBaseType_t uxIndexToClear ) /* FREERTOS_SYSTEM_CALL
+                                  */
 {
     BaseType_t xReturn;
 
@@ -1126,10 +1145,11 @@ BaseType_t MPU_xTaskGenericNotifyStateClear( TaskHandle_t xTask,
            /*-----------------------------------------------------------*/
 
     #if( configUSE_TASK_NOTIFICATIONS == 1 )
-uint32_t MPU_ulTaskGenericNotifyValueClear( TaskHandle_t xTask,
-                                            UBaseType_t uxIndexToClear,
-                                            uint32_t ulBitsToClear ) /* FREERTOS_SYSTEM_CALL
-                                                                      */
+uint32_t MPU_ulTaskGenericNotifyValueClear(
+    TaskHandle_t xTask,
+    UBaseType_t uxIndexToClear,
+    uint32_t ulBitsToClear ) /* FREERTOS_SYSTEM_CALL
+                              */
 {
     uint32_t ulReturn;
 
@@ -1159,10 +1179,11 @@ uint32_t MPU_ulTaskGenericNotifyValueClear( TaskHandle_t xTask,
            /*-----------------------------------------------------------*/
 
     #if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
-QueueHandle_t MPU_xQueueGenericCreate( UBaseType_t uxQueueLength,
-                                       UBaseType_t uxItemSize,
-                                       uint8_t ucQueueType ) /* FREERTOS_SYSTEM_CALL
-                                                              */
+QueueHandle_t MPU_xQueueGenericCreate(
+    UBaseType_t uxQueueLength,
+    UBaseType_t uxItemSize,
+    uint8_t ucQueueType ) /* FREERTOS_SYSTEM_CALL
+                           */
 {
     QueueHandle_t xReturn;
 
@@ -1188,12 +1209,13 @@ QueueHandle_t MPU_xQueueGenericCreate( UBaseType_t uxQueueLength,
            /*-----------------------------------------------------------*/
 
     #if( configSUPPORT_STATIC_ALLOCATION == 1 )
-QueueHandle_t MPU_xQueueGenericCreateStatic( const UBaseType_t uxQueueLength,
-                                             const UBaseType_t uxItemSize,
-                                             uint8_t * pucQueueStorage,
-                                             StaticQueue_t * pxStaticQueue,
-                                             const uint8_t ucQueueType ) /* FREERTOS_SYSTEM_CALL
-                                                                          */
+QueueHandle_t MPU_xQueueGenericCreateStatic(
+    const UBaseType_t uxQueueLength,
+    const UBaseType_t uxItemSize,
+    uint8_t * pucQueueStorage,
+    StaticQueue_t * pxStaticQueue,
+    const uint8_t ucQueueType ) /* FREERTOS_SYSTEM_CALL
+                                 */
 {
     QueueHandle_t xReturn;
 
@@ -1252,11 +1274,12 @@ BaseType_t MPU_xQueueGenericReset( QueueHandle_t pxQueue,
 }
 /*-----------------------------------------------------------*/
 
-BaseType_t MPU_xQueueGenericSend( QueueHandle_t xQueue,
-                                  const void * const pvItemToQueue,
-                                  TickType_t xTicksToWait,
-                                  BaseType_t xCopyPosition ) /* FREERTOS_SYSTEM_CALL
-                                                              */
+BaseType_t MPU_xQueueGenericSend(
+    QueueHandle_t xQueue,
+    const void * const pvItemToQueue,
+    TickType_t xTicksToWait,
+    BaseType_t xCopyPosition ) /* FREERTOS_SYSTEM_CALL
+                                */
 {
     BaseType_t xReturn;
 
@@ -1286,8 +1309,9 @@ BaseType_t MPU_xQueueGenericSend( QueueHandle_t xQueue,
 }
 /*-----------------------------------------------------------*/
 
-UBaseType_t MPU_uxQueueMessagesWaiting( const QueueHandle_t pxQueue ) /* FREERTOS_SYSTEM_CALL
-                                                                       */
+UBaseType_t MPU_uxQueueMessagesWaiting(
+    const QueueHandle_t pxQueue ) /* FREERTOS_SYSTEM_CALL
+                                   */
 {
     UBaseType_t uxReturn;
 
@@ -1311,8 +1335,9 @@ UBaseType_t MPU_uxQueueMessagesWaiting( const QueueHandle_t pxQueue ) /* FREERTO
 }
 /*-----------------------------------------------------------*/
 
-UBaseType_t MPU_uxQueueSpacesAvailable( const QueueHandle_t xQueue ) /* FREERTOS_SYSTEM_CALL
-                                                                      */
+UBaseType_t MPU_uxQueueSpacesAvailable(
+    const QueueHandle_t xQueue ) /* FREERTOS_SYSTEM_CALL
+                                  */
 {
     UBaseType_t uxReturn;
 
@@ -1389,9 +1414,10 @@ BaseType_t MPU_xQueuePeek( QueueHandle_t xQueue,
 }
 /*-----------------------------------------------------------*/
 
-BaseType_t MPU_xQueueSemaphoreTake( QueueHandle_t xQueue,
-                                    TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
-                                                               */
+BaseType_t MPU_xQueueSemaphoreTake(
+    QueueHandle_t xQueue,
+    TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
+                               */
 {
     BaseType_t xReturn;
 
@@ -1417,8 +1443,9 @@ BaseType_t MPU_xQueueSemaphoreTake( QueueHandle_t xQueue,
 
     #if( ( configUSE_MUTEXES == 1 ) && \
          ( INCLUDE_xSemaphoreGetMutexHolder == 1 ) )
-TaskHandle_t MPU_xQueueGetMutexHolder( QueueHandle_t xSemaphore ) /* FREERTOS_SYSTEM_CALL
-                                                                   */
+TaskHandle_t MPU_xQueueGetMutexHolder(
+    QueueHandle_t xSemaphore ) /* FREERTOS_SYSTEM_CALL
+                                */
 {
     void * xReturn;
 
@@ -1446,8 +1473,9 @@ TaskHandle_t MPU_xQueueGetMutexHolder( QueueHandle_t xSemaphore ) /* FREERTOS_SY
 
     #if( ( configUSE_MUTEXES == 1 ) && \
          ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) )
-QueueHandle_t MPU_xQueueCreateMutex( const uint8_t ucQueueType ) /* FREERTOS_SYSTEM_CALL
-                                                                  */
+QueueHandle_t MPU_xQueueCreateMutex(
+    const uint8_t ucQueueType ) /* FREERTOS_SYSTEM_CALL
+                                 */
 {
     QueueHandle_t xReturn;
 
@@ -1475,9 +1503,10 @@ QueueHandle_t MPU_xQueueCreateMutex( const uint8_t ucQueueType ) /* FREERTOS_SYS
 
     #if( ( configUSE_MUTEXES == 1 ) && \
          ( configSUPPORT_STATIC_ALLOCATION == 1 ) )
-QueueHandle_t MPU_xQueueCreateMutexStatic( const uint8_t ucQueueType,
-                                           StaticQueue_t * pxStaticQueue ) /* FREERTOS_SYSTEM_CALL
-                                                                            */
+QueueHandle_t MPU_xQueueCreateMutexStatic(
+    const uint8_t ucQueueType,
+    StaticQueue_t * pxStaticQueue ) /* FREERTOS_SYSTEM_CALL
+                                     */
 {
     QueueHandle_t xReturn;
 
@@ -1570,9 +1599,10 @@ QueueHandle_t MPU_xQueueCreateCountingSemaphoreStatic(
            /*-----------------------------------------------------------*/
 
     #if( configUSE_RECURSIVE_MUTEXES == 1 )
-BaseType_t MPU_xQueueTakeMutexRecursive( QueueHandle_t xMutex,
-                                         TickType_t xBlockTime ) /* FREERTOS_SYSTEM_CALL
-                                                                  */
+BaseType_t MPU_xQueueTakeMutexRecursive(
+    QueueHandle_t xMutex,
+    TickType_t xBlockTime ) /* FREERTOS_SYSTEM_CALL
+                             */
 {
     BaseType_t xReturn;
 
@@ -1598,8 +1628,9 @@ BaseType_t MPU_xQueueTakeMutexRecursive( QueueHandle_t xMutex,
            /*-----------------------------------------------------------*/
 
     #if( configUSE_RECURSIVE_MUTEXES == 1 )
-BaseType_t MPU_xQueueGiveMutexRecursive( QueueHandle_t xMutex ) /* FREERTOS_SYSTEM_CALL
-                                                                 */
+BaseType_t MPU_xQueueGiveMutexRecursive(
+    QueueHandle_t xMutex ) /* FREERTOS_SYSTEM_CALL
+                            */
 {
     BaseType_t xReturn;
 
@@ -1626,8 +1657,9 @@ BaseType_t MPU_xQueueGiveMutexRecursive( QueueHandle_t xMutex ) /* FREERTOS_SYST
 
     #if( ( configUSE_QUEUE_SETS == 1 ) && \
          ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) )
-QueueSetHandle_t MPU_xQueueCreateSet( UBaseType_t uxEventQueueLength ) /* FREERTOS_SYSTEM_CALL
-                                                                        */
+QueueSetHandle_t MPU_xQueueCreateSet(
+    UBaseType_t uxEventQueueLength ) /* FREERTOS_SYSTEM_CALL
+                                      */
 {
     QueueSetHandle_t xReturn;
 
@@ -1682,9 +1714,10 @@ QueueSetMemberHandle_t MPU_xQueueSelectFromSet(
            /*-----------------------------------------------------------*/
 
     #if( configUSE_QUEUE_SETS == 1 )
-BaseType_t MPU_xQueueAddToSet( QueueSetMemberHandle_t xQueueOrSemaphore,
-                               QueueSetHandle_t xQueueSet ) /* FREERTOS_SYSTEM_CALL
-                                                             */
+BaseType_t MPU_xQueueAddToSet(
+    QueueSetMemberHandle_t xQueueOrSemaphore,
+    QueueSetHandle_t xQueueSet ) /* FREERTOS_SYSTEM_CALL
+                                  */
 {
     BaseType_t xReturn;
 
@@ -1710,9 +1743,10 @@ BaseType_t MPU_xQueueAddToSet( QueueSetMemberHandle_t xQueueOrSemaphore,
            /*-----------------------------------------------------------*/
 
     #if( configUSE_QUEUE_SETS == 1 )
-BaseType_t MPU_xQueueRemoveFromSet( QueueSetMemberHandle_t xQueueOrSemaphore,
-                                    QueueSetHandle_t xQueueSet ) /* FREERTOS_SYSTEM_CALL
-                                                                  */
+BaseType_t MPU_xQueueRemoveFromSet(
+    QueueSetMemberHandle_t xQueueOrSemaphore,
+    QueueSetHandle_t xQueueSet ) /* FREERTOS_SYSTEM_CALL
+                                  */
 {
     BaseType_t xReturn;
 
@@ -1738,8 +1772,9 @@ BaseType_t MPU_xQueueRemoveFromSet( QueueSetMemberHandle_t xQueueOrSemaphore,
            /*-----------------------------------------------------------*/
 
     #if configQUEUE_REGISTRY_SIZE > 0
-void MPU_vQueueAddToRegistry( QueueHandle_t xQueue, const char * pcName ) /* FREERTOS_SYSTEM_CALL
-                                                                           */
+void MPU_vQueueAddToRegistry( QueueHandle_t xQueue,
+                              const char * pcName ) /* FREERTOS_SYSTEM_CALL
+                                                     */
 {
     if( portIS_PRIVILEGED() == pdFALSE )
     {
@@ -1831,8 +1866,9 @@ void MPU_vQueueDelete( QueueHandle_t xQueue ) /* FREERTOS_SYSTEM_CALL */
 /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
-void * MPU_pvTimerGetTimerID( const TimerHandle_t xTimer ) /* FREERTOS_SYSTEM_CALL
-                                                            */
+void * MPU_pvTimerGetTimerID(
+    const TimerHandle_t xTimer ) /* FREERTOS_SYSTEM_CALL
+                                  */
 {
     void * pvReturn;
 
@@ -1858,8 +1894,9 @@ void * MPU_pvTimerGetTimerID( const TimerHandle_t xTimer ) /* FREERTOS_SYSTEM_CA
            /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
-void MPU_vTimerSetTimerID( TimerHandle_t xTimer, void * pvNewID ) /* FREERTOS_SYSTEM_CALL
-                                                                   */
+void MPU_vTimerSetTimerID( TimerHandle_t xTimer,
+                           void * pvNewID ) /* FREERTOS_SYSTEM_CALL
+                                             */
 {
     if( portIS_PRIVILEGED() == pdFALSE )
     {
@@ -1881,8 +1918,9 @@ void MPU_vTimerSetTimerID( TimerHandle_t xTimer, void * pvNewID ) /* FREERTOS_SY
            /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
-BaseType_t MPU_xTimerIsTimerActive( TimerHandle_t xTimer ) /* FREERTOS_SYSTEM_CALL
-                                                            */
+BaseType_t MPU_xTimerIsTimerActive(
+    TimerHandle_t xTimer ) /* FREERTOS_SYSTEM_CALL
+                            */
 {
     BaseType_t xReturn;
 
@@ -1935,9 +1973,10 @@ TaskHandle_t MPU_xTimerGetTimerDaemonTaskHandle( void ) /* FREERTOS_SYSTEM_CALL
            /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
-void MPU_vTimerSetReloadMode( TimerHandle_t xTimer,
-                              const UBaseType_t uxAutoReload ) /* FREERTOS_SYSTEM_CALL
-                                                                */
+void MPU_vTimerSetReloadMode(
+    TimerHandle_t xTimer,
+    const UBaseType_t uxAutoReload ) /* FREERTOS_SYSTEM_CALL
+                                      */
 {
     if( portIS_PRIVILEGED() == pdFALSE )
     {
@@ -2039,8 +2078,9 @@ TickType_t MPU_xTimerGetPeriod( TimerHandle_t xTimer ) /* FREERTOS_SYSTEM_CALL
            /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
-TickType_t MPU_xTimerGetExpiryTime( TimerHandle_t xTimer ) /* FREERTOS_SYSTEM_CALL
-                                                            */
+TickType_t MPU_xTimerGetExpiryTime(
+    TimerHandle_t xTimer ) /* FREERTOS_SYSTEM_CALL
+                            */
 {
     TickType_t xReturn;
 
@@ -2157,12 +2197,13 @@ EventGroupHandle_t MPU_xEventGroupCreateStatic(
     #endif /* if ( configSUPPORT_STATIC_ALLOCATION == 1 ) */
            /*-----------------------------------------------------------*/
 
-EventBits_t MPU_xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
-                                     const EventBits_t uxBitsToWaitFor,
-                                     const BaseType_t xClearOnExit,
-                                     const BaseType_t xWaitForAllBits,
-                                     TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
-                                                                */
+EventBits_t MPU_xEventGroupWaitBits(
+    EventGroupHandle_t xEventGroup,
+    const EventBits_t uxBitsToWaitFor,
+    const BaseType_t xClearOnExit,
+    const BaseType_t xWaitForAllBits,
+    TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
+                               */
 {
     EventBits_t xReturn;
 
@@ -2194,9 +2235,10 @@ EventBits_t MPU_xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
 }
 /*-----------------------------------------------------------*/
 
-EventBits_t MPU_xEventGroupClearBits( EventGroupHandle_t xEventGroup,
-                                      const EventBits_t uxBitsToClear ) /* FREERTOS_SYSTEM_CALL
-                                                                         */
+EventBits_t MPU_xEventGroupClearBits(
+    EventGroupHandle_t xEventGroup,
+    const EventBits_t uxBitsToClear ) /* FREERTOS_SYSTEM_CALL
+                                       */
 {
     EventBits_t xReturn;
 
@@ -2220,9 +2262,10 @@ EventBits_t MPU_xEventGroupClearBits( EventGroupHandle_t xEventGroup,
 }
 /*-----------------------------------------------------------*/
 
-EventBits_t MPU_xEventGroupSetBits( EventGroupHandle_t xEventGroup,
-                                    const EventBits_t uxBitsToSet ) /* FREERTOS_SYSTEM_CALL
-                                                                     */
+EventBits_t MPU_xEventGroupSetBits(
+    EventGroupHandle_t xEventGroup,
+    const EventBits_t uxBitsToSet ) /* FREERTOS_SYSTEM_CALL
+                                     */
 {
     EventBits_t xReturn;
 
@@ -2246,11 +2289,12 @@ EventBits_t MPU_xEventGroupSetBits( EventGroupHandle_t xEventGroup,
 }
 /*-----------------------------------------------------------*/
 
-EventBits_t MPU_xEventGroupSync( EventGroupHandle_t xEventGroup,
-                                 const EventBits_t uxBitsToSet,
-                                 const EventBits_t uxBitsToWaitFor,
-                                 TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
-                                                            */
+EventBits_t MPU_xEventGroupSync(
+    EventGroupHandle_t xEventGroup,
+    const EventBits_t uxBitsToSet,
+    const EventBits_t uxBitsToWaitFor,
+    TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
+                               */
 {
     EventBits_t xReturn;
 
@@ -2280,8 +2324,9 @@ EventBits_t MPU_xEventGroupSync( EventGroupHandle_t xEventGroup,
 }
 /*-----------------------------------------------------------*/
 
-void MPU_vEventGroupDelete( EventGroupHandle_t xEventGroup ) /* FREERTOS_SYSTEM_CALL
-                                                              */
+void MPU_vEventGroupDelete(
+    EventGroupHandle_t xEventGroup ) /* FREERTOS_SYSTEM_CALL
+                                      */
 {
     if( portIS_PRIVILEGED() == pdFALSE )
     {
@@ -2360,11 +2405,12 @@ size_t MPU_xStreamBufferNextMessageLengthBytes(
 }
 /*-----------------------------------------------------------*/
 
-size_t MPU_xStreamBufferReceive( StreamBufferHandle_t xStreamBuffer,
-                                 void * pvRxData,
-                                 size_t xBufferLengthBytes,
-                                 TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
-                                                            */
+size_t MPU_xStreamBufferReceive(
+    StreamBufferHandle_t xStreamBuffer,
+    void * pvRxData,
+    size_t xBufferLengthBytes,
+    TickType_t xTicksToWait ) /* FREERTOS_SYSTEM_CALL
+                               */
 {
     size_t xReturn;
 
@@ -2394,8 +2440,9 @@ size_t MPU_xStreamBufferReceive( StreamBufferHandle_t xStreamBuffer,
 }
 /*-----------------------------------------------------------*/
 
-void MPU_vStreamBufferDelete( StreamBufferHandle_t xStreamBuffer ) /* FREERTOS_SYSTEM_CALL
-                                                                    */
+void MPU_vStreamBufferDelete(
+    StreamBufferHandle_t xStreamBuffer ) /* FREERTOS_SYSTEM_CALL
+                                          */
 {
     if( portIS_PRIVILEGED() == pdFALSE )
     {
@@ -2415,8 +2462,9 @@ void MPU_vStreamBufferDelete( StreamBufferHandle_t xStreamBuffer ) /* FREERTOS_S
 }
 /*-----------------------------------------------------------*/
 
-BaseType_t MPU_xStreamBufferIsFull( StreamBufferHandle_t xStreamBuffer ) /* FREERTOS_SYSTEM_CALL
-                                                                          */
+BaseType_t MPU_xStreamBufferIsFull(
+    StreamBufferHandle_t xStreamBuffer ) /* FREERTOS_SYSTEM_CALL
+                                          */
 {
     BaseType_t xReturn;
 
@@ -2440,8 +2488,9 @@ BaseType_t MPU_xStreamBufferIsFull( StreamBufferHandle_t xStreamBuffer ) /* FREE
 }
 /*-----------------------------------------------------------*/
 
-BaseType_t MPU_xStreamBufferIsEmpty( StreamBufferHandle_t xStreamBuffer ) /* FREERTOS_SYSTEM_CALL
-                                                                           */
+BaseType_t MPU_xStreamBufferIsEmpty(
+    StreamBufferHandle_t xStreamBuffer ) /* FREERTOS_SYSTEM_CALL
+                                          */
 {
     BaseType_t xReturn;
 
@@ -2465,8 +2514,9 @@ BaseType_t MPU_xStreamBufferIsEmpty( StreamBufferHandle_t xStreamBuffer ) /* FRE
 }
 /*-----------------------------------------------------------*/
 
-BaseType_t MPU_xStreamBufferReset( StreamBufferHandle_t xStreamBuffer ) /* FREERTOS_SYSTEM_CALL
-                                                                         */
+BaseType_t MPU_xStreamBufferReset(
+    StreamBufferHandle_t xStreamBuffer ) /* FREERTOS_SYSTEM_CALL
+                                          */
 {
     BaseType_t xReturn;
 
@@ -2539,9 +2589,10 @@ size_t MPU_xStreamBufferBytesAvailable(
 }
 /*-----------------------------------------------------------*/
 
-BaseType_t MPU_xStreamBufferSetTriggerLevel( StreamBufferHandle_t xStreamBuffer,
-                                             size_t xTriggerLevel ) /* FREERTOS_SYSTEM_CALL
-                                                                     */
+BaseType_t MPU_xStreamBufferSetTriggerLevel(
+    StreamBufferHandle_t xStreamBuffer,
+    size_t xTriggerLevel ) /* FREERTOS_SYSTEM_CALL
+                            */
 {
     BaseType_t xReturn;
 
@@ -2571,8 +2622,9 @@ StreamBufferHandle_t MPU_xStreamBufferGenericCreate(
     size_t xTriggerLevelBytes,
     BaseType_t xIsMessageBuffer,
     StreamBufferCallbackFunction_t pxSendCompletedCallback,
-    StreamBufferCallbackFunction_t pxReceiveCompletedCallback ) /* FREERTOS_SYSTEM_CALL
-                                                                 */
+    StreamBufferCallbackFunction_t
+        pxReceiveCompletedCallback ) /* FREERTOS_SYSTEM_CALL
+                                      */
 {
     StreamBufferHandle_t xReturn;
 
@@ -2629,8 +2681,9 @@ StreamBufferHandle_t MPU_xStreamBufferGenericCreateStatic(
     uint8_t * const pucStreamBufferStorageArea,
     StaticStreamBuffer_t * const pxStaticStreamBuffer,
     StreamBufferCallbackFunction_t pxSendCompletedCallback,
-    StreamBufferCallbackFunction_t pxReceiveCompletedCallback ) /* FREERTOS_SYSTEM_CALL
-                                                                 */
+    StreamBufferCallbackFunction_t
+        pxReceiveCompletedCallback ) /* FREERTOS_SYSTEM_CALL
+                                      */
 {
     StreamBufferHandle_t xReturn;
 

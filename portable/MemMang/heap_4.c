@@ -468,8 +468,9 @@ static void prvHeapInit( void ) /* PRIVILEGED_FUNCTION */
 }
 /*-----------------------------------------------------------*/
 
-static void prvInsertBlockIntoFreeList( BlockLink_t * pxBlockToInsert ) /* PRIVILEGED_FUNCTION
-                                                                         */
+static void prvInsertBlockIntoFreeList(
+    BlockLink_t * pxBlockToInsert ) /* PRIVILEGED_FUNCTION
+                                     */
 {
     BlockLink_t * pxIterator;
     uint8_t * puc;
