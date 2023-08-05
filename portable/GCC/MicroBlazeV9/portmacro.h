@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -31,7 +32,7 @@
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    extern "C" {
+extern "C" {
 #endif
 /* *INDENT-ON* */
 
@@ -50,24 +51,24 @@
  */
 
 /* Type definitions. */
-#define portCHAR        char
-#define portFLOAT       float
-#define portDOUBLE      double
-#define portLONG        long
-#define portSHORT       short
-#define portSTACK_TYPE  uint32_t
-#define portBASE_TYPE   long
+#define portCHAR       char
+#define portFLOAT      float
+#define portDOUBLE     double
+#define portLONG       long
+#define portSHORT      short
+#define portSTACK_TYPE uint32_t
+#define portBASE_TYPE  long
 
 typedef portSTACK_TYPE StackType_t;
 typedef long BaseType_t;
 typedef unsigned long UBaseType_t;
 
 #if( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_16_BITS )
-    typedef uint16_t TickType_t;
+typedef uint16_t TickType_t;
     #define portMAX_DELAY ( TickType_t ) 0xffff
-#elif ( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS )
-    typedef uint32_t TickType_t;
-    #define portMAX_DELAY ( TickType_t ) 0xffffffffUL
+#elif( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS )
+typedef uint32_t TickType_t;
+    #define portMAX_DELAY           ( TickType_t ) 0xffffffffUL
 
     /* 32-bit tick type on a 32-bit architecture, so reads of the tick count do
     not need to be guarded with a critical section. */
@@ -80,31 +81,33 @@ typedef unsigned long UBaseType_t;
 /* Interrupt control macros and functions. */
 void microblaze_disable_interrupts( void );
 void microblaze_enable_interrupts( void );
-#define portDISABLE_INTERRUPTS()    microblaze_disable_interrupts()
-#define portENABLE_INTERRUPTS()     microblaze_enable_interrupts()
+#define portDISABLE_INTERRUPTS() microblaze_disable_interrupts()
+#define portENABLE_INTERRUPTS()  microblaze_enable_interrupts()
 /*-----------------------------------------------------------*/
 
 /* Critical section macros. */
 void vPortEnterCritical( void );
 void vPortExitCritical( void );
-#define portENTER_CRITICAL()        {                                                               \
-                                        extern volatile UBaseType_t uxCriticalNesting;              \
-                                        microblaze_disable_interrupts();                            \
-                                        uxCriticalNesting++;                                        \
-                                    }
+#define portENTER_CRITICAL()                           \
+    {                                                  \
+        extern volatile UBaseType_t uxCriticalNesting; \
+        microblaze_disable_interrupts();               \
+        uxCriticalNesting++;                           \
+    }
 
-#define portEXIT_CRITICAL()         {                                                               \
-                                        extern volatile UBaseType_t uxCriticalNesting;              \
-                                        /* Interrupts are disabled, so we can */                    \
-                                        /* access the variable directly. */                         \
-                                        uxCriticalNesting--;                                        \
-                                        if( uxCriticalNesting == 0 )                                \
-                                        {                                                           \
-                                            /* The nesting has unwound and we                       \
-                                            can enable interrupts again. */                         \
-                                            portENABLE_INTERRUPTS();                                \
-                                        }                                                           \
-                                    }
+#define portEXIT_CRITICAL()                            \
+    {                                                  \
+        extern volatile UBaseType_t uxCriticalNesting; \
+        /* Interrupts are disabled, so we can */       \
+        /* access the variable directly. */            \
+        uxCriticalNesting--;                           \
+        if( uxCriticalNesting == 0 )                   \
+        {                                              \
+            /* The nesting has unwound and we          \
+            can enable interrupts again. */            \
+            portENABLE_INTERRUPTS();                   \
+        }                                              \
+    }
 
 /*-----------------------------------------------------------*/
 
@@ -119,18 +122,24 @@ context, if the flag is not false.  This is done to prevent multiple calls to
 vTaskSwitchContext() being made from a single interrupt, as a single interrupt
 can result in multiple peripherals being serviced. */
 extern volatile uint32_t ulTaskSwitchRequested;
-#define portYIELD_FROM_ISR( x ) do { if( ( x ) != pdFALSE ) ulTaskSwitchRequested = 1; } while( 0 )
+#define portYIELD_FROM_ISR( x )        \
+    do                                 \
+    {                                  \
+        if( ( x ) != pdFALSE )         \
+            ulTaskSwitchRequested = 1; \
+    } while( 0 )
 
 #if( configUSE_PORT_OPTIMISED_TASK_SELECTION == 1 )
 
-    /* Generic helper function. */
-    __attribute__( ( always_inline ) ) static inline uint8_t ucPortCountLeadingZeros( uint32_t ulBitmap )
-    {
+/* Generic helper function. */
+__attribute__( ( always_inline ) ) static inline uint8_t ucPortCountLeadingZeros(
+    uint32_t ulBitmap )
+{
     uint8_t ucReturn;
 
-        __asm volatile ( "clz %0, %1" : "=r" ( ucReturn ) : "r" ( ulBitmap ) );
-        return ucReturn;
-    }
+    __asm volatile( "clz %0, %1" : "=r"( ucReturn ) : "r"( ulBitmap ) );
+    return ucReturn;
+}
 
     /* Check the configuration. */
     #if( configMAX_PRIORITIES > 32 )
@@ -138,33 +147,39 @@ extern volatile uint32_t ulTaskSwitchRequested;
     #endif
 
     /* Store/clear the ready priorities in a bit map. */
-    #define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) |= ( 1UL << ( uxPriority ) )
-    #define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) &= ~( 1UL << ( uxPriority ) )
+    #define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities ) \
+        ( uxReadyPriorities ) |= ( 1UL << ( uxPriority ) )
+    #define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities ) \
+        ( uxReadyPriorities ) &= ~( 1UL << ( uxPriority ) )
 
     /*-----------------------------------------------------------*/
 
-    #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities ) uxTopPriority = ( 31UL - ( uint32_t ) ucPortCountLeadingZeros( ( uxReadyPriorities ) ) )
+    #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities ) \
+        uxTopPriority = ( 31UL - ( uint32_t ) ucPortCountLeadingZeros(   \
+                                     ( uxReadyPriorities ) ) )
 
 #endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
 
 /*-----------------------------------------------------------*/
 
 /* Hardware specifics. */
-#define portBYTE_ALIGNMENT          4
-#define portSTACK_GROWTH            ( -1 )
-#define portTICK_PERIOD_MS          ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
-#define portNOP()                   asm volatile ( "NOP" )
-#define portMEMORY_BARRIER()        asm volatile ( "" ::: "memory" )
+#define portBYTE_ALIGNMENT   4
+#define portSTACK_GROWTH     ( -1 )
+#define portTICK_PERIOD_MS   ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
+#define portNOP()            asm volatile( "NOP" )
+#define portMEMORY_BARRIER() asm volatile( "" ::: "memory" )
 /*-----------------------------------------------------------*/
 
 #if( XPAR_MICROBLAZE_USE_STACK_PROTECTION )
-#define portHAS_STACK_OVERFLOW_CHECKING 1
+    #define portHAS_STACK_OVERFLOW_CHECKING 1
 #endif
 /*-----------------------------------------------------------*/
 
 /* Task function macros as described on the FreeRTOS.org WEB site. */
-#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
-#define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
+#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) \
+    void vFunction( void * pvParameters )
+#define portTASK_FUNCTION( vFunction, pvParameters ) \
+    void vFunction( void * pvParameters )
 /*-----------------------------------------------------------*/
 
 /* The following structure is used by the FreeRTOS exception handler.  It is
@@ -190,7 +205,11 @@ typedef struct PORT_REGISTER_DUMP
     uint32_t ulR14_return_address_from_interrupt;
     uint32_t ulR15_return_address_from_subroutine;
     uint32_t ulR16_return_address_from_trap;
-    uint32_t ulR17_return_address_from_exceptions; /* The exception entry code will copy the BTR into R17 if the exception occurred in the delay slot of a branch instruction. */
+    uint32_t ulR17_return_address_from_exceptions; /* The exception entry code
+                                                      will copy the BTR into R17
+                                                      if the exception occurred
+                                                      in the delay slot of a
+                                                      branch instruction. */
     uint32_t ulR18;
     uint32_t ulR19;
     uint32_t ulR20;
@@ -215,19 +234,18 @@ typedef struct PORT_REGISTER_DUMP
     /* A human readable description of the exception cause.  The strings used
     are the same as the #define constant names found in the
     microblaze_exceptions_i.h header file */
-    int8_t *pcExceptionCause;
+    int8_t * pcExceptionCause;
 
     /* The human readable name of the task that was running at the time the
     exception occurred.  This is the name that was given to the task when the
     task was created using the FreeRTOS xTaskCreate() API function. */
-    char *pcCurrentTaskName;
+    char * pcCurrentTaskName;
 
     /* The handle of the task that was running a the time the exception
     occurred. */
     void * xCurrentTaskHandle;
 
 } xPortRegisterDump;
-
 
 /*
  * Installs pxHandler as the interrupt handler for the peripheral specified by
@@ -264,8 +282,9 @@ typedef struct PORT_REGISTER_DUMP
  * pdPASS is returned if the function executes successfully.  Any other value
  * being returned indicates that the function did not execute correctly.
  */
-BaseType_t xPortInstallInterruptHandler( uint8_t ucInterruptID, XInterruptHandler pxHandler, void *pvCallBackRef );
-
+BaseType_t xPortInstallInterruptHandler( uint8_t ucInterruptID,
+                                         XInterruptHandler pxHandler,
+                                         void * pvCallBackRef );
 
 /*
  * Enables the interrupt, within the interrupt controller, for the peripheral
@@ -325,10 +344,10 @@ void vApplicationSetupTimerInterrupt( void );
  * function - in this case the interrupt generated by the AXI timer.  It is
  * provided as an application callback because the kernel will run on lots of
  * different MicroBlaze and FPGA configurations - not all of which will have the
- * same timer peripherals defined or available.  This example uses the AXI Timer 0.
- * If that is available on your hardware platform then this example callback
- * implementation should not require modification provided the example definition
- * of vApplicationSetupTimerInterrupt() is also not modified.
+ * same timer peripherals defined or available.  This example uses the AXI Timer
+ * 0. If that is available on your hardware platform then this example callback
+ * implementation should not require modification provided the example
+ * definition of vApplicationSetupTimerInterrupt() is also not modified.
  */
 void vApplicationClearTimerInterrupt( void );
 
@@ -369,12 +388,11 @@ void vPortExceptionsInstallHandlers( void );
  * register dump information.  For example, an implementation could be provided
  * that wrote the register dump data to a display, or a UART port.
  */
-void vApplicationExceptionRegisterDump( xPortRegisterDump *xRegisterDump );
-
+void vApplicationExceptionRegisterDump( xPortRegisterDump * xRegisterDump );
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    }
+}
 #endif
 /* *INDENT-ON* */
 

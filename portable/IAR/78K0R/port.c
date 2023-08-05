@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -35,7 +36,7 @@
 
 /* The critical nesting value is initialised to a non zero value to ensure
 interrupts don't accidentally become enabled before the scheduler is started. */
-#define portINITIAL_CRITICAL_NESTING  (( uint16_t ) 10)
+#define portINITIAL_CRITICAL_NESTING ( ( uint16_t ) 10 )
 
 /* Initial PSW value allocated to a newly created task.
  *   1100011000000000
@@ -48,7 +49,7 @@ interrupts don't accidentally become enabled before the scheduler is started. */
  *   |--------------------- Zero Flag set
  *   ---------------------- Global Interrupt Flag set (enabled)
  */
-#define portPSW       (0xc6UL)
+#define portPSW                      ( 0xc6UL )
 
 /* We require the address of the pxCurrentTCB variable, but don't want to know
 any details of its type. */
@@ -82,18 +83,20 @@ static void prvSetupTimerInterrupt( void );
  *
  * See the header file portable.h.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-uint32_t *pulLocal;
+    uint32_t * pulLocal;
 
-    #if configMEMORY_MODE == 1
+#if configMEMORY_MODE == 1
     {
-        /* Parameters are passed in on the stack, and written using a 32bit value
-        hence a space is left for the second two bytes. */
+        /* Parameters are passed in on the stack, and written using a 32bit
+        value hence a space is left for the second two bytes. */
         pxTopOfStack--;
 
         /* Write in the parameter value. */
-        pulLocal =  ( uint32_t * ) pxTopOfStack;
+        pulLocal = ( uint32_t * ) pxTopOfStack;
         *pulLocal = ( uint32_t ) pvParameters;
         pxTopOfStack--;
 
@@ -117,7 +120,7 @@ uint32_t *pulLocal;
         *pxTopOfStack = ( StackType_t ) 0x1111;
         pxTopOfStack--;
     }
-    #else
+#else
     {
         /* Task function address is written to the stack first.  As it is
         written as a 32bit value a space is left on the stack for the second
@@ -133,7 +136,7 @@ uint32_t *pulLocal;
         *pxTopOfStack = ( StackType_t ) pvParameters;
         pxTopOfStack--;
     }
-    #endif
+#endif
 
     /* An initial value for the HL register. */
     *pxTopOfStack = ( StackType_t ) 0x2222;
@@ -187,7 +190,8 @@ static void prvSetupTimerInterrupt( void )
     /* First the Timer Array Unit has to be enabled. */
     TAU0EN = 1;
 
-    /* To configure the Timer Array Unit all Channels have to first be stopped. */
+    /* To configure the Timer Array Unit all Channels have to first be stopped.
+     */
     TT0 = 0xff;
 
     /* Interrupt of Timer Array Unit Channel 5 is disabled to set the interrupt

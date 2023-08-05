@@ -4,28 +4,28 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
  *
  */
-
 
 /*-----------------------------------------------------------
  * Implementation of functions defined in portable.h for the ARM7 port.
@@ -35,7 +35,6 @@
  * to ARM mode are contained in portISR.c.
  *----------------------------------------------------------*/
 
-
 /* Standard includes. */
 #include <stdlib.h>
 
@@ -44,21 +43,22 @@
 #include "task.h"
 
 /* Constants required to setup the task context. */
-#define portINITIAL_SPSR                ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, interrupts enabled. */
+#define portINITIAL_SPSR \
+    ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, interrupts enabled. */
 #define portTHUMB_MODE_BIT              ( ( StackType_t ) 0x20 )
 #define portINSTRUCTION_SIZE            ( ( StackType_t ) 4 )
 #define portNO_CRITICAL_SECTION_NESTING ( ( StackType_t ) 0 )
 
 /* Constants required to setup the tick ISR. */
-#define portENABLE_TIMER            ( ( uint8_t ) 0x01 )
-#define portPRESCALE_VALUE          0x00
-#define portINTERRUPT_ON_MATCH      ( ( uint32_t ) 0x01 )
-#define portRESET_COUNT_ON_MATCH    ( ( uint32_t ) 0x02 )
+#define portENABLE_TIMER                ( ( uint8_t ) 0x01 )
+#define portPRESCALE_VALUE              0x00
+#define portINTERRUPT_ON_MATCH          ( ( uint32_t ) 0x01 )
+#define portRESET_COUNT_ON_MATCH        ( ( uint32_t ) 0x02 )
 
 /* Constants required to setup the VIC for the tick ISR. */
-#define portTIMER_VIC_CHANNEL       ( ( uint32_t ) 0x0004 )
-#define portTIMER_VIC_CHANNEL_BIT   ( ( uint32_t ) 0x0010 )
-#define portTIMER_VIC_ENABLE        ( ( uint32_t ) 0x0020 )
+#define portTIMER_VIC_CHANNEL           ( ( uint32_t ) 0x0004 )
+#define portTIMER_VIC_CHANNEL_BIT       ( ( uint32_t ) 0x0010 )
+#define portTIMER_VIC_ENABLE            ( ( uint32_t ) 0x0020 )
 
 /*-----------------------------------------------------------*/
 
@@ -79,9 +79,11 @@ extern void vPortISRStartFirstTask( void );
  *
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-StackType_t *pxOriginalTOS;
+    StackType_t * pxOriginalTOS;
 
     pxOriginalTOS = pxTopOfStack;
 
@@ -100,7 +102,8 @@ StackType_t *pxOriginalTOS;
 
     *pxTopOfStack = ( StackType_t ) 0xaaaaaaaa; /* R14 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) pxOriginalTOS; /* Stack used when task starts goes in R13. */
+    *pxTopOfStack = ( StackType_t ) pxOriginalTOS; /* Stack used when task
+                                                      starts goes in R13. */
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) 0x12121212; /* R12 */
     pxTopOfStack--;
@@ -180,8 +183,8 @@ void vPortEndScheduler( void )
  */
 static void prvSetupTimerInterrupt( void )
 {
-uint32_t ulCompareMatch;
-extern void ( vTickISR )( void );
+    uint32_t ulCompareMatch;
+    extern void( vTickISR )( void );
 
     /* A 1ms tick does not require the use of the timer prescale.  This is
     defaulted to zero but can be used if necessary. */
@@ -190,13 +193,13 @@ extern void ( vTickISR )( void );
     /* Calculate the match value required for our wanted tick rate. */
     ulCompareMatch = configCPU_CLOCK_HZ / configTICK_RATE_HZ;
 
-    /* Protect against divide by zero.  Using an if() statement still results
-    in a warning - hence the #if. */
-    #if portPRESCALE_VALUE != 0
+/* Protect against divide by zero.  Using an if() statement still results
+in a warning - hence the #if. */
+#if portPRESCALE_VALUE != 0
     {
         ulCompareMatch /= ( portPRESCALE_VALUE + 1 );
     }
-    #endif
+#endif
     T0_MR0 = ulCompareMatch;
 
     /* Generate tick with timer 0 compare match. */

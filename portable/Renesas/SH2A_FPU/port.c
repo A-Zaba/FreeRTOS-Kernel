@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -76,9 +77,12 @@ extern uint32_t ulPortGetGBR( void );
 /*
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-    /* Mark the end of the stack - used for debugging only and can be removed. */
+    /* Mark the end of the stack - used for debugging only and can be removed.
+     */
     *pxTopOfStack = 0x11111111UL;
     pxTopOfStack--;
     *pxTopOfStack = 0x22222222UL;
@@ -180,7 +184,7 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 
 BaseType_t xPortStartScheduler( void )
 {
-extern void vApplicationSetupTimerInterrupt( void );
+    extern void vApplicationSetupTimerInterrupt( void );
 
     /* Call an application function to set up the timer that will generate the
     tick interrupt.  This way the application can decide which peripheral to
@@ -207,7 +211,7 @@ void vPortEndScheduler( void )
 
 void vPortYield( void )
 {
-int32_t lInterruptMask;
+    int32_t lInterruptMask;
 
     /* Ensure the yield trap runs at the same priority as the other interrupts
     that can cause a context switch. */
@@ -228,9 +232,9 @@ int32_t lInterruptMask;
 
 BaseType_t xPortUsesFloatingPoint( TaskHandle_t xTask )
 {
-uint32_t *pulFlopBuffer;
-BaseType_t xReturn;
-extern void * volatile pxCurrentTCB;
+    uint32_t * pulFlopBuffer;
+    BaseType_t xReturn;
+    extern void * volatile pxCurrentTCB;
 
     /* This function tells the kernel that the task referenced by xTask is
     going to use the floating point registers and therefore requires the
@@ -257,7 +261,9 @@ extern void * volatile pxCurrentTCB;
 
         /* Use the task tag to point to the flop buffer.  Pass pointer to just
         above the buffer because the flop save routine uses a pre-decrement. */
-        vTaskSetApplicationTaskTag( xTask, ( void * ) ( pulFlopBuffer + portFLOP_REGISTERS_TO_STORE ) );
+        vTaskSetApplicationTaskTag( xTask,
+                                    ( void * ) ( pulFlopBuffer +
+                                                 portFLOP_REGISTERS_TO_STORE ) );
         xReturn = pdPASS;
     }
     else

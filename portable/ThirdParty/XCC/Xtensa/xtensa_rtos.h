@@ -1,26 +1,27 @@
- /*
+/*
  * FreeRTOS Kernel <DEVELOPMENT BRANCH>
  * Copyright (C) 2015-2019 Cadence Design Systems, Inc.
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -49,19 +50,19 @@
 #define XTENSA_RTOS_H
 
 #ifdef __ASSEMBLER__
-#include    <xtensa/coreasm.h>
+    #include <xtensa/coreasm.h>
 #else
-#include    <xtensa/config/core.h>
+    #include <xtensa/config/core.h>
 #endif
 
-#include    <xtensa/corebits.h>
-#include    <xtensa/config/system.h>
-#include    <xtensa/simcall.h>
+#include <xtensa/config/system.h>
+#include <xtensa/corebits.h>
+#include <xtensa/simcall.h>
 
 /*
 Include any RTOS specific definitions that are needed by this header.
 */
-#include    <FreeRTOSConfig.h>
+#include <FreeRTOSConfig.h>
 
 /*
 Convert FreeRTOSConfig definitions to XTENSA definitions.
@@ -69,38 +70,38 @@ However these can still be overridden from the command line.
 */
 
 #ifndef XT_SIMULATOR
-  #if configXT_SIMULATOR
-    #define XT_SIMULATOR             1  /* Simulator mode */
-  #endif
+    #if configXT_SIMULATOR
+        #define XT_SIMULATOR 1 /* Simulator mode */
+    #endif
 #endif
 
 #ifndef XT_BOARD
-  #if configXT_BOARD
-    #define XT_BOARD                 1  /* Board mode */
-  #endif
+    #if configXT_BOARD
+        #define XT_BOARD 1 /* Board mode */
+    #endif
 #endif
 
 #ifndef XT_TIMER_INDEX
-  #if defined configXT_TIMER_INDEX
-    #define XT_TIMER_INDEX           configXT_TIMER_INDEX  /* Index of hardware timer to be used */
-  #endif
+    #if defined configXT_TIMER_INDEX
+        #define XT_TIMER_INDEX \
+            configXT_TIMER_INDEX /* Index of hardware timer to be used */
+    #endif
 #endif
 
 #ifndef XT_INTEXC_HOOKS
-  #if configXT_INTEXC_HOOKS
-    #define XT_INTEXC_HOOKS          1  /* Enables exception hooks */
-  #endif
+    #if configXT_INTEXC_HOOKS
+        #define XT_INTEXC_HOOKS 1 /* Enables exception hooks */
+    #endif
 #endif
 
-#if (!XT_SIMULATOR) && (!XT_BOARD)
-  #error Either XT_SIMULATOR or XT_BOARD must be defined.
+#if( !XT_SIMULATOR ) && ( !XT_BOARD )
+    #error Either XT_SIMULATOR or XT_BOARD must be defined.
 #endif
-
 
 /*
 Name of RTOS (for messages).
 */
-#define XT_RTOS_NAME    FreeRTOS
+#define XT_RTOS_NAME FreeRTOS
 
 /*
 Check some Xtensa configuration requirements and report error if not met.
@@ -108,9 +109,8 @@ Error messages can be customize to the RTOS port.
 */
 
 #if !XCHAL_HAVE_XEA2
-#error "FreeRTOS/Xtensa requires XEA2 (exception architecture 2)."
+    #error "FreeRTOS/Xtensa requires XEA2 (exception architecture 2)."
 #endif
-
 
 /*******************************************************************************
 
@@ -130,7 +130,7 @@ RTOS port can call0 _xt_context_save to save the rest of the context.
 May only be called from assembly code by the 'call0' instruction.
 */
 // void XT_RTOS_INT_ENTER(void)
-#define XT_RTOS_INT_ENTER   _frxt_int_enter
+#define XT_RTOS_INT_ENTER  _frxt_int_enter
 
 /*
 Inform RTOS of completion of an interrupt handler, and give control to
@@ -143,7 +143,7 @@ dispatcher. This function does not return to the place it was called from.
 May only be called from assembly code by the 'call0' instruction.
 */
 // void XT_RTOS_INT_EXIT(void)
-#define XT_RTOS_INT_EXIT    _frxt_int_exit
+#define XT_RTOS_INT_EXIT   _frxt_int_exit
 
 /*
 Inform RTOS of the occurrence of a tick timer interrupt.
@@ -152,8 +152,8 @@ May be coded in or called from C or assembly, per ABI conventions.
 RTOS may optionally define XT_TICK_PER_SEC in its own way (eg. macro).
 */
 // void XT_RTOS_TIMER_INT(void)
-#define XT_RTOS_TIMER_INT   _frxt_timer_int
-#define XT_TICK_PER_SEC     configTICK_RATE_HZ
+#define XT_RTOS_TIMER_INT  _frxt_timer_int
+#define XT_TICK_PER_SEC    configTICK_RATE_HZ
 
 /*
 Return in a15 the base address of the co-processor state save area for the
@@ -165,8 +165,7 @@ and by the 'call0' instruction. A result of 0 indicates an unrecoverable error.
 The implementation may use only a2-4, a15 (all other regs must be preserved).
 */
 // void* XT_RTOS_CP_STATE(void)
-#define XT_RTOS_CP_STATE    _frxt_task_coproc_state
-
+#define XT_RTOS_CP_STATE   _frxt_task_coproc_state
 
 /*******************************************************************************
 
@@ -202,13 +201,12 @@ To enable interrupt/exception hooks, compile the RTOS with '-DXT_INTEXC_HOOKS'.
 
 *******************************************************************************/
 
-#define XT_INTEXC_HOOK_NUM  (1 + XCHAL_NUM_INTLEVELS + XCHAL_HAVE_NMI)
+#define XT_INTEXC_HOOK_NUM ( 1 + XCHAL_NUM_INTLEVELS + XCHAL_HAVE_NMI )
 
 #ifndef __ASSEMBLER__
-typedef unsigned (*XT_INTEXC_HOOK)(unsigned cause);
-extern  volatile XT_INTEXC_HOOK _xt_intexc_hooks[XT_INTEXC_HOOK_NUM];
+typedef unsigned ( *XT_INTEXC_HOOK )( unsigned cause );
+extern volatile XT_INTEXC_HOOK _xt_intexc_hooks[ XT_INTEXC_HOOK_NUM ];
 #endif
-
 
 /*******************************************************************************
 
@@ -219,12 +217,11 @@ These headers are included last so they can use the RTOS definitions above.
 
 *******************************************************************************/
 
-#include    "xtensa_context.h"
+#include "xtensa_context.h"
 
 #ifdef XT_RTOS_TIMER_INT
-#include    "xtensa_timer.h"
+    #include "xtensa_timer.h"
 #endif
-
 
 /*******************************************************************************
 
@@ -232,7 +229,7 @@ Xtensa Port Version.
 
 *******************************************************************************/
 
-#define XTENSA_PORT_VERSION             1.7
-#define XTENSA_PORT_VERSION_STRING      "1.7"
+#define XTENSA_PORT_VERSION        1.7
+#define XTENSA_PORT_VERSION_STRING "1.7"
 
 #endif /* XTENSA_RTOS_H */

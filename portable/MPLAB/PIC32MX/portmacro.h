@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -34,7 +35,7 @@
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    extern "C" {
+extern "C" {
 #endif
 /* *INDENT-ON* */
 
@@ -49,24 +50,24 @@
  */
 
 /* Type definitions. */
-#define portCHAR        char
-#define portFLOAT       float
-#define portDOUBLE      double
-#define portLONG        long
-#define portSHORT       short
-#define portSTACK_TYPE  uint32_t
-#define portBASE_TYPE   long
+#define portCHAR       char
+#define portFLOAT      float
+#define portDOUBLE     double
+#define portLONG       long
+#define portSHORT      short
+#define portSTACK_TYPE uint32_t
+#define portBASE_TYPE  long
 
 typedef portSTACK_TYPE StackType_t;
 typedef long BaseType_t;
 typedef unsigned long UBaseType_t;
 
 #if( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_16_BITS )
-    typedef uint16_t TickType_t;
+typedef uint16_t TickType_t;
     #define portMAX_DELAY ( TickType_t ) 0xffff
-#elif ( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS )
-    typedef uint32_t TickType_t;
-    #define portMAX_DELAY ( TickType_t ) 0xffffffffUL
+#elif( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS )
+typedef uint32_t TickType_t;
+    #define portMAX_DELAY           ( TickType_t ) 0xffffffffUL
 
     /* 32-bit tick type on a 32-bit architecture, so reads of the tick count do
     not need to be guarded with a critical section. */
@@ -77,15 +78,15 @@ typedef unsigned long UBaseType_t;
 /*-----------------------------------------------------------*/
 
 /* Hardware specifics. */
-#define portBYTE_ALIGNMENT          8
-#define portSTACK_GROWTH            -1
-#define portTICK_PERIOD_MS          ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
+#define portBYTE_ALIGNMENT 8
+#define portSTACK_GROWTH   -1
+#define portTICK_PERIOD_MS ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
 /*-----------------------------------------------------------*/
 
 /* Critical section management. */
-#define portIPL_SHIFT               ( 10UL )
-#define portALL_IPL_BITS            ( 0x3fUL << portIPL_SHIFT )
-#define portSW0_BIT                 ( 0x01 << 8 )
+#define portIPL_SHIFT      ( 10UL )
+#define portALL_IPL_BITS   ( 0x3fUL << portIPL_SHIFT )
+#define portSW0_BIT        ( 0x01 << 8 )
 
 /* This clears the IPL bits, then sets them to
 configMAX_SYSCALL_INTERRUPT_PRIORITY.  An extra check is performed if
@@ -96,42 +97,47 @@ safe FreeRTOS API function was executed.  ISR safe FreeRTOS API functions are
 those that end in FromISR.  FreeRTOS maintains a separate interrupt API to
 ensure API function and interrupt entry is as fast and as simple as possible. */
 #ifdef configASSERT
-    #define portDISABLE_INTERRUPTS()                                            \
-    {                                                                           \
-    uint32_t ulStatus;                                                      \
-                                                                                \
-        /* Mask interrupts at and below the kernel interrupt priority. */       \
-        ulStatus = _CP0_GET_STATUS();                                           \
-                                                                                \
-        /* Is the current IPL below configMAX_SYSCALL_INTERRUPT_PRIORITY? */    \
-        if( ( ( ulStatus & portALL_IPL_BITS ) >> portIPL_SHIFT ) < configMAX_SYSCALL_INTERRUPT_PRIORITY ) \
-        {                                                                       \
-            ulStatus &= ~portALL_IPL_BITS;                                      \
-            _CP0_SET_STATUS( ( ulStatus | ( configMAX_SYSCALL_INTERRUPT_PRIORITY << portIPL_SHIFT ) ) ); \
-        }                                                                       \
-    }
+    #define portDISABLE_INTERRUPTS()                                          \
+        {                                                                     \
+            uint32_t ulStatus;                                                \
+                                                                              \
+            /* Mask interrupts at and below the kernel interrupt priority. */ \
+            ulStatus = _CP0_GET_STATUS();                                     \
+                                                                              \
+            /* Is the current IPL below configMAX_SYSCALL_INTERRUPT_PRIORITY? \
+             */                                                               \
+            if( ( ( ulStatus & portALL_IPL_BITS ) >> portIPL_SHIFT ) <        \
+                configMAX_SYSCALL_INTERRUPT_PRIORITY )                        \
+            {                                                                 \
+                ulStatus &= ~portALL_IPL_BITS;                                \
+                _CP0_SET_STATUS(                                              \
+                    ( ulStatus | ( configMAX_SYSCALL_INTERRUPT_PRIORITY       \
+                                   << portIPL_SHIFT ) ) );                    \
+            }                                                                 \
+        }
 #else /* configASSERT */
-    #define portDISABLE_INTERRUPTS()                                        \
-    {                                                                       \
-    uint32_t ulStatus;                                                  \
-                                                                            \
-        /* Mask interrupts at and below the kernel interrupt priority. */   \
-        ulStatus = _CP0_GET_STATUS();                                       \
-        ulStatus &= ~portALL_IPL_BITS;                                      \
-        _CP0_SET_STATUS( ( ulStatus | ( configMAX_SYSCALL_INTERRUPT_PRIORITY << portIPL_SHIFT ) ) ); \
-    }
+    #define portDISABLE_INTERRUPTS()                                          \
+        {                                                                     \
+            uint32_t ulStatus;                                                \
+                                                                              \
+            /* Mask interrupts at and below the kernel interrupt priority. */ \
+            ulStatus = _CP0_GET_STATUS();                                     \
+            ulStatus &= ~portALL_IPL_BITS;                                    \
+            _CP0_SET_STATUS(                                                  \
+                ( ulStatus | ( configMAX_SYSCALL_INTERRUPT_PRIORITY           \
+                               << portIPL_SHIFT ) ) );                        \
+        }
 #endif /* configASSERT */
 
-#define portENABLE_INTERRUPTS()                                         \
-{                                                                       \
-uint32_t ulStatus;                                                  \
-                                                                        \
-    /* Unmask all interrupts. */                                        \
-    ulStatus = _CP0_GET_STATUS();                                       \
-    ulStatus &= ~portALL_IPL_BITS;                                      \
-    _CP0_SET_STATUS( ulStatus );                                        \
-}
-
+#define portENABLE_INTERRUPTS()        \
+    {                                  \
+        uint32_t ulStatus;             \
+                                       \
+        /* Unmask all interrupts. */   \
+        ulStatus = _CP0_GET_STATUS();  \
+        ulStatus &= ~portALL_IPL_BITS; \
+        _CP0_SET_STATUS( ulStatus );   \
+    }
 
 extern void vTaskEnterCritical( void );
 extern void vTaskExitCritical( void );
@@ -142,7 +148,8 @@ extern void vTaskExitCritical( void );
 extern UBaseType_t uxPortSetInterruptMaskFromISR();
 extern void vPortClearInterruptMaskFromISR( UBaseType_t );
 #define portSET_INTERRUPT_MASK_FROM_ISR() uxPortSetInterruptMaskFromISR()
-#define portCLEAR_INTERRUPT_MASK_FROM_ISR( uxSavedStatusRegister ) vPortClearInterruptMaskFromISR( uxSavedStatusRegister )
+#define portCLEAR_INTERRUPT_MASK_FROM_ISR( uxSavedStatusRegister ) \
+    vPortClearInterruptMaskFromISR( uxSavedStatusRegister )
 
 #ifndef configUSE_PORT_OPTIMISED_TASK_SELECTION
     #define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
@@ -156,12 +163,15 @@ extern void vPortClearInterruptMaskFromISR( UBaseType_t );
     #endif
 
     /* Store/clear the ready priorities in a bit map. */
-    #define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) |= ( 1UL << ( uxPriority ) )
-    #define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) &= ~( 1UL << ( uxPriority ) )
+    #define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities ) \
+        ( uxReadyPriorities ) |= ( 1UL << ( uxPriority ) )
+    #define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities ) \
+        ( uxReadyPriorities ) &= ~( 1UL << ( uxPriority ) )
 
     /*-----------------------------------------------------------*/
 
-    #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities ) uxTopPriority = ( 31UL - _clz( ( uxReadyPriorities ) ) )
+    #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities ) \
+        uxTopPriority = ( 31UL - _clz( ( uxReadyPriorities ) ) )
 
 #endif /* taskRECORD_READY_PRIORITY */
 
@@ -169,29 +179,38 @@ extern void vPortClearInterruptMaskFromISR( UBaseType_t );
 
 /* Task utilities. */
 
-#define portYIELD()                             \
-{                                               \
-uint32_t ulCause;                           \
-                                                \
-    /* Trigger software interrupt. */           \
-    ulCause = _CP0_GET_CAUSE();                 \
-    ulCause |= portSW0_BIT;                     \
-    _CP0_SET_CAUSE( ulCause );                  \
-}
+#define portYIELD()                       \
+    {                                     \
+        uint32_t ulCause;                 \
+                                          \
+        /* Trigger software interrupt. */ \
+        ulCause = _CP0_GET_CAUSE();       \
+        ulCause |= portSW0_BIT;           \
+        _CP0_SET_CAUSE( ulCause );        \
+    }
 
 extern volatile UBaseType_t uxInterruptNesting;
 #define portASSERT_IF_IN_ISR() configASSERT( uxInterruptNesting == 0 )
 
-#define portNOP()   __asm volatile ( "nop" )
+#define portNOP()              __asm volatile( "nop" )
 
 /*-----------------------------------------------------------*/
 
 /* Task function macros as described on the FreeRTOS.org WEB site. */
-#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters ) __attribute__((noreturn))
-#define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
+#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) \
+    void vFunction( void * pvParameters ) __attribute__( ( noreturn ) )
+#define portTASK_FUNCTION( vFunction, pvParameters ) \
+    void vFunction( void * pvParameters )
 /*-----------------------------------------------------------*/
 
-#define portEND_SWITCHING_ISR( xSwitchRequired )    do { if( xSwitchRequired ) { portYIELD(); } } while( 0 )
+#define portEND_SWITCHING_ISR( xSwitchRequired ) \
+    do                                           \
+    {                                            \
+        if( xSwitchRequired )                    \
+        {                                        \
+            portYIELD();                         \
+        }                                        \
+    } while( 0 )
 
 /* Required by the kernel aware debugger. */
 #ifdef __DEBUG
@@ -200,7 +219,7 @@ extern volatile UBaseType_t uxInterruptNesting;
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    }
+}
 #endif
 /* *INDENT-ON* */
 

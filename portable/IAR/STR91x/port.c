@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -35,8 +36,8 @@
 #include "91x_lib.h"
 
 /* Standard includes. */
-#include <stdlib.h>
 #include <assert.h>
+#include <stdlib.h>
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
@@ -48,18 +49,22 @@
 
 /* Constants required to setup the initial stack. */
 #ifndef _RUN_TASK_IN_ARM_MODE_
-    #define portINITIAL_SPSR            ( ( StackType_t ) 0x3f ) /* System mode, THUMB mode, interrupts enabled. */
+    #define portINITIAL_SPSR                                            \
+        ( ( StackType_t ) 0x3f ) /* System mode, THUMB mode, interrupts \
+                                    enabled. */
 #else
-    #define portINITIAL_SPSR            ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, interrupts enabled. */
+    #define portINITIAL_SPSR                                                   \
+        ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, interrupts enabled. \
+                                  */
 #endif
 
-#define portINSTRUCTION_SIZE            ( ( StackType_t ) 4 )
+#define portINSTRUCTION_SIZE    ( ( StackType_t ) 4 )
 
 /* Constants required to handle critical sections. */
-#define portNO_CRITICAL_NESTING         ( ( uint32_t ) 0 )
+#define portNO_CRITICAL_NESTING ( ( uint32_t ) 0 )
 
 #ifndef abs
-    #define abs(x) ((x)>0 ? (x) : -(x))
+    #define abs( x ) ( ( x ) > 0 ? ( x ) : -( x ) )
 #endif
 
 /**
@@ -74,16 +79,15 @@
  * }
  *
  */
-#define TOGGLE_LED(port,pin)                                    \
-    if ( ((((port)->DR[(pin)<<2])) & (pin)) != Bit_RESET )      \
-    {                                                           \
-        (port)->DR[(pin) <<2] = 0x00;                           \
-    }                                                           \
-    else                                                        \
-    {                                                           \
-        (port)->DR[(pin) <<2] = (pin);                          \
+#define TOGGLE_LED( port, pin )                                           \
+    if( ( ( ( ( port )->DR[ ( pin ) << 2 ] ) ) & ( pin ) ) != Bit_RESET ) \
+    {                                                                     \
+        ( port )->DR[ ( pin ) << 2 ] = 0x00;                              \
+    }                                                                     \
+    else                                                                  \
+    {                                                                     \
+        ( port )->DR[ ( pin ) << 2 ] = ( pin );                           \
     }
-
 
 /*-----------------------------------------------------------*/
 
@@ -104,8 +108,8 @@ void WDG_IRQHandler( void );
 static void prvDefaultHandler( void );
 
 #if configUSE_WATCHDOG_TICK == 0
-    /* Used to update the OCR timer register */
-    static u16 s_nPulseLength;
+/* Used to update the OCR timer register */
+static u16 s_nPulseLength;
 #endif
 
 /*-----------------------------------------------------------*/
@@ -116,9 +120,11 @@ static void prvDefaultHandler( void );
  *
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-    StackType_t *pxOriginalTOS;
+    StackType_t * pxOriginalTOS;
 
     pxOriginalTOS = pxTopOfStack;
 
@@ -137,7 +143,8 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 
     *pxTopOfStack = ( StackType_t ) 0xaaaaaaaa; /* R14 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) pxOriginalTOS; /* Stack used when task starts goes in R13. */
+    *pxTopOfStack = ( StackType_t ) pxOriginalTOS; /* Stack used when task
+                                                      starts goes in R13. */
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) 0x12121212; /* R12 */
     pxTopOfStack--;
@@ -184,7 +191,7 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 
 BaseType_t xPortStartScheduler( void )
 {
-extern void vPortStartFirstTask( void );
+    extern void vPortStartFirstTask( void );
 
     /* Start the timer that generates the tick ISR.  Interrupts are disabled
     here already. */
@@ -209,175 +216,176 @@ void vPortEndScheduler( void )
 keyword. */
 #if configUSE_WATCHDOG_TICK == 1
 
-    static void prvFindFactors(u32 n, u16 *a, u32 *b)
+static void prvFindFactors( u32 n, u16 * a, u32 * b )
+{
+    /* This function is copied from the ST STR7 library and is
+    copyright STMicroelectronics.  Reproduced with permission. */
+
+    u32 b0;
+    u16 a0;
+    int32_t err, err_min = n;
+
+    *a = a0 = ( ( n - 1 ) / 65536ul ) + 1;
+    *b = b0 = n / *a;
+
+    for( ; *a <= 256; ( *a )++ )
     {
-        /* This function is copied from the ST STR7 library and is
-        copyright STMicroelectronics.  Reproduced with permission. */
-
-        u32 b0;
-        u16 a0;
-        int32_t err, err_min=n;
-
-        *a = a0 = ((n-1)/65536ul) + 1;
-        *b = b0 = n / *a;
-
-        for (; *a <= 256; (*a)++)
+        *b = n / *a;
+        err = ( int32_t ) *a * ( int32_t ) *b - ( int32_t ) n;
+        if( abs( err ) > ( *a / 2 ) )
         {
-            *b = n / *a;
-            err = (int32_t)*a * (int32_t)*b - (int32_t)n;
-            if (abs(err) > (*a / 2))
-            {
-                (*b)++;
-                err = (int32_t)*a * (int32_t)*b - (int32_t)n;
-            }
-            if (abs(err) < abs(err_min))
-            {
-                err_min = err;
-                a0 = *a;
-                b0 = *b;
-                if (err == 0) break;
-            }
+            ( *b )++;
+            err = ( int32_t ) *a * ( int32_t ) *b - ( int32_t ) n;
         }
-
-        *a = a0;
-        *b = b0;
+        if( abs( err ) < abs( err_min ) )
+        {
+            err_min = err;
+            a0 = *a;
+            b0 = *b;
+            if( err == 0 )
+                break;
+        }
     }
-    /*-----------------------------------------------------------*/
 
-    static void prvSetupTimerInterrupt( void )
-    {
+    *a = a0;
+    *b = b0;
+}
+/*-----------------------------------------------------------*/
+
+static void prvSetupTimerInterrupt( void )
+{
     WDG_InitTypeDef xWdg;
     uint16_t a;
     uint32_t n = configCPU_PERIPH_HZ / configTICK_RATE_HZ, b;
 
-        /* Configure the watchdog as a free running timer that generates a
-        periodic interrupt. */
+    /* Configure the watchdog as a free running timer that generates a
+    periodic interrupt. */
 
-        SCU_APBPeriphClockConfig( __WDG, ENABLE );
-        WDG_DeInit();
-        WDG_StructInit(&xWdg);
-        prvFindFactors( n, &a, &b );
-        xWdg.WDG_Prescaler = a - 1;
-        xWdg.WDG_Preload = b - 1;
-        WDG_Init( &xWdg );
-        WDG_ITConfig(ENABLE);
+    SCU_APBPeriphClockConfig( __WDG, ENABLE );
+    WDG_DeInit();
+    WDG_StructInit( &xWdg );
+    prvFindFactors( n, &a, &b );
+    xWdg.WDG_Prescaler = a - 1;
+    xWdg.WDG_Preload = b - 1;
+    WDG_Init( &xWdg );
+    WDG_ITConfig( ENABLE );
 
-        /* Configure the VIC for the WDG interrupt. */
-        VIC_Config( WDG_ITLine, VIC_IRQ, 10 );
-        VIC_ITCmd( WDG_ITLine, ENABLE );
+    /* Configure the VIC for the WDG interrupt. */
+    VIC_Config( WDG_ITLine, VIC_IRQ, 10 );
+    VIC_ITCmd( WDG_ITLine, ENABLE );
 
-        /* Install the default handlers for both VIC's. */
-        VIC0->DVAR = ( uint32_t ) prvDefaultHandler;
-        VIC1->DVAR = ( uint32_t ) prvDefaultHandler;
+    /* Install the default handlers for both VIC's. */
+    VIC0->DVAR = ( uint32_t ) prvDefaultHandler;
+    VIC1->DVAR = ( uint32_t ) prvDefaultHandler;
 
-        WDG_Cmd(ENABLE);
-    }
-    /*-----------------------------------------------------------*/
+    WDG_Cmd( ENABLE );
+}
+/*-----------------------------------------------------------*/
 
-    void WDG_IRQHandler( void )
+void WDG_IRQHandler( void )
+{
     {
-        {
-            /* Increment the tick counter. */
-            if( xTaskIncrementTick() != pdFALSE )
-            {
-                /* Select a new task to execute. */
-                vTaskSwitchContext();
-            }
-
-            /* Clear the interrupt in the watchdog. */
-            WDG->SR &= ~0x0001;
-        }
-    }
-
-#else
-
-    static void prvFindFactors(u32 n, u8 *a, u16 *b)
-    {
-        /* This function is copied from the ST STR7 library and is
-        copyright STMicroelectronics.  Reproduced with permission. */
-
-        u16 b0;
-        u8 a0;
-        int32_t err, err_min=n;
-
-
-        *a = a0 = ((n-1)/256) + 1;
-        *b = b0 = n / *a;
-
-        for (; *a <= 256; (*a)++)
-        {
-            *b = n / *a;
-            err = (int32_t)*a * (int32_t)*b - (int32_t)n;
-            if (abs(err) > (*a / 2))
-            {
-                (*b)++;
-                err = (int32_t)*a * (int32_t)*b - (int32_t)n;
-            }
-            if (abs(err) < abs(err_min))
-            {
-                err_min = err;
-                a0 = *a;
-                b0 = *b;
-                if (err == 0) break;
-            }
-        }
-
-        *a = a0;
-        *b = b0;
-    }
-    /*-----------------------------------------------------------*/
-
-    static void prvSetupTimerInterrupt( void )
-    {
-        uint8_t a;
-        uint16_t b;
-        uint32_t n = configCPU_PERIPH_HZ / configTICK_RATE_HZ;
-
-        TIM_InitTypeDef timer;
-
-        SCU_APBPeriphClockConfig( __TIM23, ENABLE );
-        TIM_DeInit(TIM2);
-        TIM_StructInit(&timer);
-        prvFindFactors( n, &a, &b );
-
-        timer.TIM_Mode           = TIM_OCM_CHANNEL_1;
-        timer.TIM_OC1_Modes      = TIM_TIMING;
-        timer.TIM_Clock_Source   = TIM_CLK_APB;
-        timer.TIM_Clock_Edge     = TIM_CLK_EDGE_RISING;
-        timer.TIM_Prescaler      = a-1;
-        timer.TIM_Pulse_Level_1  = TIM_HIGH;
-        timer.TIM_Pulse_Length_1 = s_nPulseLength  = b-1;
-
-        TIM_Init (TIM2, &timer);
-        TIM_ITConfig(TIM2, TIM_IT_OC1, ENABLE);
-        /* Configure the VIC for the WDG interrupt. */
-        VIC_Config( TIM2_ITLine, VIC_IRQ, 10 );
-        VIC_ITCmd( TIM2_ITLine, ENABLE );
-
-        /* Install the default handlers for both VIC's. */
-        VIC0->DVAR = ( uint32_t ) prvDefaultHandler;
-        VIC1->DVAR = ( uint32_t ) prvDefaultHandler;
-
-        TIM_CounterCmd(TIM2, TIM_CLEAR);
-        TIM_CounterCmd(TIM2, TIM_START);
-    }
-    /*-----------------------------------------------------------*/
-
-    void TIM2_IRQHandler( void )
-    {
-        /* Reset the timer counter to avioid overflow. */
-        TIM2->OC1R += s_nPulseLength;
-
         /* Increment the tick counter. */
         if( xTaskIncrementTick() != pdFALSE )
         {
-            /* Select a new task to run. */
+            /* Select a new task to execute. */
             vTaskSwitchContext();
         }
 
         /* Clear the interrupt in the watchdog. */
-        TIM2->SR &= ~TIM_FLAG_OC1;
+        WDG->SR &= ~0x0001;
     }
+}
+
+#else
+
+static void prvFindFactors( u32 n, u8 * a, u16 * b )
+{
+    /* This function is copied from the ST STR7 library and is
+    copyright STMicroelectronics.  Reproduced with permission. */
+
+    u16 b0;
+    u8 a0;
+    int32_t err, err_min = n;
+
+    *a = a0 = ( ( n - 1 ) / 256 ) + 1;
+    *b = b0 = n / *a;
+
+    for( ; *a <= 256; ( *a )++ )
+    {
+        *b = n / *a;
+        err = ( int32_t ) *a * ( int32_t ) *b - ( int32_t ) n;
+        if( abs( err ) > ( *a / 2 ) )
+        {
+            ( *b )++;
+            err = ( int32_t ) *a * ( int32_t ) *b - ( int32_t ) n;
+        }
+        if( abs( err ) < abs( err_min ) )
+        {
+            err_min = err;
+            a0 = *a;
+            b0 = *b;
+            if( err == 0 )
+                break;
+        }
+    }
+
+    *a = a0;
+    *b = b0;
+}
+/*-----------------------------------------------------------*/
+
+static void prvSetupTimerInterrupt( void )
+{
+    uint8_t a;
+    uint16_t b;
+    uint32_t n = configCPU_PERIPH_HZ / configTICK_RATE_HZ;
+
+    TIM_InitTypeDef timer;
+
+    SCU_APBPeriphClockConfig( __TIM23, ENABLE );
+    TIM_DeInit( TIM2 );
+    TIM_StructInit( &timer );
+    prvFindFactors( n, &a, &b );
+
+    timer.TIM_Mode = TIM_OCM_CHANNEL_1;
+    timer.TIM_OC1_Modes = TIM_TIMING;
+    timer.TIM_Clock_Source = TIM_CLK_APB;
+    timer.TIM_Clock_Edge = TIM_CLK_EDGE_RISING;
+    timer.TIM_Prescaler = a - 1;
+    timer.TIM_Pulse_Level_1 = TIM_HIGH;
+    timer.TIM_Pulse_Length_1 = s_nPulseLength = b - 1;
+
+    TIM_Init( TIM2, &timer );
+    TIM_ITConfig( TIM2, TIM_IT_OC1, ENABLE );
+    /* Configure the VIC for the WDG interrupt. */
+    VIC_Config( TIM2_ITLine, VIC_IRQ, 10 );
+    VIC_ITCmd( TIM2_ITLine, ENABLE );
+
+    /* Install the default handlers for both VIC's. */
+    VIC0->DVAR = ( uint32_t ) prvDefaultHandler;
+    VIC1->DVAR = ( uint32_t ) prvDefaultHandler;
+
+    TIM_CounterCmd( TIM2, TIM_CLEAR );
+    TIM_CounterCmd( TIM2, TIM_START );
+}
+/*-----------------------------------------------------------*/
+
+void TIM2_IRQHandler( void )
+{
+    /* Reset the timer counter to avioid overflow. */
+    TIM2->OC1R += s_nPulseLength;
+
+    /* Increment the tick counter. */
+    if( xTaskIncrementTick() != pdFALSE )
+    {
+        /* Select a new task to run. */
+        vTaskSwitchContext();
+    }
+
+    /* Clear the interrupt in the watchdog. */
+    TIM2->SR &= ~TIM_FLAG_OC1;
+}
 
 #endif /* USE_WATCHDOG_TICK */
 

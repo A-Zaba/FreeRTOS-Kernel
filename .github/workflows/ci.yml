@@ -23,7 +23,14 @@ jobs:
         uses: Skptak/CI-CD-Github-Actions/formatting@main
         with:
           path: ./portable/Common
-    
+
+  formatting-all:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check formatting
+        uses: Skptak/CI-CD-Github-Actions/formatting@main
+
   spell-check:
       runs-on: ubuntu-latest
       steps:
@@ -34,12 +41,12 @@ jobs:
           with:
             path: ./
             exclude-dirs: portable, ThirdParty, docs
-    
+
         - name: Run spellings check of MemMang
           uses: Skptak/CI-CD-Github-Actions/rust-spell-check@main
           with:
             path: ./portable/MemMang
-            
+
         - name: Run spellings check of MemMang
           uses: Skptak/CI-CD-Github-Actions/rust-spell-check@main
           with:

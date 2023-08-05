@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -27,8 +28,8 @@
  */
 
 #include "FreeRTOS.h"
-#include "task.h"
 #include "mb91467d.h"
+#include "task.h"
 
 /*-----------------------------------------------------------*/
 
@@ -40,55 +41,67 @@ extern volatile TCB_t * volatile pxCurrentTCB;
 /*-----------------------------------------------------------*/
 
 #pragma asm
-#macro  SaveContext
-     ORCCR #0x20                                ;Switch to user stack
-     ST RP,@-R15                                ;Store RP
-     STM0 (R7,R6,R5,R4,R3,R2,R1,R0)             ;Store R7-R0
-     STM1 (R14,R13,R12,R11,R10,R9,R8)           ;Store R14-R8
-     ST MDH, @-R15                              ;Store MDH
-     ST MDL, @-R15                              ;Store MDL
+#macro SaveContext
+ORCCR #0x20;
+Switch to user stack ST RP, @-R15;
+Store RP STM0( R7, R6, R5, R4, R3, R2, R1, R0 );
+Store R7 - R0 STM1( R14, R13, R12, R11, R10, R9, R8 );
+Store R14 - R8 ST MDH, @-R15;
+Store MDH ST MDL, @-R15;
+Store MDL
 
-     ANDCCR #0xDF                               ;Switch back to system stack
-     LD @R15+,R0                                ;Store PC to R0
-     ORCCR #0x20                                ;Switch to user stack
-     ST R0,@-R15                                ;Store PC to User stack
+    ANDCCR #0xDF;
+Switch back to system stack LD @R15 +, R0;
+Store PC to R0 ORCCR #0x20;
+Switch to user stack ST R0, @-R15;
+Store PC to User stack
 
-     ANDCCR #0xDF                               ;Switch back to system stack
-     LD @R15+,R0                                ;Store PS to R0
-     ORCCR #0x20                                ;Switch to user stack
-     ST R0,@-R15                                ;Store PS to User stack
+    ANDCCR #0xDF;
+Switch back to system stack LD @R15 +, R0;
+Store PS to R0 ORCCR #0x20;
+Switch to user stack ST R0, @-R15;
+Store PS to User stack
 
-     LDI #_pxCurrentTCB, R0                     ;Get pxCurrentTCB address
-     LD @R0, R0                                 ;Get the pxCurrentTCB->pxTopOfStack address
-     ST R15,@R0                                 ;Store USP to pxCurrentTCB->pxTopOfStack
+    LDI #_pxCurrentTCB,
+    R0;
+Get pxCurrentTCB address LD @R0, R0;
+Get the pxCurrentTCB->pxTopOfStack address ST R15, @R0;
+Store USP to pxCurrentTCB->pxTopOfStack
 
-     ANDCCR #0xDF                               ;Switch back to system stack for the rest of tick ISR
+    ANDCCR #0xDF;Switch back to system stack for the rest of tick ISR
 #endm
 
 #macro RestoreContext
-     LDI #_pxCurrentTCB, R0                     ;Get pxCurrentTCB address
-     LD @R0, R0                                 ;Get the pxCurrentTCB->pxTopOfStack address
-     ORCCR #0x20                                ;Switch to user stack
-     LD @R0, R15                                ;Restore USP from pxCurrentTCB->pxTopOfStack
+     LDI #_pxCurrentTCB, R0                     ;
+Get pxCurrentTCB address LD @R0, R0;
+Get the pxCurrentTCB->pxTopOfStack address ORCCR #0x20;
+Switch to user stack LD @R0, R15;
+Restore USP from pxCurrentTCB->pxTopOfStack
 
-     LD @R15+,R0                                ;Store PS to R0
-     ANDCCR #0xDF                               ;Switch to system stack
-     ST R0,@-R15                                ;Store PS to system stack
+        LD @R15 +
+    , R0;
+Store PS to R0 ANDCCR #0xDF;
+Switch to system stack ST R0, @-R15;
+Store PS to system stack
 
-     ORCCR #0x20                                ;Switch to user stack
-     LD @R15+,R0                                ;Store PC to R0
-     ANDCCR #0xDF                               ;Switch to system stack
-     ST R0,@-R15                                ;Store PC to system stack
+    ORCCR #0x20;
+Switch to user stack LD @R15 +, R0;
+Store PC to R0 ANDCCR #0xDF;
+Switch to system stack ST R0, @-R15;
+Store PC to system stack
 
-     ORCCR #0x20                                ;Switch back to retrieve the remaining context
+    ORCCR #0x20;
+Switch back to retrieve the remaining context
 
-     LD @R15+, MDL                              ;Restore MDL
-     LD @R15+, MDH                              ;Restore MDH
-     LDM1 (R14,R13,R12,R11,R10,R9,R8)           ;Restore R14-R8
-     LDM0 (R7,R6,R5,R4,R3,R2,R1,R0)             ;Restore R7-R0
-     LD @R15+, RP                               ;Restore RP
+        LD @R15 +
+    , MDL;
+Restore MDL LD @R15 +, MDH;
+Restore MDH LDM1( R14, R13, R12, R11, R10, R9, R8 );
+Restore R14 - R8 LDM0( R7, R6, R5, R4, R3, R2, R1, R0 );
+Restore R7 - R0 LD @R15 +, RP;
+Restore RP
 
-     ANDCCR #0xDF                               ;Switch back to system stack for the rest of tick ISR
+    ANDCCR #0xDF;Switch back to system stack for the rest of tick ISR
 #endm
 #pragma endasm
 
@@ -106,7 +119,9 @@ static void prvSetupTimerInterrupt( void );
  *
  * See the header file portable.h.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
     /* Place a few bytes of known values on the bottom of the stack.
     This is just useful for debugging. */
@@ -121,7 +136,7 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
     /* This is a redundant push to the stack, it may be required if
     in some implementations of the compiler the parameter to the task
     is passed on to the stack rather than in R4 register. */
-    *pxTopOfStack = (StackType_t)(pvParameters);
+    *pxTopOfStack = ( StackType_t ) ( pvParameters );
     pxTopOfStack--;
 
     *pxTopOfStack = ( StackType_t ) 0x00000000; /* RP */
@@ -137,7 +152,7 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
     parameter to the task (or function) is passed via R4 parameter
     to the task, hence the pvParameters pointer is copied into the R4
     register. See compiler manual section 4.6.2 for more information. */
-    *pxTopOfStack = ( StackType_t ) (pvParameters); /* R4 */
+    *pxTopOfStack = ( StackType_t ) ( pvParameters ); /* R4 */
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) 0x00003333; /* R3 */
     pxTopOfStack--;
@@ -182,14 +197,15 @@ BaseType_t xPortStartScheduler( void )
     /* Setup the hardware to generate the tick. */
     prvSetupTimerInterrupt();
 
-    /* Restore the context of the first task that is going to run. */
-    #pragma asm
-        RestoreContext
-    #pragma endasm
+/* Restore the context of the first task that is going to run. */
+#pragma asm
+    RestoreContext
+#pragma endasm
 
-    /* Simulate a function call end as generated by the compiler.  We will now
-    jump to the start of the task the context of which we have just restored. */
-    __asm(" reti ");
+        /* Simulate a function call end as generated by the compiler.  We will
+        now jump to the start of the task the context of which we have just
+        restored. */
+        __asm( " reti " );
 
     /* Should not get here. */
     return pdFAIL;
@@ -205,71 +221,77 @@ void vPortEndScheduler( void )
 
 static void prvSetupTimerInterrupt( void )
 {
-/* The peripheral clock divided by 32 is used by the timer. */
-const uint16_t usReloadValue = ( uint16_t ) ( ( ( configPER_CLOCK_HZ / configTICK_RATE_HZ ) / 32UL ) - 1UL );
+    /* The peripheral clock divided by 32 is used by the timer. */
+    const uint16_t usReloadValue = ( uint16_t ) ( ( ( configPER_CLOCK_HZ /
+                                                      configTICK_RATE_HZ ) /
+                                                    32UL ) -
+                                                  1UL );
 
     /* Setup RLT0 to generate a tick interrupt. */
 
-    TMCSR0_CNTE = 0;        /* Count Disable */
-    TMCSR0_CSL = 0x2;       /* CLKP/32 */
-    TMCSR0_MOD = 0;         /* Software trigger */
-    TMCSR0_RELD = 1;        /* Reload */
+    TMCSR0_CNTE = 0;  /* Count Disable */
+    TMCSR0_CSL = 0x2; /* CLKP/32 */
+    TMCSR0_MOD = 0;   /* Software trigger */
+    TMCSR0_RELD = 1;  /* Reload */
 
-    TMCSR0_UF = 0;          /* Clear underflow flag */
+    TMCSR0_UF = 0; /* Clear underflow flag */
     TMRLR0 = usReloadValue;
-    TMCSR0_INTE = 1;        /* Interrupt Enable */
-    TMCSR0_CNTE = 1;        /* Count Enable */
-    TMCSR0_TRG = 1;         /* Trigger */
+    TMCSR0_INTE = 1; /* Interrupt Enable */
+    TMCSR0_CNTE = 1; /* Count Enable */
+    TMCSR0_TRG = 1;  /* Trigger */
 
-    PORTEN = 0x3;           /* Port Enable */
+    PORTEN = 0x3; /* Port Enable */
 }
 /*-----------------------------------------------------------*/
 
 #if configUSE_PREEMPTION == 1
 
-    /*
-     * Tick ISR for preemptive scheduler. The tick count is incremented
-     * after the context is saved. Then the context is switched if required,
-     * and last the context of the task which is to be resumed is restored.
-     */
+/*
+ * Tick ISR for preemptive scheduler. The tick count is incremented
+ * after the context is saved. Then the context is switched if required,
+ * and last the context of the task which is to be resumed is restored.
+ */
 
     #pragma asm
 
-    .global _ReloadTimer0_IRQHandler
-    _ReloadTimer0_IRQHandler:
+.global _ReloadTimer0_IRQHandler _ReloadTimer0_IRQHandler:
 
-    ANDCCR #0xEF                            ;Disable Interrupts
-    SaveContext                             ;Save context
-    ORCCR #0x10                             ;Re-enable Interrupts
+    ANDCCR #0xEF;
+Disable Interrupts SaveContext;
+Save context ORCCR #0x10;
+Re - enable Interrupts
 
-    LDI #0xFFFB,R1
-    LDI #_tmcsr0, R0
-    AND R1,@R0                              ;Clear RLT0 interrupt flag
+         LDI #0xFFFB,
+    R1 LDI #_tmcsr0, R0 AND R1, @R0;
+Clear RLT0 interrupt flag
 
-    CALL32   _xTaskIncrementTick,R12        ;Increment Tick
-    CALL32   _vTaskSwitchContext,R12        ;Switch context if required
+    CALL32 _xTaskIncrementTick,
+    R12;
+Increment Tick CALL32 _vTaskSwitchContext, R12;
+Switch context if required
 
-    ANDCCR #0xEF                            ;Disable Interrupts
-    RestoreContext                          ;Restore context
-    ORCCR #0x10                             ;Re-enable Interrupts
+    ANDCCR #0xEF;
+Disable Interrupts RestoreContext;
+Restore context ORCCR #0x10;
+Re - enable Interrupts
 
-    RETI
+         RETI
 
     #pragma endasm
 
 #else
 
-    /*
-     * Tick ISR for the cooperative scheduler.  All this does is increment the
-     * tick count.  We don't need to switch context, this can only be done by
-     * manual calls to taskYIELD();
-     */
-    __interrupt void ReloadTimer0_IRQHandler( void )
-    {
-        /* Clear RLT0 interrupt flag */
-        TMCSR0_UF = 0;
-        xTaskIncrementTick();
-    }
+/*
+ * Tick ISR for the cooperative scheduler.  All this does is increment the
+ * tick count.  We don't need to switch context, this can only be done by
+ * manual calls to taskYIELD();
+ */
+__interrupt void ReloadTimer0_IRQHandler( void )
+{
+    /* Clear RLT0 interrupt flag */
+    TMCSR0_UF = 0;
+    xTaskIncrementTick();
+}
 
 #endif
 
@@ -280,23 +302,27 @@ const uint16_t usReloadValue = ( uint16_t ) ( ( ( configPER_CLOCK_HZ / configTIC
  */
 #pragma asm
 
-    .global _vPortYieldDelayed
-    _vPortYieldDelayed:
+             .global _vPortYieldDelayed _vPortYieldDelayed:
 
-    ANDCCR #0xEF                            ;Disable Interrupts
-    SaveContext                             ;Save context
-    ORCCR #0x10                             ;Re-enable Interrupts
+    ANDCCR #0xEF;
+Disable Interrupts SaveContext;
+Save context ORCCR #0x10;
+Re - enable Interrupts
 
-    LDI #_dicr, R0
-    BANDL #0x0E, @R0                        ;Clear Delayed interrupt flag
+         LDI #_dicr,
+    R0 BANDL #0x0E, @R0;
+Clear Delayed interrupt flag
 
-    CALL32   _vTaskSwitchContext,R12        ;Switch context if required
+    CALL32 _vTaskSwitchContext,
+    R12;
+Switch context if required
 
-    ANDCCR #0xEF                            ;Disable Interrupts
-    RestoreContext                          ;Restore context
-    ORCCR #0x10                             ;Re-enable Interrupts
+    ANDCCR #0xEF;
+Disable Interrupts RestoreContext;
+Restore context ORCCR #0x10;
+Re - enable Interrupts
 
-    RETI
+         RETI
 
 #pragma endasm
 /*-----------------------------------------------------------*/
@@ -308,14 +334,14 @@ const uint16_t usReloadValue = ( uint16_t ) ( ( ( configPER_CLOCK_HZ / configTIC
  */
 #pragma asm
 
-    .global _vPortYield
-    _vPortYield:
+             .global _vPortYield _vPortYield:
 
-    SaveContext                             ;Save context
-    CALL32   _vTaskSwitchContext,R12        ;Switch context if required
-    RestoreContext                          ;Restore context
+    SaveContext;
+Save context CALL32 _vTaskSwitchContext, R12;
+Switch context if required RestoreContext;
+Restore context
 
     RETI
 
 #pragma endasm
-/*-----------------------------------------------------------*/
+    /*-----------------------------------------------------------*/

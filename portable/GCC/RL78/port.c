@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -32,7 +33,7 @@
 
 /* The critical nesting value is initialised to a non zero value to ensure
 interrupts don't accidentally become enabled before the scheduler is started. */
-#define portINITIAL_CRITICAL_NESTING  ( ( uint16_t ) 10 )
+#define portINITIAL_CRITICAL_NESTING ( ( uint16_t ) 10 )
 
 /* Initial PSW value allocated to a newly created task.
  *   11000110
@@ -45,7 +46,7 @@ interrupts don't accidentally become enabled before the scheduler is started. */
  *   |--------------------- Zero Flag set
  *   ---------------------- Global Interrupt Flag set (enabled)
  */
-#define portPSW       ( 0xc6UL )
+#define portPSW                      ( 0xc6UL )
 
 /* Each task maintains a count of the critical section nesting depth.  Each time
 a critical section is entered the count is incremented.  Each time a critical
@@ -62,7 +63,7 @@ volatile uint16_t usCriticalNesting = portINITIAL_CRITICAL_NESTING;
 /*
  * Sets up the periodic ISR used for the RTOS tick.
  */
-__attribute__((weak)) void vApplicationSetupTimerInterrupt( void );
+__attribute__( ( weak ) ) void vApplicationSetupTimerInterrupt( void );
 
 /*
  * Starts the scheduler by loading the context of the first task to run.
@@ -78,9 +79,11 @@ extern void vPortStartFirstTask( void );
  *
  * See the header file portable.h.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-uint32_t *pulLocal;
+    uint32_t * pulLocal;
 
     /* Stack type and pointers to the stack type are both 2 bytes. */
 
@@ -89,7 +92,7 @@ uint32_t *pulLocal;
     pxTopOfStack--;
 
     /* Write in the parameter value. */
-    pulLocal =  ( uint32_t * ) pxTopOfStack;
+    pulLocal = ( uint32_t * ) pxTopOfStack;
     *pulLocal = ( StackType_t ) pvParameters;
     pxTopOfStack--;
 
@@ -156,15 +159,15 @@ void vPortEndScheduler( void )
 }
 /*-----------------------------------------------------------*/
 
-__attribute__((weak)) void vApplicationSetupTimerInterrupt( void )
+__attribute__( ( weak ) ) void vApplicationSetupTimerInterrupt( void )
 {
-const uint16_t usClockHz = 15000UL; /* Internal clock. */
-const uint16_t usCompareMatch = ( usClockHz / configTICK_RATE_HZ ) + 1UL;
+    const uint16_t usClockHz = 15000UL; /* Internal clock. */
+    const uint16_t usCompareMatch = ( usClockHz / configTICK_RATE_HZ ) + 1UL;
 
     /* Use the internal 15K clock. */
     OSMC = ( unsigned char ) 0x16;
 
-    #ifdef RTCEN
+#ifdef RTCEN
     {
         /* Supply the interval timer clock. */
         RTCEN = ( unsigned char ) 1U;
@@ -184,9 +187,9 @@ const uint16_t usCompareMatch = ( usClockHz / configTICK_RATE_HZ ) + 1UL;
         /* Enable INTIT interrupt. */
         ITMK = ( unsigned char ) 0;
     }
-    #endif
+#endif
 
-    #ifdef TMKAEN
+#ifdef TMKAEN
     {
         /* Supply the interval timer clock. */
         TMKAEN = ( unsigned char ) 1U;
@@ -206,6 +209,6 @@ const uint16_t usCompareMatch = ( usClockHz / configTICK_RATE_HZ ) + 1UL;
         /* Enable INTIT interrupt. */
         TMKAMK = ( unsigned char ) 0;
     }
-    #endif
+#endif
 }
 /*-----------------------------------------------------------*/

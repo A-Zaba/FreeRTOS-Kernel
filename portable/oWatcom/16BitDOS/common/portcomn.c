@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -43,18 +44,18 @@ Changes from V2.6.1:
     + usPortCheckFreeStackSpace() has been moved to tasks.c.
 */
 
-
-
-#include <stdlib.h>
 #include "FreeRTOS.h"
+#include <stdlib.h>
 
 /*-----------------------------------------------------------*/
 
 /* See header file for description. */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-StackType_t DS_Reg = 0;
-StackType_t * pxOriginalSP;
+    StackType_t DS_Reg = 0;
+    StackType_t * pxOriginalSP;
 
     /* Place a few bytes of known values on the bottom of the stack.
     This is just useful for debugging. */
@@ -70,8 +71,8 @@ StackType_t * pxOriginalSP;
     *pxTopOfStack = 0x5555;
     pxTopOfStack--;
 
-
-    /*lint -e950 -e611 -e923 Lint doesn't like this much - but nothing I can do about it. */
+    /*lint -e950 -e611 -e923 Lint doesn't like this much - but nothing I can do
+     * about it. */
 
     /* We are going to start the scheduler using a return from interrupt
     instruction to load the program counter, so first there would be the
@@ -94,15 +95,15 @@ StackType_t * pxOriginalSP;
     /* The remaining registers would be pushed on the stack by our context
     switch function.  These are loaded with values simply to make debugging
     easier. */
-    *pxTopOfStack = FP_OFF( pvParameters );     /* AX */
+    *pxTopOfStack = FP_OFF( pvParameters ); /* AX */
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) 0xCCCC; /* CX */
     pxTopOfStack--;
-    *pxTopOfStack = FP_SEG( pvParameters );     /* DX */
+    *pxTopOfStack = FP_SEG( pvParameters ); /* DX */
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) 0xBBBB; /* BX */
     pxTopOfStack--;
-    *pxTopOfStack = FP_OFF( pxOriginalSP );     /* SP */
+    *pxTopOfStack = FP_OFF( pxOriginalSP ); /* SP */
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) 0xBBBB; /* BP */
     pxTopOfStack--;
@@ -111,7 +112,8 @@ StackType_t * pxOriginalSP;
     *pxTopOfStack = ( StackType_t ) 0xDDDD; /* DI */
 
     /* We need the true data segment. */
-    __asm{  MOV DS_Reg, DS };
+    __asm {  MOV DS_Reg, DS }
+    ;
 
     pxTopOfStack--;
     *pxTopOfStack = DS_Reg; /* DS */
@@ -121,18 +123,17 @@ StackType_t * pxOriginalSP;
 
     /* The AX register is pushed again twice - don't know why. */
     pxTopOfStack--;
-    *pxTopOfStack = FP_OFF( pvParameters );     /* AX */
+    *pxTopOfStack = FP_OFF( pvParameters ); /* AX */
     pxTopOfStack--;
-    *pxTopOfStack = FP_OFF( pvParameters );     /* AX */
+    *pxTopOfStack = FP_OFF( pvParameters ); /* AX */
 
-
-    #ifdef DEBUG_BUILD
-        /* The compiler adds space to each ISR stack if building to
-        include debug information.  Presumably this is used by the
-        debugger - we don't need to initialise it to anything just
-        make sure it is there. */
-        pxTopOfStack--;
-    #endif
+#ifdef DEBUG_BUILD
+    /* The compiler adds space to each ISR stack if building to
+    include debug information.  Presumably this is used by the
+    debugger - we don't need to initialise it to anything just
+    make sure it is there. */
+    pxTopOfStack--;
+#endif
 
     /*lint +e950 +e611 +e923 */
 

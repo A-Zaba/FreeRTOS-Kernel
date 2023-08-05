@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -31,7 +32,7 @@
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    extern "C" {
+extern "C" {
 #endif
 /* *INDENT-ON* */
 
@@ -46,24 +47,24 @@
  */
 
 /* Type definitions. */
-#define portCHAR        char
-#define portFLOAT       float
-#define portDOUBLE      double
-#define portLONG        long
-#define portSHORT       short
-#define portSTACK_TYPE  uint32_t
-#define portBASE_TYPE   long
+#define portCHAR       char
+#define portFLOAT      float
+#define portDOUBLE     double
+#define portLONG       long
+#define portSHORT      short
+#define portSTACK_TYPE uint32_t
+#define portBASE_TYPE  long
 
 typedef portSTACK_TYPE StackType_t;
 typedef long BaseType_t;
 typedef unsigned long UBaseType_t;
 
 #if( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_16_BITS )
-    typedef uint16_t TickType_t;
+typedef uint16_t TickType_t;
     #define portMAX_DELAY ( TickType_t ) 0xffff
-#elif ( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS )
-    typedef uint32_t TickType_t;
-    #define portMAX_DELAY ( TickType_t ) 0xffffffffUL
+#elif( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS )
+typedef uint32_t TickType_t;
+    #define portMAX_DELAY           ( TickType_t ) 0xffffffffUL
 
     /* 32-bit tick type on a 32-bit architecture, so reads of the tick count do
     not need to be guarded with a critical section. */
@@ -76,31 +77,33 @@ typedef unsigned long UBaseType_t;
 /* Interrupt control macros. */
 void microblaze_disable_interrupts( void );
 void microblaze_enable_interrupts( void );
-#define portDISABLE_INTERRUPTS()    microblaze_disable_interrupts()
-#define portENABLE_INTERRUPTS()     microblaze_enable_interrupts()
+#define portDISABLE_INTERRUPTS() microblaze_disable_interrupts()
+#define portENABLE_INTERRUPTS()  microblaze_enable_interrupts()
 /*-----------------------------------------------------------*/
 
 /* Critical section macros. */
 void vPortEnterCritical( void );
 void vPortExitCritical( void );
-#define portENTER_CRITICAL()        {                                                       \
-                                        extern UBaseType_t uxCriticalNesting;   \
-                                        microblaze_disable_interrupts();                    \
-                                        uxCriticalNesting++;                                \
-                                    }
+#define portENTER_CRITICAL()                  \
+    {                                         \
+        extern UBaseType_t uxCriticalNesting; \
+        microblaze_disable_interrupts();      \
+        uxCriticalNesting++;                  \
+    }
 
-#define portEXIT_CRITICAL()         {                                                       \
-                                        extern UBaseType_t uxCriticalNesting;   \
-                                        /* Interrupts are disabled, so we can */            \
-                                        /* access the variable directly. */                 \
-                                        uxCriticalNesting--;                                \
-                                        if( uxCriticalNesting == 0 )            \
-                                        {                                                   \
-                                            /* The nesting has unwound and we               \
-                                            can enable interrupts again. */                 \
-                                            portENABLE_INTERRUPTS();                        \
-                                        }                                                   \
-                                    }
+#define portEXIT_CRITICAL()                      \
+    {                                            \
+        extern UBaseType_t uxCriticalNesting;    \
+        /* Interrupts are disabled, so we can */ \
+        /* access the variable directly. */      \
+        uxCriticalNesting--;                     \
+        if( uxCriticalNesting == 0 )             \
+        {                                        \
+            /* The nesting has unwound and we    \
+            can enable interrupts again. */      \
+            portENABLE_INTERRUPTS();             \
+        }                                        \
+    }
 
 /*-----------------------------------------------------------*/
 
@@ -113,20 +116,22 @@ void vTaskSwitchContext();
 /*-----------------------------------------------------------*/
 
 /* Hardware specifics. */
-#define portBYTE_ALIGNMENT          4
-#define portSTACK_GROWTH            ( -1 )
-#define portTICK_PERIOD_MS          ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
-#define portNOP()                   asm volatile ( "NOP" )
-#define portMEMORY_BARRIER()        asm volatile ( "" ::: "memory" )
+#define portBYTE_ALIGNMENT   4
+#define portSTACK_GROWTH     ( -1 )
+#define portTICK_PERIOD_MS   ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
+#define portNOP()            asm volatile( "NOP" )
+#define portMEMORY_BARRIER() asm volatile( "" ::: "memory" )
 /*-----------------------------------------------------------*/
 
 /* Task function macros as described on the FreeRTOS.org WEB site. */
-#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
-#define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
+#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) \
+    void vFunction( void * pvParameters )
+#define portTASK_FUNCTION( vFunction, pvParameters ) \
+    void vFunction( void * pvParameters )
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    }
+}
 #endif
 /* *INDENT-ON* */
 

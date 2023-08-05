@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -45,7 +46,7 @@
 /* Tasks should start with interrupts enabled and in Supervisor mode, therefore
 PSW is set with U and I set, and PM and IPL clear. */
 #define portINITIAL_PSW  ( ( StackType_t ) 0x00030000 )
-#define portINITIAL_FPSW    ( ( StackType_t ) 0x00000100 )
+#define portINITIAL_FPSW ( ( StackType_t ) 0x00000100 )
 
 /*-----------------------------------------------------------*/
 
@@ -63,14 +64,16 @@ __interrupt void vTickISR( void );
 
 /*-----------------------------------------------------------*/
 
-extern void *pxCurrentTCB;
+extern void * pxCurrentTCB;
 
 /*-----------------------------------------------------------*/
 
 /*
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
     /* R0 is not included as it is the stack pointer. */
 
@@ -80,10 +83,10 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) pxCode;
 
-    /* When debugging it can be useful if every register is set to a known
-    value.  Otherwise code space can be saved by just setting the registers
-    that need to be set. */
-    #ifdef USE_FULL_REGISTER_INITIALISATION
+/* When debugging it can be useful if every register is set to a known
+value.  Otherwise code space can be saved by just setting the registers
+that need to be set. */
+#ifdef USE_FULL_REGISTER_INITIALISATION
     {
         pxTopOfStack--;
         *pxTopOfStack = 0xffffffff; /* r15. */
@@ -115,11 +118,11 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
         *pxTopOfStack = 0x22222222;
         pxTopOfStack--;
     }
-    #else
+#else
     {
         pxTopOfStack -= 15;
     }
-    #endif
+#endif
 
     *pxTopOfStack = ( StackType_t ) pvParameters; /* R1 */
     pxTopOfStack--;
@@ -143,14 +146,15 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 
 BaseType_t xPortStartScheduler( void )
 {
-extern void vApplicationSetupTimerInterrupt( void );
+    extern void vApplicationSetupTimerInterrupt( void );
 
     /* Use pxCurrentTCB just so it does not get optimised away. */
     if( pxCurrentTCB != NULL )
     {
-        /* Call an application function to set up the timer that will generate the
-        tick interrupt.  This way the application can decide which peripheral to
-        use.  A demo application is provided to show a suitable example. */
+        /* Call an application function to set up the timer that will generate
+        the tick interrupt.  This way the application can decide which
+        peripheral to use.  A demo application is provided to show a suitable
+        example. */
         vApplicationSetupTimerInterrupt();
 
         /* Enable the software interrupt. */

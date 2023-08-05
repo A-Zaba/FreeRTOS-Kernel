@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -38,26 +39,33 @@
 /**
  * @brief Constants required to manipulate the SCB.
  */
-#define secureinitSCB_AIRCR                 ( ( volatile uint32_t * ) 0xe000ed0c )  /* Application Interrupt and Reset Control Register. */
-#define secureinitSCB_AIRCR_VECTKEY_POS     ( 16UL )
-#define secureinitSCB_AIRCR_VECTKEY_MASK    ( 0xFFFFUL << secureinitSCB_AIRCR_VECTKEY_POS )
-#define secureinitSCB_AIRCR_PRIS_POS        ( 14UL )
-#define secureinitSCB_AIRCR_PRIS_MASK       ( 1UL << secureinitSCB_AIRCR_PRIS_POS )
+#define secureinitSCB_AIRCR                                                   \
+    ( ( volatile uint32_t * ) 0xe000ed0c ) /* Application Interrupt and Reset \
+                                              Control Register. */
+#define secureinitSCB_AIRCR_VECTKEY_POS ( 16UL )
+#define secureinitSCB_AIRCR_VECTKEY_MASK \
+    ( 0xFFFFUL << secureinitSCB_AIRCR_VECTKEY_POS )
+#define secureinitSCB_AIRCR_PRIS_POS  ( 14UL )
+#define secureinitSCB_AIRCR_PRIS_MASK ( 1UL << secureinitSCB_AIRCR_PRIS_POS )
 
 /**
  * @brief Constants required to manipulate the FPU.
  */
-#define secureinitFPCCR                     ( ( volatile uint32_t * ) 0xe000ef34 )  /* Floating Point Context Control Register. */
-#define secureinitFPCCR_LSPENS_POS          ( 29UL )
-#define secureinitFPCCR_LSPENS_MASK         ( 1UL << secureinitFPCCR_LSPENS_POS )
-#define secureinitFPCCR_TS_POS              ( 26UL )
-#define secureinitFPCCR_TS_MASK             ( 1UL << secureinitFPCCR_TS_POS )
+#define secureinitFPCCR                                                      \
+    ( ( volatile uint32_t * ) 0xe000ef34 ) /* Floating Point Context Control \
+                                              Register. */
+#define secureinitFPCCR_LSPENS_POS  ( 29UL )
+#define secureinitFPCCR_LSPENS_MASK ( 1UL << secureinitFPCCR_LSPENS_POS )
+#define secureinitFPCCR_TS_POS      ( 26UL )
+#define secureinitFPCCR_TS_MASK     ( 1UL << secureinitFPCCR_TS_POS )
 
-#define secureinitNSACR                     ( ( volatile uint32_t * ) 0xe000ed8c )  /* Non-secure Access Control Register. */
-#define secureinitNSACR_CP10_POS            ( 10UL )
-#define secureinitNSACR_CP10_MASK           ( 1UL << secureinitNSACR_CP10_POS )
-#define secureinitNSACR_CP11_POS            ( 11UL )
-#define secureinitNSACR_CP11_MASK           ( 1UL << secureinitNSACR_CP11_POS )
+#define secureinitNSACR                                                 \
+    ( ( volatile uint32_t * ) 0xe000ed8c ) /* Non-secure Access Control \
+                                              Register. */
+#define secureinitNSACR_CP10_POS  ( 10UL )
+#define secureinitNSACR_CP10_MASK ( 1UL << secureinitNSACR_CP10_POS )
+#define secureinitNSACR_CP11_POS  ( 11UL )
+#define secureinitNSACR_CP11_MASK ( 1UL << secureinitNSACR_CP11_POS )
 /*-----------------------------------------------------------*/
 
 secureportNON_SECURE_CALLABLE void SecureInit_DePrioritizeNSExceptions( void )
@@ -71,9 +79,14 @@ secureportNON_SECURE_CALLABLE void SecureInit_DePrioritizeNSExceptions( void )
      * when the processor is running in the Thread Mode. */
     if( ulIPSR != 0 )
     {
-        *( secureinitSCB_AIRCR ) = ( *( secureinitSCB_AIRCR ) & ~( secureinitSCB_AIRCR_VECTKEY_MASK | secureinitSCB_AIRCR_PRIS_MASK ) ) |
-                                   ( ( 0x05FAUL << secureinitSCB_AIRCR_VECTKEY_POS ) & secureinitSCB_AIRCR_VECTKEY_MASK ) |
-                                   ( ( 0x1UL << secureinitSCB_AIRCR_PRIS_POS ) & secureinitSCB_AIRCR_PRIS_MASK );
+        *( secureinitSCB_AIRCR ) = ( *( secureinitSCB_AIRCR ) &
+                                     ~( secureinitSCB_AIRCR_VECTKEY_MASK |
+                                        secureinitSCB_AIRCR_PRIS_MASK ) ) |
+                                   ( ( 0x05FAUL
+                                       << secureinitSCB_AIRCR_VECTKEY_POS ) &
+                                     secureinitSCB_AIRCR_VECTKEY_MASK ) |
+                                   ( ( 0x1UL << secureinitSCB_AIRCR_PRIS_POS ) &
+                                     secureinitSCB_AIRCR_PRIS_MASK );
     }
 }
 /*-----------------------------------------------------------*/
@@ -91,7 +104,8 @@ secureportNON_SECURE_CALLABLE void SecureInit_EnableNSFPUAccess( void )
     {
         /* CP10 = 1 ==> Non-secure access to the Floating Point Unit is
          * permitted. CP11 should be programmed to the same value as CP10. */
-        *( secureinitNSACR ) |= ( secureinitNSACR_CP10_MASK | secureinitNSACR_CP11_MASK );
+        *( secureinitNSACR ) |= ( secureinitNSACR_CP10_MASK |
+                                  secureinitNSACR_CP11_MASK );
 
         /* LSPENS = 0 ==> LSPEN is writable fron non-secure state. This ensures
          * that we can enable/disable lazy stacking in port.c file. */

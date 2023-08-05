@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -31,13 +32,13 @@
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    extern "C" {
+extern "C" {
 #endif
 /* *INDENT-ON* */
 
 /* record stack high address for stack check */
 #ifndef configRECORD_STACK_HIGH_ADDRESS
-    #define configRECORD_STACK_HIGH_ADDRESS    1
+    #define configRECORD_STACK_HIGH_ADDRESS 1
 #endif
 
 /*-----------------------------------------------------------
@@ -51,53 +52,53 @@
  */
 
 /* Type definitions. */
-#define portCHAR          char
-#define portFLOAT         float
-#define portDOUBLE        double
-#define portLONG          long
-#define portSHORT         short
-#define portSTACK_TYPE    unsigned int
-#define portBASE_TYPE     portLONG
+#define portCHAR       char
+#define portFLOAT      float
+#define portDOUBLE     double
+#define portLONG       long
+#define portSHORT      short
+#define portSTACK_TYPE unsigned int
+#define portBASE_TYPE  portLONG
 
 #ifndef Asm
-    #define Asm           __asm__ volatile
+    #define Asm __asm__ volatile
 #endif
 
 /*
  *  normal constants
  */
 #ifndef NULL
-    #define NULL    0           /* invalid pointer */
-#endif /* NULL */
+    #define NULL 0 /* invalid pointer */
+#endif             /* NULL */
 
 #ifndef true
-    #define true    1           /* true */
-#endif /* true */
+    #define true 1 /* true */
+#endif             /* true */
 
 #ifndef false
-    #define false    0          /* false */
-#endif /* false */
+    #define false 0 /* false */
+#endif              /* false */
 
-typedef portSTACK_TYPE     StackType_t;
-typedef long               BaseType_t;
-typedef unsigned long      UBaseType_t;
+typedef portSTACK_TYPE StackType_t;
+typedef long BaseType_t;
+typedef unsigned long UBaseType_t;
 
-#if ( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_16_BITS )
-    typedef uint16_t       TickType_t;
-    #define portMAX_DELAY          ( TickType_t ) 0xffff
-#elif ( configTICK_TYPE_WIDTH_IN_BITS  == TICK_TYPE_WIDTH_32_BITS )
-    typedef uint32_t             TickType_t;
-    #define portMAX_DELAY    ( TickType_t ) 0xffffffffUL
+#if( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_16_BITS )
+typedef uint16_t TickType_t;
+    #define portMAX_DELAY ( TickType_t ) 0xffff
+#elif( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS )
+typedef uint32_t TickType_t;
+    #define portMAX_DELAY ( TickType_t ) 0xffffffffUL
 #else
     #error configTICK_TYPE_WIDTH_IN_BITS set to unsupported tick type width.
 #endif
 
-#define portNO_CRITICAL_NESTING    ( ( uint32_t ) 0 )
-#define portSTACK_GROWTH           ( -1 )
-#define portTICK_PERIOD_MS         ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
-#define portBYTE_ALIGNMENT         8
+#define portNO_CRITICAL_NESTING ( ( uint32_t ) 0 )
+#define portSTACK_GROWTH        ( -1 )
+#define portTICK_PERIOD_MS      ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
+#define portBYTE_ALIGNMENT      8
 #define portNOP()               Asm( "nop_s" );
-#define IPM_ENABLE_ALL             1
+#define IPM_ENABLE_ALL          1
 
 #define portYIELD_FROM_ISR()    vPortYieldFromIsr()
 #define portYIELD()             vPortYield()
@@ -107,22 +108,20 @@ typedef unsigned long      UBaseType_t;
     {                            \
         Asm( "clri" );           \
         Asm( "" ::: "memory" );  \
-    }                            \
+    }
 
 #define portENABLE_INTERRUPTS() \
     {                           \
         Asm( "" ::: "memory" ); \
         Asm( "seti" );          \
-    }                           \
+    }
 
 extern volatile unsigned int ulCriticalNesting;
 
-#define portENTER_CRITICAL()     \
-    {                            \
-        portDISABLE_INTERRUPTS() \
-        ulCriticalNesting++;     \
+#define portENTER_CRITICAL()                          \
+    {                                                 \
+        portDISABLE_INTERRUPTS() ulCriticalNesting++; \
     }
-
 
 #define portEXIT_CRITICAL()                                    \
     {                                                          \
@@ -136,16 +135,20 @@ extern volatile unsigned int ulCriticalNesting;
         }                                                      \
     }
 
+#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) \
+    void vFunction( void * pvParameters )
+#define portTASK_FUNCTION( vFunction, pvParameters ) \
+    void vFunction( void * pvParameters )
 
-#define portTASK_FUNCTION_PROTO( vFunction, pvParameters )    void vFunction( void * pvParameters )
-#define portTASK_FUNCTION( vFunction, pvParameters )          void vFunction( void * pvParameters )
-
-#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()              do {} while( 0 )     /* we use the timer */
-#define portALT_GET_RUN_TIME_COUNTER_VALUE( dest )            ( dest = xTickCount )
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() \
+    do                                           \
+    {                                            \
+    } while( 0 ) /* we use the timer */
+#define portALT_GET_RUN_TIME_COUNTER_VALUE( dest ) ( dest = xTickCount )
 
 #if defined( __MW__ )
-    extern void task_end_hook( void * pxTCB );
-    #define portCLEAN_UP_TCB( pxTCB )    task_end_hook( ( void * ) pxTCB )
+extern void task_end_hook( void * pxTCB );
+    #define portCLEAN_UP_TCB( pxTCB ) task_end_hook( ( void * ) pxTCB )
 #endif
 
 void vPortYield( void );
@@ -153,7 +156,7 @@ void vPortYieldFromIsr( void );
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    }
+}
 #endif
 /* *INDENT-ON* */
 

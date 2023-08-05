@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT AND BSD-3-Clause
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -70,21 +71,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#include <yfuns.h>
-#include <avr32/io.h>
 #include "usart.h"
-
+#include <avr32/io.h>
+#include <yfuns.h>
 
 _STD_BEGIN
 
-
 #pragma module_name = "?__write"
 
-
 //! Pointer to the base of the USART module instance to use for stdio.
-__no_init volatile avr32_usart_t *volatile stdio_usart_base;
-
+__no_init volatile avr32_usart_t * volatile stdio_usart_base;
 
 /*! \brief Writes a number of bytes, at most \a size, from the memory area
  *         pointed to by \a buffer.
@@ -99,35 +95,34 @@ __no_init volatile avr32_usart_t *volatile stdio_usart_base;
  *
  * \return The number of bytes written, or \c _LLIO_ERROR on failure.
  */
-size_t __write(int handle, const uint8_t *buffer, size_t size)
+size_t __write( int handle, const uint8_t * buffer, size_t size )
 {
-  size_t nChars = 0;
+    size_t nChars = 0;
 
-  if (buffer == 0)
-  {
-    // This means that we should flush internal buffers.
-    return 0;
-  }
-
-  // This implementation only writes to stdout and stderr.
-  // For all other file handles, it returns failure.
-  if (handle != _LLIO_STDOUT && handle != _LLIO_STDERR)
-  {
-    return _LLIO_ERROR;
-  }
-
-  for (; size != 0; --size)
-  {
-    if (usart_putchar(stdio_usart_base, *buffer++) < 0)
+    if( buffer == 0 )
     {
-      return _LLIO_ERROR;
+        // This means that we should flush internal buffers.
+        return 0;
     }
 
-    ++nChars;
-  }
+    // This implementation only writes to stdout and stderr.
+    // For all other file handles, it returns failure.
+    if( handle != _LLIO_STDOUT && handle != _LLIO_STDERR )
+    {
+        return _LLIO_ERROR;
+    }
 
-  return nChars;
+    for( ; size != 0; --size )
+    {
+        if( usart_putchar( stdio_usart_base, *buffer++ ) < 0 )
+        {
+            return _LLIO_ERROR;
+        }
+
+        ++nChars;
+    }
+
+    return nChars;
 }
-
 
 _STD_END

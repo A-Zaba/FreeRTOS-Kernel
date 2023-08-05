@@ -4,28 +4,28 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
  *
  */
-
 
 /* Standard includes. */
 #include <stdlib.h>
@@ -35,25 +35,26 @@
 #include "task.h"
 
 /* Constants required to setup the initial task context. */
-#define portINITIAL_SPSR                ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, interrupts enabled. */
+#define portINITIAL_SPSR \
+    ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, interrupts enabled. */
 #define portTHUMB_MODE_BIT              ( ( StackType_t ) 0x20 )
 #define portINSTRUCTION_SIZE            ( ( StackType_t ) 4 )
 #define portNO_CRITICAL_SECTION_NESTING ( ( StackType_t ) 0 )
 
 /* Constants required to setup the tick ISR. */
-#define portENABLE_TIMER            ( ( uint8_t ) 0x01 )
-#define portPRESCALE_VALUE          0x00
-#define portINTERRUPT_ON_MATCH      ( ( uint32_t ) 0x01 )
-#define portRESET_COUNT_ON_MATCH    ( ( uint32_t ) 0x02 )
+#define portENABLE_TIMER                ( ( uint8_t ) 0x01 )
+#define portPRESCALE_VALUE              0x00
+#define portINTERRUPT_ON_MATCH          ( ( uint32_t ) 0x01 )
+#define portRESET_COUNT_ON_MATCH        ( ( uint32_t ) 0x02 )
 
 /* Constants required to setup the VIC for the tick ISR. */
-#define portTIMER_VIC_CHANNEL       ( ( uint32_t ) 0x0004 )
-#define portTIMER_VIC_CHANNEL_BIT   ( ( uint32_t ) 0x0010 )
-#define portTIMER_VIC_ENABLE        ( ( uint32_t ) 0x0020 )
+#define portTIMER_VIC_CHANNEL           ( ( uint32_t ) 0x0004 )
+#define portTIMER_VIC_CHANNEL_BIT       ( ( uint32_t ) 0x0010 )
+#define portTIMER_VIC_ENABLE            ( ( uint32_t ) 0x0020 )
 
 /* Constants required to handle interrupts. */
-#define portTIMER_MATCH_ISR_BIT     ( ( uint8_t ) 0x01 )
-#define portCLEAR_VIC_INTERRUPT     ( ( uint32_t ) 0 )
+#define portTIMER_MATCH_ISR_BIT         ( ( uint8_t ) 0x01 )
+#define portCLEAR_VIC_INTERRUPT         ( ( uint32_t ) 0 )
 
 /*-----------------------------------------------------------*/
 
@@ -63,7 +64,7 @@ use the stack as per other ports.  Instead a variable is used to keep
 track of the critical section nesting.  This variable has to be stored
 as part of the task context and must be initialised to a non zero value. */
 
-#define portNO_CRITICAL_NESTING     ( ( uint32_t ) 0 )
+#define portNO_CRITICAL_NESTING         ( ( uint32_t ) 0 )
 volatile uint32_t ulCriticalNesting = 9999UL;
 
 /*-----------------------------------------------------------*/
@@ -82,9 +83,11 @@ extern __asm void vPortStartFirstTask( void );
 /*
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-StackType_t *pxOriginalTOS;
+    StackType_t * pxOriginalTOS;
 
     /* Setup the initial stack of the task.  The stack is set exactly as
     expected by the portRESTORE_CONTEXT() macro.
@@ -105,7 +108,8 @@ StackType_t *pxOriginalTOS;
 
     *pxTopOfStack = ( StackType_t ) 0xaaaaaaaa; /* R14 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) pxOriginalTOS; /* Stack used when task starts goes in R13. */
+    *pxTopOfStack = ( StackType_t ) pxOriginalTOS; /* Stack used when task
+                                                      starts goes in R13. */
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) 0x12121212; /* R12 */
     pxTopOfStack--;
@@ -181,39 +185,39 @@ void vPortEndScheduler( void )
 
 #if configUSE_PREEMPTION == 0
 
-    /*
-     * The cooperative scheduler requires a normal IRQ service routine to
-     * simply increment the system tick.
-     */
-    void vNonPreemptiveTick( void ) __irq;
-    void vNonPreemptiveTick( void ) __irq
-    {
-        /* Increment the tick count - this may make a delaying task ready
-        to run - but a context switch is not performed. */
-        xTaskIncrementTick();
+/*
+ * The cooperative scheduler requires a normal IRQ service routine to
+ * simply increment the system tick.
+ */
+void vNonPreemptiveTick( void ) __irq;
+void vNonPreemptiveTick( void ) __irq
+{
+    /* Increment the tick count - this may make a delaying task ready
+    to run - but a context switch is not performed. */
+    xTaskIncrementTick();
 
-        T0IR = portTIMER_MATCH_ISR_BIT;             /* Clear the timer event */
-        VICVectAddr = portCLEAR_VIC_INTERRUPT;      /* Acknowledge the Interrupt */
-    }
+    T0IR = portTIMER_MATCH_ISR_BIT;        /* Clear the timer event */
+    VICVectAddr = portCLEAR_VIC_INTERRUPT; /* Acknowledge the Interrupt */
+}
 
- #else
+#else
 
-    /*
-     **************************************************************************
-     * The preemptive scheduler ISR is written in assembler and can be found
-     * in the portASM.s file. This will only get used if portUSE_PREEMPTION
-     * is set to 1 in portmacro.h
-     **************************************************************************
-     */
+/*
+ **************************************************************************
+ * The preemptive scheduler ISR is written in assembler and can be found
+ * in the portASM.s file. This will only get used if portUSE_PREEMPTION
+ * is set to 1 in portmacro.h
+ **************************************************************************
+ */
 
-      void vPreemptiveTick( void );
+void vPreemptiveTick( void );
 
 #endif
 /*-----------------------------------------------------------*/
 
 static void prvSetupTimerInterrupt( void )
 {
-uint32_t ulCompareMatch;
+    uint32_t ulCompareMatch;
 
     /* A 1ms tick does not require the use of the timer prescale.  This is
     defaulted to zero but can be used if necessary. */
@@ -222,13 +226,13 @@ uint32_t ulCompareMatch;
     /* Calculate the match value required for our wanted tick rate. */
     ulCompareMatch = configCPU_CLOCK_HZ / configTICK_RATE_HZ;
 
-    /* Protect against divide by zero.  Using an if() statement still results
-    in a warning - hence the #if. */
-    #if portPRESCALE_VALUE != 0
+/* Protect against divide by zero.  Using an if() statement still results
+in a warning - hence the #if. */
+#if portPRESCALE_VALUE != 0
     {
         ulCompareMatch /= ( portPRESCALE_VALUE + 1 );
     }
-    #endif
+#endif
 
     T0MR0 = ulCompareMatch;
 
@@ -239,17 +243,17 @@ uint32_t ulCompareMatch;
     VICIntSelect &= ~( portTIMER_VIC_CHANNEL_BIT );
     VICIntEnable |= portTIMER_VIC_CHANNEL_BIT;
 
-    /* The ISR installed depends on whether the preemptive or cooperative
-    scheduler is being used. */
-    #if configUSE_PREEMPTION == 1
+/* The ISR installed depends on whether the preemptive or cooperative
+scheduler is being used. */
+#if configUSE_PREEMPTION == 1
     {
         VICVectAddr0 = ( uint32_t ) vPreemptiveTick;
     }
-    #else
+#else
     {
         VICVectAddr0 = ( uint32_t ) vNonPreemptiveTick;
     }
-    #endif
+#endif
 
     VICVectCntl0 = portTIMER_VIC_CHANNEL | portTIMER_VIC_ENABLE;
 
@@ -261,7 +265,7 @@ uint32_t ulCompareMatch;
 
 void vPortEnterCritical( void )
 {
-    /* Disable interrupts as per portDISABLE_INTERRUPTS();                          */
+    /* Disable interrupts as per portDISABLE_INTERRUPTS(); */
     __disable_irq();
 
     /* Now interrupts are disabled ulCriticalNesting can be accessed

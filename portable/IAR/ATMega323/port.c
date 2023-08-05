@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -36,23 +37,22 @@
  *----------------------------------------------------------*/
 
 /* Start tasks with interrupts enables. */
-#define portFLAGS_INT_ENABLED                   ( ( StackType_t ) 0x80 )
+#define portFLAGS_INT_ENABLED                ( ( StackType_t ) 0x80 )
 
 /* Hardware constants for timer 1. */
-#define portCLEAR_COUNTER_ON_MATCH              ( ( uint8_t ) 0x08 )
-#define portPRESCALE_64                         ( ( uint8_t ) 0x03 )
-#define portCLOCK_PRESCALER                     ( ( uint32_t ) 64 )
-#define portCOMPARE_MATCH_A_INTERRUPT_ENABLE    ( ( uint8_t ) 0x10 )
+#define portCLEAR_COUNTER_ON_MATCH           ( ( uint8_t ) 0x08 )
+#define portPRESCALE_64                      ( ( uint8_t ) 0x03 )
+#define portCLOCK_PRESCALER                  ( ( uint32_t ) 64 )
+#define portCOMPARE_MATCH_A_INTERRUPT_ENABLE ( ( uint8_t ) 0x10 )
 
 /* The number of bytes used on the hardware stack by the task start address. */
-#define portBYTES_USED_BY_RETURN_ADDRESS        ( 2 )
+#define portBYTES_USED_BY_RETURN_ADDRESS     ( 2 )
 /*-----------------------------------------------------------*/
 
 /* Stores the critical section nesting.  This must not be initialised to 0.
 It will be initialised when a task starts. */
-#define portNO_CRITICAL_NESTING                 ( ( UBaseType_t ) 0 )
+#define portNO_CRITICAL_NESTING              ( ( UBaseType_t ) 0 )
 UBaseType_t uxCriticalNesting = 0x50;
-
 
 /*
  * Perform hardware setup to enable ticks from timer 1, compare match A.
@@ -71,10 +71,12 @@ extern void vPortStart( void );
 /*
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-uint16_t usAddress;
-StackType_t *pxTopOfHardwareStack;
+    uint16_t usAddress;
+    StackType_t * pxTopOfHardwareStack;
 
     /* Place a few bytes of known values on the bottom of the stack.
     This is just useful for debugging. */
@@ -90,12 +92,10 @@ StackType_t *pxTopOfHardwareStack;
     below. */
     pxTopOfHardwareStack = pxTopOfStack;
 
-
     /* Simulate how the stack would look after a call to vPortYield(). */
 
-    /*lint -e950 -e611 -e923 Lint doesn't like this much - but nothing I can do about it. */
-
-
+    /*lint -e950 -e611 -e923 Lint doesn't like this much - but nothing I can do
+     * about it. */
 
     /* The IAR compiler requires two stacks per task.  First there is the
     hardware call stack which uses the AVR stack pointer.  Second there is the
@@ -104,9 +104,9 @@ StackType_t *pxTopOfHardwareStack;
 
     This function places both stacks within the memory block passed in as the
     first parameter.  The hardware stack is placed at the bottom of the memory
-    block.  A gap is then left for the hardware stack to grow.  Next the software
-    stack is placed.  The amount of space between the software and hardware
-    stacks is defined by configCALL_STACK_SIZE.
+    block.  A gap is then left for the hardware stack to grow.  Next the
+    software stack is placed.  The amount of space between the software and
+    hardware stacks is defined by configCALL_STACK_SIZE.
 
 
 
@@ -120,19 +120,16 @@ StackType_t *pxTopOfHardwareStack;
     *pxTopOfStack = ( StackType_t ) ( usAddress & ( uint16_t ) 0x00ff );
     pxTopOfStack--;
 
-
     /* Leave enough space for the hardware stack before starting the software
     stack.  The '- 2' is because we have already used two spaces for the
     address of the start of the task. */
     pxTopOfStack -= ( configCALL_STACK_SIZE - 2 );
 
-
-
     /* Next simulate the stack as if after a call to portSAVE_CONTEXT().
     portSAVE_CONTEXT places the flags on the stack immediately after r0
     to ensure the interrupts get disabled as soon as possible, and so ensuring
     the stack use is minimal should a context switch interrupt occur. */
-    *pxTopOfStack = ( StackType_t ) 0x00;   /* R0 */
+    *pxTopOfStack = ( StackType_t ) 0x00; /* R0 */
     pxTopOfStack--;
     *pxTopOfStack = portFLAGS_INT_ENABLED;
     pxTopOfStack--;
@@ -151,39 +148,36 @@ StackType_t *pxTopOfHardwareStack;
     *pxTopOfStack = ( StackType_t ) ( usAddress & ( uint16_t ) 0x00ff );
     pxTopOfStack--;
 
-
-
-
     /* Now the remaining registers. */
-    *pxTopOfStack = ( StackType_t ) 0x01;   /* R1 */
+    *pxTopOfStack = ( StackType_t ) 0x01; /* R1 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x02;   /* R2 */
+    *pxTopOfStack = ( StackType_t ) 0x02; /* R2 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x03;   /* R3 */
+    *pxTopOfStack = ( StackType_t ) 0x03; /* R3 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x04;   /* R4 */
+    *pxTopOfStack = ( StackType_t ) 0x04; /* R4 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x05;   /* R5 */
+    *pxTopOfStack = ( StackType_t ) 0x05; /* R5 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x06;   /* R6 */
+    *pxTopOfStack = ( StackType_t ) 0x06; /* R6 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x07;   /* R7 */
+    *pxTopOfStack = ( StackType_t ) 0x07; /* R7 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x08;   /* R8 */
+    *pxTopOfStack = ( StackType_t ) 0x08; /* R8 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x09;   /* R9 */
+    *pxTopOfStack = ( StackType_t ) 0x09; /* R9 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x10;   /* R10 */
+    *pxTopOfStack = ( StackType_t ) 0x10; /* R10 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x11;   /* R11 */
+    *pxTopOfStack = ( StackType_t ) 0x11; /* R11 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x12;   /* R12 */
+    *pxTopOfStack = ( StackType_t ) 0x12; /* R12 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x13;   /* R13 */
+    *pxTopOfStack = ( StackType_t ) 0x13; /* R13 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x14;   /* R14 */
+    *pxTopOfStack = ( StackType_t ) 0x14; /* R14 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x15;   /* R15 */
+    *pxTopOfStack = ( StackType_t ) 0x15; /* R15 */
     pxTopOfStack--;
 
     /* Place the parameter on the stack in the expected location. */
@@ -195,36 +189,37 @@ StackType_t *pxTopOfHardwareStack;
     *pxTopOfStack = ( StackType_t ) ( usAddress & ( uint16_t ) 0x00ff );
     pxTopOfStack--;
 
-    *pxTopOfStack = ( StackType_t ) 0x18;   /* R18 */
+    *pxTopOfStack = ( StackType_t ) 0x18; /* R18 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x19;   /* R19 */
+    *pxTopOfStack = ( StackType_t ) 0x19; /* R19 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x20;   /* R20 */
+    *pxTopOfStack = ( StackType_t ) 0x20; /* R20 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x21;   /* R21 */
+    *pxTopOfStack = ( StackType_t ) 0x21; /* R21 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x22;   /* R22 */
+    *pxTopOfStack = ( StackType_t ) 0x22; /* R22 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x23;   /* R23 */
+    *pxTopOfStack = ( StackType_t ) 0x23; /* R23 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x24;   /* R24 */
+    *pxTopOfStack = ( StackType_t ) 0x24; /* R24 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x25;   /* R25 */
+    *pxTopOfStack = ( StackType_t ) 0x25; /* R25 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x26;   /* R26 X */
+    *pxTopOfStack = ( StackType_t ) 0x26; /* R26 X */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x27;   /* R27 */
+    *pxTopOfStack = ( StackType_t ) 0x27; /* R27 */
     pxTopOfStack--;
 
     /* The Y register is not stored as it is used as the software stack and
     gets saved into the task control block. */
 
-    *pxTopOfStack = ( StackType_t ) 0x30;   /* R30 Z */
+    *pxTopOfStack = ( StackType_t ) 0x30; /* R30 Z */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) 0x031;  /* R31 */
+    *pxTopOfStack = ( StackType_t ) 0x031; /* R31 */
 
     pxTopOfStack--;
-    *pxTopOfStack = portNO_CRITICAL_NESTING;    /* Critical nesting is zero when the task starts. */
+    *pxTopOfStack = portNO_CRITICAL_NESTING; /* Critical nesting is zero when
+                                                the task starts. */
 
     /*lint +e950 +e611 +e923 */
 
@@ -259,8 +254,8 @@ void vPortEndScheduler( void )
  */
 static void prvSetupTimerInterrupt( void )
 {
-uint32_t ulCompareMatch;
-uint8_t ucHighByte, ucLowByte;
+    uint32_t ulCompareMatch;
+    uint8_t ucHighByte, ucLowByte;
 
     /* Using 16bit timer 1 to generate the tick.  Correct fuses must be
     selected for the configCPU_CLOCK_HZ clock. */
@@ -293,31 +288,31 @@ uint8_t ucHighByte, ucLowByte;
 
 #if configUSE_PREEMPTION == 1
 
-    /*
-     * Tick ISR for preemptive scheduler.  We can use a __task attribute as
-     * the context is saved at the start of vPortYieldFromTick().  The tick
-     * count is incremented after the context is saved.
-     */
-    __task void SIG_OUTPUT_COMPARE1A( void )
-    {
-        vPortYieldFromTick();
-        asm( "reti" );
-    }
+/*
+ * Tick ISR for preemptive scheduler.  We can use a __task attribute as
+ * the context is saved at the start of vPortYieldFromTick().  The tick
+ * count is incremented after the context is saved.
+ */
+__task void SIG_OUTPUT_COMPARE1A( void )
+{
+    vPortYieldFromTick();
+    asm( "reti" );
+}
 
 #else
 
-    /*
-     * Tick ISR for the cooperative scheduler.  All this does is increment the
-     * tick count.  We don't need to switch context, this can only be done by
-     * manual calls to taskYIELD();
-     *
-     * THE INTERRUPT VECTOR IS POPULATED IN portmacro.s90.  DO NOT INSTALL
-     * IT HERE USING THE USUAL PRAGMA.
-     */
-    __interrupt void SIG_OUTPUT_COMPARE1A( void )
-    {
-        xTaskIncrementTick();
-    }
+/*
+ * Tick ISR for the cooperative scheduler.  All this does is increment the
+ * tick count.  We don't need to switch context, this can only be done by
+ * manual calls to taskYIELD();
+ *
+ * THE INTERRUPT VECTOR IS POPULATED IN portmacro.s90.  DO NOT INSTALL
+ * IT HERE USING THE USUAL PRAGMA.
+ */
+__interrupt void SIG_OUTPUT_COMPARE1A( void )
+{
+    xTaskIncrementTick();
+}
 #endif
 /*-----------------------------------------------------------*/
 

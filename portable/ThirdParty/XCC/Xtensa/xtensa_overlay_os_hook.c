@@ -1,26 +1,27 @@
- /*
+/*
  * FreeRTOS Kernel <DEVELOPMENT BRANCH>
  * Copyright (C) 2015-2019 Cadence Design Systems, Inc.
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -41,13 +42,12 @@
  */
 static SemaphoreHandle_t xt_overlay_mutex;
 
-
 /* This function should be overridden to provide OS specific init such
  * as the creation of a mutex lock that can be used for overlay locking.
  * Typically this mutex would be set up with priority inheritance. See
  * overlay manager documentation for more details.
  */
-void xt_overlay_init_os(void)
+void xt_overlay_init_os( void )
 {
     /* Create the mutex for overlay access. Priority inheritance is
      * required.
@@ -55,22 +55,20 @@ void xt_overlay_init_os(void)
     xt_overlay_mutex = xSemaphoreCreateMutex();
 }
 
-
 /* This function locks access to shared overlay resources, typically
  * by acquiring a mutex.
  */
-void xt_overlay_lock(void)
+void xt_overlay_lock( void )
 {
-    xSemaphoreTake(xt_overlay_mutex, 0);
+    xSemaphoreTake( xt_overlay_mutex, 0 );
 }
-
 
 /* This function releases access to shared overlay resources, typically
  * by unlocking a mutex.
  */
-void xt_overlay_unlock(void)
+void xt_overlay_unlock( void )
 {
-    xSemaphoreGive(xt_overlay_mutex);
+    xSemaphoreGive( xt_overlay_mutex );
 }
 
 #endif

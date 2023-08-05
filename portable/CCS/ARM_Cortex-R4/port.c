@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -38,28 +39,27 @@ uint32_t ulCriticalNesting = 9999;
 /*-----------------------------------------------------------*/
 
 /* Registers required to configure the RTI. */
-#define portRTI_GCTRL_REG       ( * ( ( volatile uint32_t * ) 0xFFFFFC00 ) )
-#define portRTI_TBCTRL_REG      ( * ( ( volatile uint32_t * ) 0xFFFFFC04 ) )
-#define portRTI_COMPCTRL_REG    ( * ( ( volatile uint32_t * ) 0xFFFFFC0C ) )
-#define portRTI_CNT0_FRC0_REG   ( * ( ( volatile uint32_t * ) 0xFFFFFC10 ) )
-#define portRTI_CNT0_UC0_REG    ( * ( ( volatile uint32_t * ) 0xFFFFFC14 ) )
-#define portRTI_CNT0_CPUC0_REG  ( * ( ( volatile uint32_t * ) 0xFFFFFC18 ) )
-#define portRTI_CNT0_COMP0_REG  ( * ( ( volatile uint32_t * ) 0xFFFFFC50 ) )
-#define portRTI_CNT0_UDCP0_REG  ( * ( ( volatile uint32_t * ) 0xFFFFFC54 ) )
-#define portRTI_SETINTENA_REG   ( * ( ( volatile uint32_t * ) 0xFFFFFC80 ) )
-#define portRTI_CLEARINTENA_REG ( * ( ( volatile uint32_t * ) 0xFFFFFC84 ) )
-#define portRTI_INTFLAG_REG     ( * ( ( volatile uint32_t * ) 0xFFFFFC88 ) )
-
+#define portRTI_GCTRL_REG                    ( *( ( volatile uint32_t * ) 0xFFFFFC00 ) )
+#define portRTI_TBCTRL_REG                   ( *( ( volatile uint32_t * ) 0xFFFFFC04 ) )
+#define portRTI_COMPCTRL_REG                 ( *( ( volatile uint32_t * ) 0xFFFFFC0C ) )
+#define portRTI_CNT0_FRC0_REG                ( *( ( volatile uint32_t * ) 0xFFFFFC10 ) )
+#define portRTI_CNT0_UC0_REG                 ( *( ( volatile uint32_t * ) 0xFFFFFC14 ) )
+#define portRTI_CNT0_CPUC0_REG               ( *( ( volatile uint32_t * ) 0xFFFFFC18 ) )
+#define portRTI_CNT0_COMP0_REG               ( *( ( volatile uint32_t * ) 0xFFFFFC50 ) )
+#define portRTI_CNT0_UDCP0_REG               ( *( ( volatile uint32_t * ) 0xFFFFFC54 ) )
+#define portRTI_SETINTENA_REG                ( *( ( volatile uint32_t * ) 0xFFFFFC80 ) )
+#define portRTI_CLEARINTENA_REG              ( *( ( volatile uint32_t * ) 0xFFFFFC84 ) )
+#define portRTI_INTFLAG_REG                  ( *( ( volatile uint32_t * ) 0xFFFFFC88 ) )
 
 /* Constants required to set up the initial stack of each task. */
-#define portINITIAL_SPSR        ( ( StackType_t ) 0x1F )
-#define portINITIAL_FPSCR       ( ( StackType_t ) 0x00 )
-#define portINSTRUCTION_SIZE    ( ( StackType_t ) 0x04 )
-#define portTHUMB_MODE_BIT      ( ( StackType_t ) 0x20 )
+#define portINITIAL_SPSR                     ( ( StackType_t ) 0x1F )
+#define portINITIAL_FPSCR                    ( ( StackType_t ) 0x00 )
+#define portINSTRUCTION_SIZE                 ( ( StackType_t ) 0x04 )
+#define portTHUMB_MODE_BIT                   ( ( StackType_t ) 0x20 )
 
 /* The number of words on the stack frame between the saved Top Of Stack and
 R0 (in which the parameters are passed. */
-#define portSPACE_BETWEEN_TOS_AND_PARAMETERS    ( 12 )
+#define portSPACE_BETWEEN_TOS_AND_PARAMETERS ( 12 )
 
 /*-----------------------------------------------------------*/
 
@@ -74,22 +74,23 @@ uint32_t ulTaskHasFPUContext = 0;
 
 /*-----------------------------------------------------------*/
 
-
 /*
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-StackType_t *pxOriginalTOS;
+    StackType_t * pxOriginalTOS;
 
     pxOriginalTOS = pxTopOfStack;
 
-    #if __TI_VFP_SUPPORT__
+#if __TI_VFP_SUPPORT__
     {
         /* Ensure the stack is correctly aligned on exit. */
         pxTopOfStack--;
     }
-    #endif
+#endif
 
     /* Setup the initial stack of the task.  The stack is set exactly as
     expected by the portRESTORE_CONTEXT() macro. */
@@ -102,10 +103,11 @@ StackType_t *pxOriginalTOS;
 
     *pxTopOfStack = ( StackType_t ) 0x00000000; /* R14 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) pxOriginalTOS; /* Stack used when task starts goes in R13. */
+    *pxTopOfStack = ( StackType_t ) pxOriginalTOS; /* Stack used when task
+                                                      starts goes in R13. */
     pxTopOfStack--;
 
-    #ifdef portPRELOAD_TASK_REGISTERS
+#ifdef portPRELOAD_TASK_REGISTERS
     {
         *pxTopOfStack = ( StackType_t ) 0x12121212; /* R12 */
         pxTopOfStack--;
@@ -132,18 +134,19 @@ StackType_t *pxOriginalTOS;
         *pxTopOfStack = ( StackType_t ) 0x01010101; /* R1 */
         pxTopOfStack--;
     }
-    #else
+#else
     {
         pxTopOfStack -= portSPACE_BETWEEN_TOS_AND_PARAMETERS;
     }
-    #endif
+#endif
 
     /* Function parameters are passed in R0. */
     *pxTopOfStack = ( StackType_t ) pvParameters; /* R0 */
     pxTopOfStack--;
 
     /* Set the status register for system mode, with interrupts enabled. */
-    *pxTopOfStack = ( StackType_t ) ( ( _get_CPSR() & ~0xFF ) | portINITIAL_SPSR );
+    *pxTopOfStack = ( StackType_t ) ( ( _get_CPSR() & ~0xFF ) |
+                                      portINITIAL_SPSR );
 
     if( ( ( uint32_t ) pxCode & 0x01UL ) != 0x00 )
     {
@@ -151,7 +154,7 @@ StackType_t *pxOriginalTOS;
         *pxTopOfStack |= portTHUMB_MODE_BIT;
     }
 
-    #ifdef __TI_VFP_SUPPORT__
+#ifdef __TI_VFP_SUPPORT__
     {
         pxTopOfStack--;
 
@@ -160,13 +163,13 @@ StackType_t *pxOriginalTOS;
         registers. */
         *pxTopOfStack = pdFALSE;
     }
-    #endif
+#endif
 
     return pxTopOfStack;
 }
 /*-----------------------------------------------------------*/
 
-static void prvSetupTimerInterrupt(void)
+static void prvSetupTimerInterrupt( void )
 {
     /* Disable timer 0. */
     portRTI_GCTRL_REG &= 0xFFFFFFFEUL;
@@ -178,8 +181,8 @@ static void prvSetupTimerInterrupt(void)
     portRTI_COMPCTRL_REG = 0x00000000U;
 
     /* Initialise the counter and the prescale counter registers. */
-    portRTI_CNT0_UC0_REG =  0x00000000U;
-    portRTI_CNT0_FRC0_REG =  0x00000000U;
+    portRTI_CNT0_UC0_REG = 0x00000000U;
+    portRTI_CNT0_FRC0_REG = 0x00000000U;
 
     /* Set Prescalar for RTI clock. */
     portRTI_CNT0_CPUC0_REG = 0x00000001U;
@@ -187,7 +190,7 @@ static void prvSetupTimerInterrupt(void)
     portRTI_CNT0_UDCP0_REG = ( configCPU_CLOCK_HZ / 2 ) / configTICK_RATE_HZ;
 
     /* Clear interrupts. */
-    portRTI_INTFLAG_REG =  0x0007000FU;
+    portRTI_INTFLAG_REG = 0x0007000FU;
     portRTI_CLEARINTENA_REG = 0x00070F0FU;
 
     /* Enable the compare 0 interrupt. */
@@ -199,12 +202,13 @@ static void prvSetupTimerInterrupt(void)
 /*
  * See header file for description.
  */
-BaseType_t xPortStartScheduler(void)
+BaseType_t xPortStartScheduler( void )
 {
     /* Start the timer that generates the tick ISR. */
     prvSetupTimerInterrupt();
 
-    /* Reset the critical section nesting count read to execute the first task. */
+    /* Reset the critical section nesting count read to execute the first task.
+     */
     ulCriticalNesting = 0;
 
     /* Start the first task.  This is done from portASM.asm as ARM mode must be
@@ -219,7 +223,7 @@ BaseType_t xPortStartScheduler(void)
 /*
  * See header file for description.
  */
-void vPortEndScheduler(void)
+void vPortEndScheduler( void )
 {
     /* Not implemented in ports where there is nothing to return to.
     Artificially force an assert. */
@@ -229,32 +233,31 @@ void vPortEndScheduler(void)
 
 #if configUSE_PREEMPTION == 0
 
-    /* The cooperative scheduler requires a normal IRQ service routine to
-     * simply increment the system tick. */
-    __interrupt void vPortNonPreemptiveTick( void )
-    {
-        /* clear clock interrupt flag */
-        portRTI_INTFLAG_REG = 0x00000001;
+/* The cooperative scheduler requires a normal IRQ service routine to
+ * simply increment the system tick. */
+__interrupt void vPortNonPreemptiveTick( void )
+{
+    /* clear clock interrupt flag */
+    portRTI_INTFLAG_REG = 0x00000001;
 
-        /* Increment the tick count - this may make a delaying task ready
-        to run - but a context switch is not performed. */
-        xTaskIncrementTick();
-    }
+    /* Increment the tick count - this may make a delaying task ready
+    to run - but a context switch is not performed. */
+    xTaskIncrementTick();
+}
 
- #else
+#else
 
-    /*
-     **************************************************************************
-     * The preemptive scheduler ISR is written in assembler and can be found
-     * in the portASM.asm file. This will only get used if portUSE_PREEMPTION
-     * is set to 1 in portmacro.h
-     **************************************************************************
-     */
-    void vPortPreemptiveTick( void );
+/*
+ **************************************************************************
+ * The preemptive scheduler ISR is written in assembler and can be found
+ * in the portASM.asm file. This will only get used if portUSE_PREEMPTION
+ * is set to 1 in portmacro.h
+ **************************************************************************
+ */
+void vPortPreemptiveTick( void );
 
 #endif
 /*-----------------------------------------------------------*/
-
 
 /*
  * Disable interrupts, and keep a count of the nesting depth.
@@ -295,17 +298,17 @@ void vPortExitCritical( void )
 
 #if __TI_VFP_SUPPORT__
 
-    void vPortTaskUsesFPU( void )
-    {
+void vPortTaskUsesFPU( void )
+{
     extern void vPortInitialiseFPSCR( void );
 
-        /* A task is registering the fact that it needs an FPU context.  Set the
-        FPU flag (saved as part of the task context. */
-        ulTaskHasFPUContext = pdTRUE;
+    /* A task is registering the fact that it needs an FPU context.  Set the
+    FPU flag (saved as part of the task context. */
+    ulTaskHasFPUContext = pdTRUE;
 
-        /* Initialise the floating point status register. */
-        vPortInitialiseFPSCR();
-    }
+    /* Initialise the floating point status register. */
+    vPortInitialiseFPSCR();
+}
 
 #endif /* __TI_VFP_SUPPORT__ */
 

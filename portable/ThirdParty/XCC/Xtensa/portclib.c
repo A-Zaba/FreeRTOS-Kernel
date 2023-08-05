@@ -5,22 +5,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -31,26 +32,24 @@
 
 #if XT_USE_THREAD_SAFE_CLIB
 
-#if XSHAL_CLIB == XTHAL_CLIB_XCLIB
+    #if XSHAL_CLIB == XTHAL_CLIB_XCLIB
 
-#include <errno.h>
-#include <sys/reent.h>
+        #include <errno.h>
+        #include <sys/reent.h>
 
-#include "semphr.h"
+        #include "semphr.h"
 
-typedef SemaphoreHandle_t       _Rmtx;
+typedef SemaphoreHandle_t _Rmtx;
 
 //-----------------------------------------------------------------------------
 //  Override this and set to nonzero to enable locking.
 //-----------------------------------------------------------------------------
 int32_t _xclib_use_mt = 1;
 
-
 //-----------------------------------------------------------------------------
 //  Init lock.
 //-----------------------------------------------------------------------------
-void
-_Mtxinit(_Rmtx * mtx)
+void _Mtxinit( _Rmtx * mtx )
 {
     *mtx = xSemaphoreCreateRecursiveMutex();
 }
@@ -58,41 +57,40 @@ _Mtxinit(_Rmtx * mtx)
 //-----------------------------------------------------------------------------
 //  Destroy lock.
 //-----------------------------------------------------------------------------
-void
-_Mtxdst(_Rmtx * mtx)
+void _Mtxdst( _Rmtx * mtx )
 {
-    if ((mtx != NULL) && (*mtx != NULL)) {
-        vSemaphoreDelete(*mtx);
+    if( ( mtx != NULL ) && ( *mtx != NULL ) )
+    {
+        vSemaphoreDelete( *mtx );
     }
 }
 
 //-----------------------------------------------------------------------------
 //  Lock.
 //-----------------------------------------------------------------------------
-void
-_Mtxlock(_Rmtx * mtx)
+void _Mtxlock( _Rmtx * mtx )
 {
-    if ((mtx != NULL) && (*mtx != NULL)) {
-        xSemaphoreTakeRecursive(*mtx, portMAX_DELAY);
+    if( ( mtx != NULL ) && ( *mtx != NULL ) )
+    {
+        xSemaphoreTakeRecursive( *mtx, portMAX_DELAY );
     }
 }
 
 //-----------------------------------------------------------------------------
 //  Unlock.
 //-----------------------------------------------------------------------------
-void
-_Mtxunlock(_Rmtx * mtx)
+void _Mtxunlock( _Rmtx * mtx )
 {
-    if ((mtx != NULL) && (*mtx != NULL)) {
-        xSemaphoreGiveRecursive(*mtx);
+    if( ( mtx != NULL ) && ( *mtx != NULL ) )
+    {
+        xSemaphoreGiveRecursive( *mtx );
     }
 }
 
 //-----------------------------------------------------------------------------
 //  Called by malloc() to allocate blocks of memory from the heap.
 //-----------------------------------------------------------------------------
-void *
-_sbrk_r (struct _reent * reent, int32_t incr)
+void * _sbrk_r( struct _reent * reent, int32_t incr )
 {
     extern char _end;
     extern char _heap_sentry;
@@ -100,13 +98,14 @@ _sbrk_r (struct _reent * reent, int32_t incr)
     static char * heap_ptr;
     char * base;
 
-    if (!heap_ptr)
-        heap_ptr = (char *) &_end;
+    if( !heap_ptr )
+        heap_ptr = ( char * ) &_end;
 
     base = heap_ptr;
-    if (heap_ptr + incr >= _heap_sentry_ptr) {
+    if( heap_ptr + incr >= _heap_sentry_ptr )
+    {
         reent->_errno = ENOMEM;
-        return (char *) -1;
+        return ( char * ) -1;
     }
 
     heap_ptr += incr;
@@ -116,83 +115,75 @@ _sbrk_r (struct _reent * reent, int32_t incr)
 //-----------------------------------------------------------------------------
 //  Global initialization for C library.
 //-----------------------------------------------------------------------------
-void
-vPortClibInit(void)
+void vPortClibInit( void )
 {
 }
 
 //-----------------------------------------------------------------------------
 //  Per-thread cleanup stub provided for linking, does nothing.
 //-----------------------------------------------------------------------------
-void
-_reclaim_reent(void * ptr)
+void _reclaim_reent( void * ptr )
 {
 }
 
-#endif /* XSHAL_CLIB == XTHAL_CLIB_XCLIB */
+    #endif /* XSHAL_CLIB == XTHAL_CLIB_XCLIB */
 
-#if XSHAL_CLIB == XTHAL_CLIB_NEWLIB
+    #if XSHAL_CLIB == XTHAL_CLIB_NEWLIB
 
-#include <errno.h>
-#include <malloc.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+        #include <errno.h>
+        #include <malloc.h>
+        #include <stdio.h>
+        #include <stdlib.h>
+        #include <string.h>
 
-#include "semphr.h"
+        #include "semphr.h"
 
 static SemaphoreHandle_t xClibMutex;
-static uint32_t  ulClibInitDone = 0;
+static uint32_t ulClibInitDone = 0;
 
 //-----------------------------------------------------------------------------
 //  Get C library lock.
 //-----------------------------------------------------------------------------
-void
-__malloc_lock(struct _reent * ptr)
+void __malloc_lock( struct _reent * ptr )
 {
-    if (!ulClibInitDone)
+    if( !ulClibInitDone )
         return;
 
-    xSemaphoreTakeRecursive(xClibMutex, portMAX_DELAY);
+    xSemaphoreTakeRecursive( xClibMutex, portMAX_DELAY );
 }
 
 //-----------------------------------------------------------------------------
 //  Release C library lock.
 //-----------------------------------------------------------------------------
-void
-__malloc_unlock(struct _reent * ptr)
+void __malloc_unlock( struct _reent * ptr )
 {
-    if (!ulClibInitDone)
+    if( !ulClibInitDone )
         return;
 
-    xSemaphoreGiveRecursive(xClibMutex);
+    xSemaphoreGiveRecursive( xClibMutex );
 }
 
 //-----------------------------------------------------------------------------
 //  Lock for environment. Since we have only one global lock we can just call
 //  the malloc() lock function.
 //-----------------------------------------------------------------------------
-void
-__env_lock(struct _reent * ptr)
+void __env_lock( struct _reent * ptr )
 {
-    __malloc_lock(ptr);
+    __malloc_lock( ptr );
 }
-
 
 //-----------------------------------------------------------------------------
 //  Unlock environment.
 //-----------------------------------------------------------------------------
-void
-__env_unlock(struct _reent * ptr)
+void __env_unlock( struct _reent * ptr )
 {
-    __malloc_unlock(ptr);
+    __malloc_unlock( ptr );
 }
 
 //-----------------------------------------------------------------------------
 //  Called by malloc() to allocate blocks of memory from the heap.
 //-----------------------------------------------------------------------------
-void *
-_sbrk_r (struct _reent * reent, int32_t incr)
+void * _sbrk_r( struct _reent * reent, int32_t incr )
 {
     extern char _end;
     extern char _heap_sentry;
@@ -200,13 +191,14 @@ _sbrk_r (struct _reent * reent, int32_t incr)
     static char * heap_ptr;
     char * base;
 
-    if (!heap_ptr)
-        heap_ptr = (char *) &_end;
+    if( !heap_ptr )
+        heap_ptr = ( char * ) &_end;
 
     base = heap_ptr;
-    if (heap_ptr + incr >= _heap_sentry_ptr) {
+    if( heap_ptr + incr >= _heap_sentry_ptr )
+    {
         reent->_errno = ENOMEM;
-        return (char *) -1;
+        return ( char * ) -1;
     }
 
     heap_ptr += incr;
@@ -216,15 +208,14 @@ _sbrk_r (struct _reent * reent, int32_t incr)
 //-----------------------------------------------------------------------------
 //  Global initialization for C library.
 //-----------------------------------------------------------------------------
-void
-vPortClibInit(void)
+void vPortClibInit( void )
 {
-    configASSERT(!ulClibInitDone);
+    configASSERT( !ulClibInitDone );
 
     xClibMutex = xSemaphoreCreateRecursiveMutex();
-    ulClibInitDone  = 1;
+    ulClibInitDone = 1;
 }
 
-#endif /* XSHAL_CLIB == XTHAL_CLIB_NEWLIB */
+    #endif /* XSHAL_CLIB == XTHAL_CLIB_NEWLIB */
 
 #endif /* XT_USE_THREAD_SAFE_CLIB */

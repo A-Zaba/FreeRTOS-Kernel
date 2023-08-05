@@ -39,7 +39,8 @@
 #define PORTBENCHMARK_H
 
 #if configBENCHMARK
-    #error "You need to download the FreeRTOS_trace patch that overwrites this file"
+    #error \
+        "You need to download the FreeRTOS_trace patch that overwrites this file"
 #endif
 
 #define portbenchmarkINTERRUPT_DISABLE()

@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -30,7 +31,6 @@
  * Implementation of functions defined in portable.h for the Atmel ARM7 port.
  *----------------------------------------------------------*/
 
-
 /* Standard includes. */
 #include <stdlib.h>
 
@@ -39,11 +39,11 @@
 #include "task.h"
 
 /* Hardware includes. */
+#include <aic/aic.h>
 #include <board.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 #include <pit/pit.h>
-#include <aic/aic.h>
 #include <tc/tc.h>
 #include <utility/led.h>
 #include <utility/trace.h>
@@ -51,19 +51,19 @@
 /*-----------------------------------------------------------*/
 
 /* Constants required to setup the initial stack. */
-#define portINITIAL_SPSR                ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, interrupts enabled. */
-#define portTHUMB_MODE_BIT              ( ( StackType_t ) 0x20 )
-#define portINSTRUCTION_SIZE            ( ( StackType_t ) 4 )
+#define portINITIAL_SPSR \
+    ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, interrupts enabled. */
+#define portTHUMB_MODE_BIT      ( ( StackType_t ) 0x20 )
+#define portINSTRUCTION_SIZE    ( ( StackType_t ) 4 )
 
 /* Constants required to setup the PIT. */
-#define port1MHz_IN_Hz                  ( 1000000ul )
-#define port1SECOND_IN_uS               ( 1000000.0 )
+#define port1MHz_IN_Hz          ( 1000000ul )
+#define port1SECOND_IN_uS       ( 1000000.0 )
 
 /* Constants required to handle critical sections. */
-#define portNO_CRITICAL_NESTING         ( ( uint32_t ) 0 )
+#define portNO_CRITICAL_NESTING ( ( uint32_t ) 0 )
 
-
-#define portINT_LEVEL_SENSITIVE  0
+#define portINT_LEVEL_SENSITIVE 0
 #define portPIT_ENABLE          ( ( uint16_t ) 0x1 << 24 )
 #define portPIT_INT_ENABLE      ( ( uint16_t ) 0x1 << 25 )
 /*-----------------------------------------------------------*/
@@ -87,9 +87,11 @@ uint32_t ulCriticalNesting = ( uint32_t ) 9999;
  *
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-StackType_t *pxOriginalTOS;
+    StackType_t * pxOriginalTOS;
 
     pxOriginalTOS = pxTopOfStack;
 
@@ -108,7 +110,8 @@ StackType_t *pxOriginalTOS;
 
     *pxTopOfStack = ( StackType_t ) 0xaaaaaaaa; /* R14 */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) pxOriginalTOS; /* Stack used when task starts goes in R13. */
+    *pxTopOfStack = ( StackType_t ) pxOriginalTOS; /* Stack used when task
+                                                      starts goes in R13. */
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) 0x12121212; /* R12 */
     pxTopOfStack--;
@@ -143,12 +146,12 @@ StackType_t *pxOriginalTOS;
     /* The status register is set for system mode, with interrupts enabled. */
     *pxTopOfStack = ( StackType_t ) portINITIAL_SPSR;
 
-    #ifdef THUMB_INTERWORK
+#ifdef THUMB_INTERWORK
     {
         /* We want the task to start in thumb mode. */
         *pxTopOfStack |= portTHUMB_MODE_BIT;
     }
-    #endif
+#endif
 
     pxTopOfStack--;
 
@@ -163,7 +166,7 @@ StackType_t *pxOriginalTOS;
 
 BaseType_t xPortStartScheduler( void )
 {
-extern void vPortStartFirstTask( void );
+    extern void vPortStartFirstTask( void );
 
     /* Start the timer that generates the tick ISR.  Interrupts are disabled
     here already. */
@@ -186,7 +189,7 @@ void vPortEndScheduler( void )
 
 static __arm void vPortTickISR( void )
 {
-volatile uint32_t ulDummy;
+    volatile uint32_t ulDummy;
 
     /* Increment the tick count - which may wake some tasks but as the
     preemptive scheduler is not being used any woken task is not given
@@ -208,7 +211,8 @@ volatile uint32_t ulDummy;
 
 static void prvSetupTimerInterrupt( void )
 {
-const uint32_t ulPeriodIn_uS = ( 1.0 / ( double ) configTICK_RATE_HZ ) * port1SECOND_IN_uS;
+    const uint32_t ulPeriodIn_uS = ( 1.0 / ( double ) configTICK_RATE_HZ ) *
+                                   port1SECOND_IN_uS;
 
     /* Setup the PIT for the required frequency. */
     PIT_Init( ulPeriodIn_uS, BOARD_MCK / port1MHz_IN_Hz );

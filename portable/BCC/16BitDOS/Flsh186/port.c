@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -45,22 +46,23 @@ Changes from V2.6.1
  *----------------------------------------------------------*/
 
 #include <dos.h>
-#include <stdlib.h>
 #include <setjmp.h>
+#include <stdlib.h>
 
 #include "FreeRTOS.h"
-#include "task.h"
 #include "portasm.h"
+#include "task.h"
 
 /*lint -e950 Non ANSI reserved words okay in this file only. */
 
-#define portTIMER_EOI_TYPE      ( 8 )
-#define portRESET_PIC()         portOUTPUT_WORD( ( uint16_t ) 0xff22, portTIMER_EOI_TYPE )
-#define portTIMER_INT_NUMBER    0x12
+#define portTIMER_EOI_TYPE ( 8 )
+#define portRESET_PIC() \
+    portOUTPUT_WORD( ( uint16_t ) 0xff22, portTIMER_EOI_TYPE )
+#define portTIMER_INT_NUMBER         0x12
 
-#define portTIMER_1_CONTROL_REGISTER    ( ( uint16_t ) 0xff5e )
-#define portTIMER_0_CONTROL_REGISTER    ( ( uint16_t ) 0xff56 )
-#define portTIMER_INTERRUPT_ENABLE      ( ( uint16_t ) 0x2000 )
+#define portTIMER_1_CONTROL_REGISTER ( ( uint16_t ) 0xff5e )
+#define portTIMER_0_CONTROL_REGISTER ( ( uint16_t ) 0xff56 )
+#define portTIMER_INTERRUPT_ENABLE   ( ( uint16_t ) 0x2000 )
 
 /* Setup the hardware to generate the required tick frequency. */
 static void prvSetTickFrequency( uint32_t ulTickRateHz );
@@ -71,13 +73,13 @@ static void prvExitFunction( void );
 /* The ISR used depends on whether the preemptive or cooperative scheduler
 is being used. */
 #if( configUSE_PREEMPTION == 1 )
-    /* Tick service routine used by the scheduler when preemptive scheduling is
-    being used. */
-    static void __interrupt __far prvPreemptiveTick( void );
+/* Tick service routine used by the scheduler when preemptive scheduling is
+being used. */
+static void __interrupt __far prvPreemptiveTick( void );
 #else
-    /* Tick service routine used by the scheduler when cooperative scheduling is
-    being used. */
-    static void __interrupt __far prvNonPreemptiveTick( void );
+/* Tick service routine used by the scheduler when cooperative scheduling is
+being used. */
+static void __interrupt __far prvNonPreemptiveTick( void );
 #endif
 
 /* Trap routine used by taskYIELD() to manually cause a context switch. */
@@ -91,7 +93,7 @@ static BaseType_t xSchedulerRunning = pdFALSE;
 /* Points to the original routine installed on the vector we use for manual
 context switches.  This is then used to restore the original routine during
 prvExitFunction(). */
-static void ( __interrupt __far *pxOldSwitchISR )();
+static void( __interrupt __far * pxOldSwitchISR )();
 
 /* Used to restore the original DOS context when the scheduler is ended. */
 static jmp_buf xJumpBuf;
@@ -111,17 +113,17 @@ BaseType_t xPortStartScheduler( void )
     vector. */
     _dos_setvect( portSWITCH_INT_NUMBER, prvYieldProcessor );
 
-    #if( configUSE_PREEMPTION == 1 )
+#if( configUSE_PREEMPTION == 1 )
     {
         /* Put our tick switch function on the timer interrupt. */
         _dos_setvect( portTIMER_INT_NUMBER, prvPreemptiveTick );
     }
-    #else
+#else
     {
         /* We want the timer interrupt to just increment the tick count. */
         _dos_setvect( portTIMER_INT_NUMBER, prvNonPreemptiveTick );
     }
-    #endif
+#endif
 
     prvSetTickFrequency( configTICK_RATE_HZ );
 
@@ -135,7 +137,8 @@ BaseType_t xPortStartScheduler( void )
     {
         xSchedulerRunning = pdTRUE;
 
-        /* Kick off the scheduler by setting up the context of the first task. */
+        /* Kick off the scheduler by setting up the context of the first task.
+         */
         portFIRST_CONTEXT();
     }
 
@@ -146,26 +149,26 @@ BaseType_t xPortStartScheduler( void )
 /* The ISR used depends on whether the preemptive or cooperative scheduler
 is being used. */
 #if( configUSE_PREEMPTION == 1 )
-    static void __interrupt __far prvPreemptiveTick( void )
+static void __interrupt __far prvPreemptiveTick( void )
+{
+    /* Get the scheduler to update the task states following the tick. */
+    if( xTaskIncrementTick() != pdFALSE )
     {
-        /* Get the scheduler to update the task states following the tick. */
-        if( xTaskIncrementTick() != pdFALSE )
-        {
-            /* Switch in the context of the next task to be run. */
-            portSWITCH_CONTEXT();
-        }
+        /* Switch in the context of the next task to be run. */
+        portSWITCH_CONTEXT();
+    }
 
-        /* Reset the PIC ready for the next time. */
-        portRESET_PIC();
-    }
+    /* Reset the PIC ready for the next time. */
+    portRESET_PIC();
+}
 #else
-    static void __interrupt __far prvNonPreemptiveTick( void )
-    {
-        /* Same as preemptive tick, but the cooperative scheduler is being used
-        so we don't have to switch in the context of the next task. */
-        xTaskIncrementTick();
-        portRESET_PIC();
-    }
+static void __interrupt __far prvNonPreemptiveTick( void )
+{
+    /* Same as preemptive tick, but the cooperative scheduler is being used
+    so we don't have to switch in the context of the next task. */
+    xTaskIncrementTick();
+    portRESET_PIC();
+}
 #endif
 /*-----------------------------------------------------------*/
 
@@ -187,8 +190,8 @@ void vPortEndScheduler( void )
 
 static void prvExitFunction( void )
 {
-const uint16_t usTimerDisable = 0x0000;
-uint16_t usTimer0Control;
+    const uint16_t usTimerDisable = 0x0000;
+    uint16_t usTimer0Control;
 
     /* Interrupts should be disabled here anyway - but no
     harm in making sure. */
@@ -210,27 +213,27 @@ uint16_t usTimer0Control;
     usTimer0Control |= portTIMER_INTERRUPT_ENABLE;
     portOUTPUT_WORD( portTIMER_0_CONTROL_REGISTER, usTimer0Control );
 
-
     portENABLE_INTERRUPTS();
 }
 /*-----------------------------------------------------------*/
 
 static void prvSetTickFrequency( uint32_t ulTickRateHz )
 {
-const uint16_t usMaxCountRegister = 0xff5a;
-const uint16_t usTimerPriorityRegister = 0xff32;
-const uint16_t usTimerEnable = 0xC000;
-const uint16_t usRetrigger = 0x0001;
-const uint16_t usTimerHighPriority = 0x0000;
-uint16_t usTimer0Control;
+    const uint16_t usMaxCountRegister = 0xff5a;
+    const uint16_t usTimerPriorityRegister = 0xff32;
+    const uint16_t usTimerEnable = 0xC000;
+    const uint16_t usRetrigger = 0x0001;
+    const uint16_t usTimerHighPriority = 0x0000;
+    uint16_t usTimer0Control;
 
-/* ( CPU frequency / 4 ) / clock 2 max count [inpw( 0xff62 ) = 7] */
+    /* ( CPU frequency / 4 ) / clock 2 max count [inpw( 0xff62 ) = 7] */
 
-const uint32_t ulClockFrequency = ( uint32_t ) 0x7f31a0UL;
+    const uint32_t ulClockFrequency = ( uint32_t ) 0x7f31a0UL;
 
-uint32_t ulTimerCount = ulClockFrequency / ulTickRateHz;
+    uint32_t ulTimerCount = ulClockFrequency / ulTickRateHz;
 
-    portOUTPUT_WORD( portTIMER_1_CONTROL_REGISTER, usTimerEnable | portTIMER_INTERRUPT_ENABLE | usRetrigger );
+    portOUTPUT_WORD( portTIMER_1_CONTROL_REGISTER,
+                     usTimerEnable | portTIMER_INTERRUPT_ENABLE | usRetrigger );
     portOUTPUT_WORD( usMaxCountRegister, ( uint16_t ) ulTimerCount );
     portOUTPUT_WORD( usTimerPriorityRegister, usTimerHighPriority );
 
@@ -239,6 +242,5 @@ uint32_t ulTimerCount = ulClockFrequency / ulTickRateHz;
     usTimer0Control &= ~portTIMER_INTERRUPT_ENABLE;
     portOUTPUT_WORD( portTIMER_0_CONTROL_REGISTER, usTimer0Control );
 }
-
 
 /*lint +e950 */

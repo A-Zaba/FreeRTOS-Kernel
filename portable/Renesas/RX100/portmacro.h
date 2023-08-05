@@ -4,35 +4,35 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
  *
  */
 
-
 #ifndef PORTMACRO_H
 #define PORTMACRO_H
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    extern "C" {
+extern "C" {
 #endif
 /* *INDENT-ON* */
 
@@ -51,24 +51,24 @@
 
 /* Type definitions - these are a bit legacy and not really used now, other
 than portSTACK_TYPE and portBASE_TYPE. */
-#define portCHAR        char
-#define portFLOAT       float
-#define portDOUBLE      double
-#define portLONG        long
-#define portSHORT       short
-#define portSTACK_TYPE  uint32_t
-#define portBASE_TYPE   long
+#define portCHAR       char
+#define portFLOAT      float
+#define portDOUBLE     double
+#define portLONG       long
+#define portSHORT      short
+#define portSTACK_TYPE uint32_t
+#define portBASE_TYPE  long
 
 typedef portSTACK_TYPE StackType_t;
 typedef long BaseType_t;
 typedef unsigned long UBaseType_t;
 
 #if( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_16_BITS )
-    typedef uint16_t TickType_t;
+typedef uint16_t TickType_t;
     #define portMAX_DELAY ( TickType_t ) 0xffff
-#elif ( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS )
-    typedef uint32_t TickType_t;
-    #define portMAX_DELAY ( TickType_t ) 0xffffffffUL
+#elif( configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS )
+typedef uint32_t TickType_t;
+    #define portMAX_DELAY           ( TickType_t ) 0xffffffffUL
 
     /* 32-bit tick type on a 32-bit architecture, so reads of the tick count do
     not need to be guarded with a critical section. */
@@ -79,10 +79,10 @@ typedef unsigned long UBaseType_t;
 /*-----------------------------------------------------------*/
 
 /* Hardware specifics. */
-#define portBYTE_ALIGNMENT              8   /* Could make four, according to manual. */
-#define portSTACK_GROWTH                -1
-#define portTICK_PERIOD_MS              ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
-#define portNOP()                       nop()
+#define portBYTE_ALIGNMENT 8 /* Could make four, according to manual. */
+#define portSTACK_GROWTH   -1
+#define portTICK_PERIOD_MS ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
+#define portNOP()          nop()
 
 #pragma inline_asm vPortYield
 static void vPortYield( void )
@@ -91,16 +91,25 @@ static void vPortYield( void )
     functions are considered to use the same rules as function calls by the
     compiler. */
     PUSH.L R5
-    /* Set ITU SWINTR. */
-    MOV.L #872E0H, R5
-    MOV.B #1, [R5]
-    /* Read back to ensure the value is taken before proceeding. */
-    MOV.L [R5], R5
-    /* Restore clobbered register to its previous value. */
-    POP R5
+        /* Set ITU SWINTR. */
+        MOV.L#872E0H,
+        R5 MOV.B #1,
+        [R5]
+        /* Read back to ensure the value is taken before proceeding. */
+        MOV.L[ R5 ],
+        R5
+            /* Restore clobbered register to its previous value. */
+            POP R5
 }
 #define portYIELD() vPortYield()
-#define portYIELD_FROM_ISR( x ) do { if( x != pdFALSE ) { portYIELD(); } } while( 0 )
+#define portYIELD_FROM_ISR( x ) \
+    do                          \
+    {                           \
+        if( x != pdFALSE )      \
+        {                       \
+            portYIELD();        \
+        }                       \
+    } while( 0 )
 
 /* These macros should not be called directly, but through the
 taskENTER_CRITICAL() and taskEXIT_CRITICAL() macros.  An extra check is
@@ -111,12 +120,16 @@ when an ISR safe FreeRTOS API function was executed.  ISR safe FreeRTOS API
 functions are those that end in FromISR.  FreeRTOS maintains a separate
 interrupt API to ensure API function and interrupt entry is as fast and as
 simple as possible. */
-#define portENABLE_INTERRUPTS()     set_ipl( ( long ) 0 )
+#define portENABLE_INTERRUPTS() set_ipl( ( long ) 0 )
 #ifdef configASSERT
-    #define portASSERT_IF_INTERRUPT_PRIORITY_INVALID() configASSERT( ( get_ipl() <= configMAX_SYSCALL_INTERRUPT_PRIORITY ) )
-    #define portDISABLE_INTERRUPTS()    if( get_ipl() < configMAX_SYSCALL_INTERRUPT_PRIORITY ) set_ipl( ( long ) configMAX_SYSCALL_INTERRUPT_PRIORITY )
+    #define portASSERT_IF_INTERRUPT_PRIORITY_INVALID() \
+        configASSERT( ( get_ipl() <= configMAX_SYSCALL_INTERRUPT_PRIORITY ) )
+    #define portDISABLE_INTERRUPTS()                           \
+        if( get_ipl() < configMAX_SYSCALL_INTERRUPT_PRIORITY ) \
+        set_ipl( ( long ) configMAX_SYSCALL_INTERRUPT_PRIORITY )
 #else
-    #define portDISABLE_INTERRUPTS()    set_ipl( ( long ) configMAX_SYSCALL_INTERRUPT_PRIORITY )
+    #define portDISABLE_INTERRUPTS() \
+        set_ipl( ( long ) configMAX_SYSCALL_INTERRUPT_PRIORITY )
 #endif
 
 /* Critical nesting counts are stored in the TCB. */
@@ -125,32 +138,38 @@ simple as possible. */
 /* The critical nesting functions defined within tasks.c. */
 extern void vTaskEnterCritical( void );
 extern void vTaskExitCritical( void );
-#define portENTER_CRITICAL()    vTaskEnterCritical()
-#define portEXIT_CRITICAL()     vTaskExitCritical()
+#define portENTER_CRITICAL() vTaskEnterCritical()
+#define portEXIT_CRITICAL()  vTaskExitCritical()
 
 /* As this port allows interrupt nesting... */
-#define portSET_INTERRUPT_MASK_FROM_ISR() ( UBaseType_t ) get_ipl(); set_ipl( ( signed long ) configMAX_SYSCALL_INTERRUPT_PRIORITY )
-#define portCLEAR_INTERRUPT_MASK_FROM_ISR( uxSavedInterruptStatus ) set_ipl( ( signed long ) uxSavedInterruptStatus )
+#define portSET_INTERRUPT_MASK_FROM_ISR() \
+    ( UBaseType_t ) get_ipl();            \
+    set_ipl( ( signed long ) configMAX_SYSCALL_INTERRUPT_PRIORITY )
+#define portCLEAR_INTERRUPT_MASK_FROM_ISR( uxSavedInterruptStatus ) \
+    set_ipl( ( signed long ) uxSavedInterruptStatus )
 
 /*-----------------------------------------------------------*/
 
 /* Tickless idle/low power functionality. */
 #if configUSE_TICKLESS_IDLE == 1
     #ifndef portSUPPRESS_TICKS_AND_SLEEP
-        extern void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime );
-        #define portSUPPRESS_TICKS_AND_SLEEP( xExpectedIdleTime ) vPortSuppressTicksAndSleep( xExpectedIdleTime )
+extern void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime );
+        #define portSUPPRESS_TICKS_AND_SLEEP( xExpectedIdleTime ) \
+            vPortSuppressTicksAndSleep( xExpectedIdleTime )
     #endif
 #endif
 
 /*-----------------------------------------------------------*/
 
 /* Task function macros as described on the FreeRTOS.org WEB site. */
-#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
-#define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
+#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) \
+    void vFunction( void * pvParameters )
+#define portTASK_FUNCTION( vFunction, pvParameters ) \
+    void vFunction( void * pvParameters )
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-    }
+}
 #endif
 /* *INDENT-ON* */
 

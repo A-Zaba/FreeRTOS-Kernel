@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -67,24 +68,24 @@ Changes from V3.2.0
  *----------------------------------------------------------*/
 
 /* Hardware setup for tick. */
-#define portTIMER_FOSC_SCALE            ( ( uint32_t ) 4 )
+#define portTIMER_FOSC_SCALE             ( ( uint32_t ) 4 )
 
 /* Initial interrupt enable state for newly created tasks.  This value is
 copied into INTCON when a task switches in for the first time. */
-#define portINITAL_INTERRUPT_STATE          0xc0
+#define portINITAL_INTERRUPT_STATE       0xc0
 
 /* Just the bit within INTCON for the global interrupt flag. */
-#define portGLOBAL_INTERRUPT_FLAG           0x80
+#define portGLOBAL_INTERRUPT_FLAG        0x80
 
 /* Constant used for context switch macro when we require the interrupt
 enable state to be unchanged when the interrupted task is switched back in. */
-#define portINTERRUPTS_UNCHANGED            0x00
+#define portINTERRUPTS_UNCHANGED         0x00
 
 /* Some memory areas get saved as part of the task context.  These memory
 area's get used by the compiler for temporary storage, especially when
 performing mathematical operations, or when using 32bit data types.  This
 constant defines the size of memory area which must be saved. */
-#define portCOMPILER_MANAGED_MEMORY_SIZE    ( ( uint8_t ) 0x13 )
+#define portCOMPILER_MANAGED_MEMORY_SIZE ( ( uint8_t ) 0x13 )
 
 /* We require the address of the pxCurrentTCB variable, but don't want to know
 any details of its type. */
@@ -92,8 +93,8 @@ typedef void TCB_t;
 extern volatile TCB_t * volatile pxCurrentTCB;
 
 /* IO port constants. */
-#define portBIT_SET     ( ( uint8_t ) 1 )
-#define portBIT_CLEAR   ( ( uint8_t ) 0 )
+#define portBIT_SET   ( ( uint8_t ) 1 )
+#define portBIT_CLEAR ( ( uint8_t ) 0 )
 
 /*
  * The serial port ISR's are defined in serial.c, but are called from portable
@@ -144,209 +145,154 @@ static void prvLowInterrupt( void );
  * this is sufficient for your needs.  It is not clear whether this size is
  * fixed for all compilations or has the potential to be program specific.
  */
-#define portSAVE_CONTEXT( ucForcedInterruptFlags )                              \
-{                                                                               \
-    _asm                                                                        \
-        /* Save the status and WREG registers first, as these will get modified \
-        by the operations below. */                                             \
-        MOVFF   WREG, PREINC1                                                   \
-        MOVFF   STATUS, PREINC1                                                 \
-        /* Save the INTCON register with the appropriate bits forced if         \
-        necessary - as described above. */                                      \
-        MOVFF   INTCON, WREG                                                    \
-        IORLW   ucForcedInterruptFlags                                          \
-        MOVFF   WREG, PREINC1                                                   \
-    _endasm                                                                     \
-                                                                                \
-    portDISABLE_INTERRUPTS();                                                   \
-                                                                                \
-    _asm                                                                        \
-        /* Store the necessary registers to the stack. */                       \
-        MOVFF   BSR, PREINC1                                                    \
-        MOVFF   FSR2L, PREINC1                                                  \
-        MOVFF   FSR2H, PREINC1                                                  \
-        MOVFF   FSR0L, PREINC1                                                  \
-        MOVFF   FSR0H, PREINC1                                                  \
-        MOVFF   TABLAT, PREINC1                                                 \
-        MOVFF   TBLPTRU, PREINC1                                                \
-        MOVFF   TBLPTRH, PREINC1                                                \
-        MOVFF   TBLPTRL, PREINC1                                                \
-        MOVFF   PRODH, PREINC1                                                  \
-        MOVFF   PRODL, PREINC1                                                  \
-        MOVFF   PCLATU, PREINC1                                                 \
-        MOVFF   PCLATH, PREINC1                                                 \
-        /* Store the .tempdata and MATH_DATA areas as described above. */       \
-        CLRF    FSR0L, 0                                                        \
-        CLRF    FSR0H, 0                                                        \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   POSTINC0, PREINC1                                               \
-        MOVFF   INDF0, PREINC1                                                  \
-        MOVFF   FSR0L, PREINC1                                                  \
-        MOVFF   FSR0H, PREINC1                                                  \
-        /* Store the hardware stack pointer in a temp register before we        \
-        modify it. */                                                           \
-        MOVFF   STKPTR, FSR0L                                                   \
-    _endasm                                                                     \
-                                                                                \
-        /* Store each address from the hardware stack. */                       \
-        while( STKPTR > ( uint8_t ) 0 )                             \
-        {                                                                       \
-            _asm                                                                \
-                MOVFF   TOSL, PREINC1                                           \
-                MOVFF   TOSH, PREINC1                                           \
-                MOVFF   TOSU, PREINC1                                           \
-                POP                                                             \
-            _endasm                                                             \
-        }                                                                       \
-                                                                                \
-    _asm                                                                        \
-        /* Store the number of addresses on the hardware stack (from the        \
-        temporary register). */                                                 \
-        MOVFF   FSR0L, PREINC1                                                  \
-        MOVF    PREINC1, 1, 0                                                   \
-    _endasm                                                                     \
-                                                                                \
-    /* Save the new top of the software stack in the TCB. */                    \
-    _asm                                                                        \
-        MOVFF   pxCurrentTCB, FSR0L                                             \
-        MOVFF   pxCurrentTCB + 1, FSR0H                                         \
-        MOVFF   FSR1L, POSTINC0                                                 \
-        MOVFF   FSR1H, POSTINC0                                                 \
-    _endasm                                                                     \
-}
+#define portSAVE_CONTEXT( ucForcedInterruptFlags )                             \
+    {                                                                          \
+        _asm /* Save the status and WREG registers first, as these will get    \
+             modified by the operations below. */                                                   \
+            MOVFF WREG,                                                        \
+            PREINC1 MOVFF STATUS,                                              \
+            PREINC1 /* Save the INTCON register with the appropriate bits      \
+                    forced if necessary - as described above. */                                            \
+                        MOVFF INTCON,                                          \
+            WREG IORLW ucForcedInterruptFlags MOVFF WREG,                      \
+            PREINC1 _endasm                                                    \
+                                                                               \
+            portDISABLE_INTERRUPTS();                                          \
+                                                                               \
+        _asm /* Store the necessary registers to the stack. */                 \
+            MOVFF BSR,                                                         \
+            PREINC1 MOVFF FSR2L, PREINC1 MOVFF FSR2H, PREINC1 MOVFF FSR0L,     \
+            PREINC1 MOVFF FSR0H, PREINC1 MOVFF TABLAT, PREINC1 MOVFF TBLPTRU,  \
+            PREINC1 MOVFF TBLPTRH, PREINC1 MOVFF TBLPTRL, PREINC1 MOVFF PRODH, \
+            PREINC1 MOVFF PRODL, PREINC1 MOVFF PCLATU, PREINC1 MOVFF PCLATH,   \
+            PREINC1 /* Store the .tempdata and MATH_DATA areas as described    \
+                       above. */                                               \
+                        CLRF FSR0L,                                            \
+            0 CLRF FSR0H, 0 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,            \
+            PREINC1 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,                    \
+            PREINC1 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,                    \
+            PREINC1 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,                    \
+            PREINC1 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,                    \
+            PREINC1 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,                    \
+            PREINC1 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,                    \
+            PREINC1 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,                    \
+            PREINC1 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,                    \
+            PREINC1 MOVFF POSTINC0, PREINC1 MOVFF INDF0, PREINC1 MOVFF FSR0L,  \
+            PREINC1 MOVFF FSR0H,                                               \
+            PREINC1 /* Store the hardware stack pointer in a temp register     \
+                    before we modify it. */                                                                 \
+                        MOVFF STKPTR,                                          \
+            FSR0L _endasm                                                      \
+                                                                               \
+            /* Store each address from the hardware stack. */                  \
+            while( STKPTR > ( uint8_t ) 0 )                                    \
+        {                                                                      \
+            _asm MOVFF TOSL, PREINC1 MOVFF TOSH, PREINC1 MOVFF TOSU,           \
+                PREINC1 POP _endasm                                            \
+        }                                                                      \
+                                                                               \
+        _asm /* Store the number of addresses on the hardware stack (from the  \
+             temporary register). */                                           \
+            MOVFF FSR0L,                                                       \
+            PREINC1 MOVF PREINC1, 1,                                           \
+            0 _endasm                                                          \
+                                                                               \
+            /* Save the new top of the software stack in the TCB. */           \
+            _asm MOVFF pxCurrentTCB,                                           \
+            FSR0L MOVFF pxCurrentTCB + 1, FSR0H MOVFF FSR1L,                   \
+            POSTINC0 MOVFF FSR1H, POSTINC0 _endasm                             \
+    }
 /*-----------------------------------------------------------*/
 
 /*
  * This is the reverse of portSAVE_CONTEXT.  See portSAVE_CONTEXT for more
  * details.
  */
-#define portRESTORE_CONTEXT()                                                   \
-{                                                                               \
-    _asm                                                                        \
-        /* Set FSR0 to point to pxCurrentTCB->pxTopOfStack. */                  \
-        MOVFF   pxCurrentTCB, FSR0L                                             \
-        MOVFF   pxCurrentTCB + 1, FSR0H                                         \
-                                                                                \
-        /* De-reference FSR0 to set the address it holds into FSR1.             \
-        (i.e. *( pxCurrentTCB->pxTopOfStack ) ). */                             \
-        MOVFF   POSTINC0, FSR1L                                                 \
-        MOVFF   POSTINC0, FSR1H                                                 \
-                                                                                \
-        /* How many return addresses are there on the hardware stack?  Discard  \
-        the first byte as we are pointing to the next free space. */            \
-        MOVFF   POSTDEC1, FSR0L                                                 \
-        MOVFF   POSTDEC1, FSR0L                                                 \
-    _endasm                                                                     \
-                                                                                \
-    /* Fill the hardware stack from our software stack. */                      \
-    STKPTR = 0;                                                                 \
-                                                                                \
-    while( STKPTR < FSR0L )                                                     \
-    {                                                                           \
-        _asm                                                                    \
-            PUSH                                                                \
-            MOVF    POSTDEC1, 0, 0                                              \
-            MOVWF   TOSU, 0                                                     \
-            MOVF    POSTDEC1, 0, 0                                              \
-            MOVWF   TOSH, 0                                                     \
-            MOVF    POSTDEC1, 0, 0                                              \
-            MOVWF   TOSL, 0                                                     \
-        _endasm                                                                 \
-    }                                                                           \
-                                                                                \
-    _asm                                                                        \
-        /* Restore the .tmpdata and MATH_DATA memory. */                        \
-        MOVFF   POSTDEC1, FSR0H                                                 \
-        MOVFF   POSTDEC1, FSR0L                                                 \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, POSTDEC0                                              \
-        MOVFF   POSTDEC1, INDF0                                                 \
-        /* Restore the other registers forming the tasks context. */            \
-        MOVFF   POSTDEC1, PCLATH                                                \
-        MOVFF   POSTDEC1, PCLATU                                                \
-        MOVFF   POSTDEC1, PRODL                                                 \
-        MOVFF   POSTDEC1, PRODH                                                 \
-        MOVFF   POSTDEC1, TBLPTRL                                               \
-        MOVFF   POSTDEC1, TBLPTRH                                               \
-        MOVFF   POSTDEC1, TBLPTRU                                               \
-        MOVFF   POSTDEC1, TABLAT                                                \
-        MOVFF   POSTDEC1, FSR0H                                                 \
-        MOVFF   POSTDEC1, FSR0L                                                 \
-        MOVFF   POSTDEC1, FSR2H                                                 \
-        MOVFF   POSTDEC1, FSR2L                                                 \
-        MOVFF   POSTDEC1, BSR                                                   \
-        /* The next byte is the INTCON register.  Read this into WREG as some   \
-        manipulation is required. */                                            \
-        MOVFF   POSTDEC1, WREG                                                  \
-    _endasm                                                                     \
-                                                                                \
-    /* From the INTCON register, only the interrupt enable bits form part       \
-    of the tasks context.  It is perfectly legitimate for another task to       \
-    have modified any other bits.  We therefore only restore the top two bits.  \
-    */                                                                          \
-    if( WREG & portGLOBAL_INTERRUPT_FLAG )                                      \
-    {                                                                           \
-        _asm                                                                    \
-            MOVFF   POSTDEC1, STATUS                                            \
-            MOVFF   POSTDEC1, WREG                                              \
-            /* Return enabling interrupts. */                                   \
-            RETFIE  0                                                           \
-        _endasm                                                                 \
-    }                                                                           \
-    else                                                                        \
-    {                                                                           \
-        _asm                                                                    \
-            MOVFF   POSTDEC1, STATUS                                            \
-            MOVFF   POSTDEC1, WREG                                              \
-            /* Return without effecting interrupts.  The context may have       \
-            been saved from a critical region. */                               \
-            RETURN  0                                                           \
-        _endasm                                                                 \
-    }                                                                           \
-}
+#define portRESTORE_CONTEXT()                                                  \
+    {                                                                          \
+        _asm /* Set FSR0 to point to pxCurrentTCB->pxTopOfStack. */            \
+            MOVFF pxCurrentTCB,                                                \
+            FSR0L MOVFF pxCurrentTCB + 1,                                      \
+            FSR0H                                                              \
+                                                                               \
+                /* De-reference FSR0 to set the address it holds into FSR1.    \
+                (i.e. *( pxCurrentTCB->pxTopOfStack ) ). */                    \
+                MOVFF POSTINC0,                                                \
+            FSR1L MOVFF POSTINC0,                                              \
+            FSR1H                                                              \
+                                                                               \
+                /* How many return addresses are there on the hardware stack?  \
+                Discard the first byte as we are pointing to the next free                            \
+                space. */                                                      \
+                    MOVFF POSTDEC1,                                            \
+            FSR0L MOVFF POSTDEC1,                                              \
+            FSR0L _endasm                                                      \
+                                                                               \
+                /* Fill the hardware stack from our software stack. */         \
+                STKPTR = 0;                                                    \
+                                                                               \
+        while( STKPTR < FSR0L )                                                \
+        {                                                                      \
+            _asm PUSH MOVF POSTDEC1, 0, 0 MOVWF TOSU, 0 MOVF POSTDEC1, 0,      \
+                0 MOVWF TOSH, 0 MOVF POSTDEC1, 0, 0 MOVWF TOSL, 0 _endasm      \
+        }                                                                      \
+                                                                               \
+        _asm /* Restore the .tmpdata and MATH_DATA memory. */                  \
+            MOVFF POSTDEC1,                                                    \
+            FSR0H MOVFF POSTDEC1, FSR0L MOVFF POSTDEC1,                        \
+            POSTDEC0 MOVFF POSTDEC1, POSTDEC0 MOVFF POSTDEC1,                  \
+            POSTDEC0 MOVFF POSTDEC1, POSTDEC0 MOVFF POSTDEC1,                  \
+            POSTDEC0 MOVFF POSTDEC1, POSTDEC0 MOVFF POSTDEC1,                  \
+            POSTDEC0 MOVFF POSTDEC1, POSTDEC0 MOVFF POSTDEC1,                  \
+            POSTDEC0 MOVFF POSTDEC1, POSTDEC0 MOVFF POSTDEC1,                  \
+            POSTDEC0 MOVFF POSTDEC1, POSTDEC0 MOVFF POSTDEC1,                  \
+            POSTDEC0 MOVFF POSTDEC1, POSTDEC0 MOVFF POSTDEC1,                  \
+            POSTDEC0 MOVFF POSTDEC1, POSTDEC0 MOVFF POSTDEC1,                  \
+            POSTDEC0 MOVFF POSTDEC1, POSTDEC0 MOVFF POSTDEC1,                  \
+            POSTDEC0 MOVFF POSTDEC1,                                           \
+            INDF0 /* Restore the other registers forming the tasks context. */ \
+                MOVFF POSTDEC1,                                                \
+            PCLATH MOVFF POSTDEC1, PCLATU MOVFF POSTDEC1,                      \
+            PRODL MOVFF POSTDEC1, PRODH MOVFF POSTDEC1,                        \
+            TBLPTRL MOVFF POSTDEC1, TBLPTRH MOVFF POSTDEC1,                    \
+            TBLPTRU MOVFF POSTDEC1, TABLAT MOVFF POSTDEC1,                     \
+            FSR0H MOVFF POSTDEC1, FSR0L MOVFF POSTDEC1, FSR2H MOVFF POSTDEC1,  \
+            FSR2L MOVFF POSTDEC1,                                              \
+            BSR /* The next byte is the INTCON register.  Read this into WREG  \
+                as some manipulation is required. */                                                  \
+                    MOVFF POSTDEC1,                                            \
+            WREG _endasm                                                       \
+                                                                               \
+            /* From the INTCON register, only the interrupt enable bits form   \
+            part of the tasks context.  It is perfectly legitimate for another                 \
+            task to have modified any other bits.  We therefore only restore                      \
+            the top two bits.                                                  \
+            */                                                                 \
+            if( WREG & portGLOBAL_INTERRUPT_FLAG )                             \
+        {                                                                      \
+            _asm MOVFF POSTDEC1, STATUS MOVFF POSTDEC1,                        \
+                WREG /* Return enabling interrupts. */                         \
+                    RETFIE 0 _endasm                                           \
+        }                                                                      \
+        else                                                                   \
+        {                                                                      \
+            _asm MOVFF POSTDEC1, STATUS MOVFF POSTDEC1,                        \
+                WREG /* Return without effecting interrupts.  The context may  \
+                     have been saved from a critical region. */                                         \
+                         RETURN 0 _endasm                                      \
+        }                                                                      \
+    }
 /*-----------------------------------------------------------*/
 
 /*
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-uint32_t ulAddress;
-uint8_t ucBlock;
+    uint32_t ulAddress;
+    uint8_t ucBlock;
 
     /* Place a few bytes of known values on the bottom of the stack.
     This is just useful for debugging. */
@@ -357,7 +303,6 @@ uint8_t ucBlock;
     pxTopOfStack++;
     *pxTopOfStack = 0x33;
     pxTopOfStack++;
-
 
     /* Simulate how the stack would look after a call to vPortYield() generated
     by the compiler.
@@ -517,23 +462,19 @@ void vPortYield( void )
 /*
  * Vector for ISR.  Nothing here must alter any registers!
  */
-#pragma code high_vector=0x08
+#pragma code high_vector = 0x08
 static void prvLowInterrupt( void )
 {
     /* Was the interrupt the tick? */
     if( PIR1bits.CCP1IF )
     {
-        _asm
-            goto prvTickISR
-        _endasm
+        _asm goto prvTickISR _endasm
     }
 
     /* Was the interrupt a byte being received? */
     if( PIR1bits.RCIF )
     {
-        _asm
-            goto vSerialRxISR
-        _endasm
+        _asm goto vSerialRxISR _endasm
     }
 
     /* Was the interrupt the Tx register becoming empty? */
@@ -541,9 +482,7 @@ static void prvLowInterrupt( void )
     {
         if( PIE1bits.TXIE )
         {
-            _asm
-                goto vSerialTxISR
-            _endasm
+            _asm goto vSerialTxISR _endasm
         }
     }
 }
@@ -580,9 +519,11 @@ static void prvTickISR( void )
  */
 static void prvSetupTimerInterrupt( void )
 {
-const uint32_t ulConstCompareValue = ( ( configCPU_CLOCK_HZ / portTIMER_FOSC_SCALE ) / configTICK_RATE_HZ );
-uint32_t ulCompareValue;
-uint8_t ucByte;
+    const uint32_t ulConstCompareValue = ( ( configCPU_CLOCK_HZ /
+                                             portTIMER_FOSC_SCALE ) /
+                                           configTICK_RATE_HZ );
+    uint32_t ulCompareValue;
+    uint8_t ucByte;
 
     /* Interrupts are disabled when this function is called.
 

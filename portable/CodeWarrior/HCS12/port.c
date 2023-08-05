@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -30,11 +31,9 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-
 /*-----------------------------------------------------------
  * Implementation of functions defined in portable.h for the HCS12 port.
  *----------------------------------------------------------*/
-
 
 /*
  * Configure a timer to generate the RTOS tick at the frequency specified
@@ -46,17 +45,17 @@ static void prvSetupTimerInterrupt( void );
 scheduler startup function. */
 #pragma CODE_SEG __NEAR_SEG NON_BANKED
 
-    /* Manual context switch function.  This is the SWI ISR. */
-    void interrupt vPortYield( void );
+/* Manual context switch function.  This is the SWI ISR. */
+void interrupt vPortYield( void );
 
-    /* Tick context switch function.  This is the timer ISR. */
-    void interrupt vPortTickInterrupt( void );
+/* Tick context switch function.  This is the timer ISR. */
+void interrupt vPortTickInterrupt( void );
 
-    /* Simply called by xPortStartScheduler().  xPortStartScheduler() does not
-    start the scheduler directly because the header file containing the
-    xPortStartScheduler() prototype is part of the common kernel code, and
-    therefore cannot use the CODE_SEG pragma. */
-    static BaseType_t xBankedStartScheduler( void );
+/* Simply called by xPortStartScheduler().  xPortStartScheduler() does not
+start the scheduler directly because the header file containing the
+xPortStartScheduler() prototype is part of the common kernel code, and
+therefore cannot use the CODE_SEG pragma. */
+static BaseType_t xBankedStartScheduler( void );
 
 #pragma CODE_SEG DEFAULT
 
@@ -73,7 +72,9 @@ volatile UBaseType_t uxCriticalNesting = 0xff;
 /*
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
     /*
         Place a few bytes of known values on the bottom of the stack.
@@ -87,17 +88,15 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
         pxTopOfStack--;
     */
 
-
-
     /* Setup the initial stack of the task.  The stack is set exactly as
     expected by the portRESTORE_CONTEXT() macro.  In this case the stack as
     expected by the HCS12 RTI instruction. */
 
-
-    /* The address of the task function is placed in the stack byte at a time. */
-    *pxTopOfStack = ( StackType_t ) *( ((StackType_t *) (&pxCode) ) + 1 );
+    /* The address of the task function is placed in the stack byte at a time.
+     */
+    *pxTopOfStack = ( StackType_t ) * ( ( ( StackType_t * ) ( &pxCode ) ) + 1 );
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) *( ((StackType_t *) (&pxCode) ) + 0 );
+    *pxTopOfStack = ( StackType_t ) * ( ( ( StackType_t * ) ( &pxCode ) ) + 0 );
     pxTopOfStack--;
 
     /* Next are all the registers that form part of the task context. */
@@ -115,11 +114,13 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
     pxTopOfStack--;
 
     /* A register contains parameter high byte. */
-    *pxTopOfStack = ( StackType_t ) *( ((StackType_t *) (&pvParameters) ) + 0 );
+    *pxTopOfStack = ( StackType_t ) *
+                    ( ( ( StackType_t * ) ( &pvParameters ) ) + 0 );
     pxTopOfStack--;
 
     /* B register contains parameter low byte. */
-    *pxTopOfStack = ( StackType_t ) *( ((StackType_t *) (&pvParameters) ) + 1 );
+    *pxTopOfStack = ( StackType_t ) *
+                    ( ( ( StackType_t * ) ( &pvParameters ) ) + 1 );
     pxTopOfStack--;
 
     /* CCR: Note that when the task starts interrupts will be enabled since
@@ -127,11 +128,11 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
     *pxTopOfStack = ( StackType_t ) 0x00;
     pxTopOfStack--;
 
-    #ifdef BANKED_MODEL
-        /* The page of the task. */
-        *pxTopOfStack = ( StackType_t ) ( ( int ) pxCode );
-        pxTopOfStack--;
-    #endif
+#ifdef BANKED_MODEL
+    /* The page of the task. */
+    *pxTopOfStack = ( StackType_t ) ( ( int ) pxCode );
+    pxTopOfStack--;
+#endif
 
     /* Finally the critical nesting depth is initialised with 0 (not within
     a critical section). */
@@ -208,7 +209,7 @@ void interrupt vPortYield( void )
  */
 void interrupt vPortTickInterrupt( void )
 {
-    #if configUSE_PREEMPTION == 1
+#if configUSE_PREEMPTION == 1
     {
         /* A context switch might happen so save the context. */
         portSAVE_CONTEXT();
@@ -225,12 +226,12 @@ void interrupt vPortTickInterrupt( void )
         to that interrupted. */
         portRESTORE_CONTEXT();
     }
-    #else
+#else
     {
         xTaskIncrementTick();
         TFLG1 = 1;
     }
-    #endif
+#endif
 }
 
 #pragma CODE_SEG DEFAULT

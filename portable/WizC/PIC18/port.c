@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -28,15 +29,16 @@
 
 /*
 Changes from V3.2.1
-    + CallReturn Depth increased from 8 to 10 levels to accomodate wizC/fedC V12.
+    + CallReturn Depth increased from 8 to 10 levels to accomodate wizC/fedC
+V12.
 
 Changes from V3.2.0
-    + TBLPTRU is now initialised to zero during the initial stack creation of a new task. This solves
-    an error on devices with more than 64kB ROM.
+    + TBLPTRU is now initialised to zero during the initial stack creation of a
+new task. This solves an error on devices with more than 64kB ROM.
 
 Changes from V3.0.0
-    + ucCriticalNesting is now initialised to 0x7F to prevent interrupts from being
-          handled before the scheduler is started.
+    + ucCriticalNesting is now initialised to 0x7F to prevent interrupts from
+being handled before the scheduler is started.
 
 Changes from V3.0.1
 */
@@ -79,16 +81,16 @@ extern volatile TCB_t * volatile pxCurrentTCB;
  */
 #if _ROMSIZE > 0x8000
     #define portSTACK_FSR_BYTES             ( 15 )
-    #define portSTACK_CALLRETURN_ENTRY_SIZE (  3 )
+    #define portSTACK_CALLRETURN_ENTRY_SIZE ( 3 )
 #else
     #define portSTACK_FSR_BYTES             ( 13 )
-    #define portSTACK_CALLRETURN_ENTRY_SIZE (  2 )
+    #define portSTACK_CALLRETURN_ENTRY_SIZE ( 2 )
 #endif
 
-#define portSTACK_MINIMAL_CALLRETURN_DEPTH  ( 10 )
-#define portSTACK_OTHER_BYTES               ( 20 )
+#define portSTACK_MINIMAL_CALLRETURN_DEPTH ( 10 )
+#define portSTACK_OTHER_BYTES              ( 20 )
 
-uint16_t usCalcMinStackSize     = 0;
+uint16_t usCalcMinStackSize = 0;
 
 /*-----------------------------------------------------------*/
 
@@ -106,26 +108,27 @@ register uint8_t ucCriticalNesting = 0x7F;
  * Initialise the stack of a new task.
  * See portSAVE_CONTEXT macro for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-uint8_t ucScratch;
+    uint8_t ucScratch;
     /*
      * Get the size of the RAMarea in page 0 used by the compiler
      * We do this here already to avoid W-register conflicts.
      */
-    _Pragma("asm")
-        movlw   OVERHEADPAGE0-LOCOPTSIZE+MAXLOCOPTSIZE
-        movwf   PRODL,ACCESS        ; PRODL is used as temp register
-    _Pragma("asmend")
-    ucScratch = PRODL;
+    _Pragma( "asm" ) movlw OVERHEADPAGE0 - LOCOPTSIZE +
+        MAXLOCOPTSIZE movwf PRODL,
+        ACCESS;
+    PRODL is used as temp register _Pragma( "asmend" ) ucScratch = PRODL;
 
     /*
      * Place a few bytes of known values on the bottom of the stack.
      * This is just useful for debugging.
      */
-//  *pxTopOfStack-- = 0x11;
-//  *pxTopOfStack-- = 0x22;
-//  *pxTopOfStack-- = 0x33;
+    //  *pxTopOfStack-- = 0x11;
+    //  *pxTopOfStack-- = 0x22;
+    //  *pxTopOfStack-- = 0x33;
 
     /*
      * Simulate how the stack would look after a call to vPortYield()
@@ -136,8 +139,9 @@ uint8_t ucScratch;
      * First store the function parameters.  This is where the task expects
      * to find them when it starts running.
      */
-    *pxTopOfStack-- = ( StackType_t ) ( (( uint16_t ) pvParameters >> 8) & 0x00ff );
-    *pxTopOfStack-- = ( StackType_t ) (  ( uint16_t ) pvParameters       & 0x00ff );
+    *pxTopOfStack-- = ( StackType_t ) ( ( ( uint16_t ) pvParameters >> 8 ) &
+                                        0x00ff );
+    *pxTopOfStack-- = ( StackType_t ) ( ( uint16_t ) pvParameters & 0x00ff );
 
     /*
      * Next are all the registers that form part of the task context.
@@ -165,7 +169,7 @@ uint8_t ucScratch;
     /*
      * Next the compiler's scratchspace.
      */
-    while(ucScratch-- > 0)
+    while( ucScratch-- > 0 )
     {
         *pxTopOfStack-- = ( StackType_t ) 0;
     }
@@ -173,14 +177,14 @@ uint8_t ucScratch;
     /*
      * The only function return address so far is the address of the task entry.
      * The order is TOSU/TOSH/TOSL. For devices > 64kB, TOSU is put on the
-     * stack, too. TOSU is always written as zero here because wizC does not allow
-     * functionpointers to point above 64kB in ROM.
+     * stack, too. TOSU is always written as zero here because wizC does not
+     * allow functionpointers to point above 64kB in ROM.
      */
 #if _ROMSIZE > 0x8000
     *pxTopOfStack-- = ( StackType_t ) 0;
 #endif
     *pxTopOfStack-- = ( StackType_t ) ( ( ( uint16_t ) pxCode >> 8 ) & 0x00ff );
-    *pxTopOfStack-- = ( StackType_t ) ( (   uint16_t ) pxCode        & 0x00ff );
+    *pxTopOfStack-- = ( StackType_t ) ( ( uint16_t ) pxCode & 0x00ff );
 
     /*
      * Store the number of return addresses on the hardware stack.
@@ -206,20 +210,20 @@ uint16_t usPortCALCULATE_MINIMAL_STACK_SIZE( void )
     /*
      * Fetch the size of compiler's scratchspace.
      */
-    _Pragma("asm")
-        movlw   OVERHEADPAGE0-LOCOPTSIZE+MAXLOCOPTSIZE
-        movlb   usCalcMinStackSize>>8
-        movwf   usCalcMinStackSize,BANKED
-    _Pragma("asmend")
+    _Pragma( "asm" ) movlw OVERHEADPAGE0 - LOCOPTSIZE +
+            MAXLOCOPTSIZE movlb usCalcMinStackSize >>
+        8 movwf usCalcMinStackSize,
+        BANKED _Pragma( "asmend" )
 
-    /*
-     * Add minimum needed stackspace
-     */
-    usCalcMinStackSize  +=  ( portSTACK_FSR_BYTES )
-        +   ( portSTACK_MINIMAL_CALLRETURN_DEPTH * portSTACK_CALLRETURN_ENTRY_SIZE )
-        +   ( portSTACK_OTHER_BYTES );
+        /*
+         * Add minimum needed stackspace
+         */
+        usCalcMinStackSize += ( portSTACK_FSR_BYTES ) +
+                              ( portSTACK_MINIMAL_CALLRETURN_DEPTH *
+                                portSTACK_CALLRETURN_ENTRY_SIZE ) +
+                              ( portSTACK_OTHER_BYTES );
 
-    return(usCalcMinStackSize);
+    return ( usCalcMinStackSize );
 }
 
 /*-----------------------------------------------------------*/
@@ -253,7 +257,7 @@ void vPortEndScheduler( void )
      * once running. When called a reset is done which is probably the
      * most valid action.
      */
-    _Pragma(asmline reset);
+    _Pragma( asmline reset );
 }
 
 /*-----------------------------------------------------------*/
@@ -284,18 +288,18 @@ void vPortYield( void )
 
 #if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
 
-    void *pvPortMalloc( uint16_t usWantedSize )
+void * pvPortMalloc( uint16_t usWantedSize )
+{
+    void * pvReturn;
+
+    vTaskSuspendAll();
     {
-    void *pvReturn;
-
-        vTaskSuspendAll();
-        {
-            pvReturn = malloc( ( malloc_t ) usWantedSize );
-        }
-        xTaskResumeAll();
-
-        return pvReturn;
+        pvReturn = malloc( ( malloc_t ) usWantedSize );
     }
+    xTaskResumeAll();
+
+    return pvReturn;
+}
 
 #endif /* configSUPPORT_STATIC_ALLOCATION */
 
@@ -303,16 +307,16 @@ void vPortYield( void )
 
 #if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
 
-    void vPortFree( void *pv )
+void vPortFree( void * pv )
+{
+    if( pv )
     {
-        if( pv )
+        vTaskSuspendAll();
         {
-            vTaskSuspendAll();
-            {
-                free( pv );
-            }
-            xTaskResumeAll();
+            free( pv );
         }
+        xTaskResumeAll();
     }
+}
 
 #endif /* configSUPPORT_DYNAMIC_ALLOCATION */

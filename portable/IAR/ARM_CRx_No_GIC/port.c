@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -50,26 +51,28 @@
 
 /* A critical section is exited when the critical section nesting count reaches
 this value. */
-#define portNO_CRITICAL_NESTING         ( ( uint32_t ) 0 )
+#define portNO_CRITICAL_NESTING       ( ( uint32_t ) 0 )
 
 /* Tasks are not created with a floating point context, but can be given a
 floating point context after they have been created.  A variable is stored as
 part of the tasks context that holds portNO_FLOATING_POINT_CONTEXT if the task
 does not have an FPU context, or any other value if the task does have an FPU
 context. */
-#define portNO_FLOATING_POINT_CONTEXT   ( ( StackType_t ) 0 )
+#define portNO_FLOATING_POINT_CONTEXT ( ( StackType_t ) 0 )
 
 /* Constants required to setup the initial task context. */
-#define portINITIAL_SPSR                ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, IRQ enabled FIQ enabled. */
-#define portTHUMB_MODE_BIT              ( ( StackType_t ) 0x20 )
-#define portTHUMB_MODE_ADDRESS          ( 0x01UL )
+#define portINITIAL_SPSR                                               \
+    ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, IRQ enabled FIQ \
+                                enabled. */
+#define portTHUMB_MODE_BIT      ( ( StackType_t ) 0x20 )
+#define portTHUMB_MODE_ADDRESS  ( 0x01UL )
 
 /* Masks all bits in the APSR other than the mode bits. */
-#define portAPSR_MODE_BITS_MASK         ( 0x1F )
+#define portAPSR_MODE_BITS_MASK ( 0x1F )
 
 /* The value of the mode bits in the APSR when the CPU is executing in user
 mode. */
-#define portAPSR_USER_MODE              ( 0x10 )
+#define portAPSR_USER_MODE      ( 0x10 )
 
 /* Let the user override the pre-loading of the initial LR with the address of
 prvTaskExitError() in case it messes up unwinding of the stack in the
@@ -102,8 +105,8 @@ the scheduler starts.  As it is stored as part of the task context it will
 automatically be set to 0 when the first task is started. */
 volatile uint32_t ulCriticalNesting = 9999UL;
 
-/* Saved as part of the task context.  If ulPortTaskHasFPUContext is non-zero then
-a floating point context must be saved and restored for the task. */
+/* Saved as part of the task context.  If ulPortTaskHasFPUContext is non-zero
+then a floating point context must be saved and restored for the task. */
 volatile uint32_t ulPortTaskHasFPUContext = pdFALSE;
 
 /* Set to 1 to pend a context switch from an ISR. */
@@ -118,7 +121,9 @@ volatile uint32_t ulPortInterruptNesting = 0UL;
 /*
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
     /* Setup the initial stack of the task.  The stack is set exactly as
     expected by the portRESTORE_CONTEXT() macro.
@@ -147,7 +152,7 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
     pxTopOfStack--;
 
     /* Next all the registers other than the stack pointer. */
-    *pxTopOfStack = ( StackType_t ) portTASK_RETURN_ADDRESS;    /* R14 */
+    *pxTopOfStack = ( StackType_t ) portTASK_RETURN_ADDRESS; /* R14 */
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) 0x12121212; /* R12 */
     pxTopOfStack--;
@@ -200,17 +205,18 @@ static void prvTaskExitError( void )
     defined, then stop here so application writers can catch the error. */
     configASSERT( ulPortInterruptNesting == ~0UL );
     portDISABLE_INTERRUPTS();
-    for( ;; );
+    for( ;; )
+        ;
 }
 /*-----------------------------------------------------------*/
 
 BaseType_t xPortStartScheduler( void )
 {
-uint32_t ulAPSR;
+    uint32_t ulAPSR;
 
     /* Only continue if the CPU is not in User mode.  The CPU must be in a
     Privileged mode for the scheduler to start. */
-    __asm volatile ( "MRS %0, APSR" : "=r" ( ulAPSR ) );
+    __asm volatile( "MRS %0, APSR" : "=r"( ulAPSR ) );
     ulAPSR &= portAPSR_MODE_BITS_MASK;
     configASSERT( ulAPSR != portAPSR_USER_MODE );
 
@@ -285,7 +291,7 @@ void vPortExitCritical( void )
 
 void FreeRTOS_Tick_Handler( void )
 {
-uint32_t ulInterruptStatus;
+    uint32_t ulInterruptStatus;
 
     ulInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
 
@@ -303,13 +309,13 @@ uint32_t ulInterruptStatus;
 
 void vPortTaskUsesFPU( void )
 {
-uint32_t ulInitialFPSCR = 0;
+    uint32_t ulInitialFPSCR = 0;
 
     /* A task is registering the fact that it needs an FPU context.  Set the
     FPU flag (which is saved as part of the task context). */
     ulPortTaskHasFPUContext = pdTRUE;
 
     /* Initialise the floating point status register. */
-    __asm volatile ( "FMXR  FPSCR, %0" :: "r" (ulInitialFPSCR) );
+    __asm volatile( "FMXR  FPSCR, %0" ::"r"( ulInitialFPSCR ) );
 }
 /*-----------------------------------------------------------*/

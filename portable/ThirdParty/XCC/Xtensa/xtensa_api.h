@@ -1,26 +1,27 @@
- /*
+/*
  * FreeRTOS Kernel <DEVELOPMENT BRANCH>
  * Copyright (C) 2015-2019 Cadence Design Systems, Inc.
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -38,13 +39,11 @@
 
 #include "xtensa_context.h"
 
-
 /* Typedef for C-callable interrupt handler function */
-typedef void (*xt_handler)(void *);
+typedef void ( *xt_handler )( void * );
 
 /* Typedef for C-callable exception handler function */
-typedef void (*xt_exc_handler)(XtExcFrame *);
-
+typedef void ( *xt_exc_handler )( XtExcFrame * );
 
 /*
 -------------------------------------------------------------------------------
@@ -62,8 +61,7 @@ typedef void (*xt_exc_handler)(XtExcFrame *);
   of the exception frame structure see xtensa_context.h.
 -------------------------------------------------------------------------------
 */
-extern xt_exc_handler xt_set_exception_handler(int n, xt_exc_handler f);
-
+extern xt_exc_handler xt_set_exception_handler( int n, xt_exc_handler f );
 
 /*
 -------------------------------------------------------------------------------
@@ -74,8 +72,7 @@ extern xt_exc_handler xt_set_exception_handler(int n, xt_exc_handler f);
     arg      - Argument to be passed to handler.
 -------------------------------------------------------------------------------
 */
-extern xt_handler xt_set_interrupt_handler(int n, xt_handler f, void * arg);
-
+extern xt_handler xt_set_interrupt_handler( int n, xt_handler f, void * arg );
 
 /*
 -------------------------------------------------------------------------------
@@ -86,8 +83,7 @@ extern xt_handler xt_set_interrupt_handler(int n, xt_handler f, void * arg);
   Returns the previous state of the interrupt enables.
 -------------------------------------------------------------------------------
 */
-extern unsigned int xt_ints_on(unsigned int mask);
-
+extern unsigned int xt_ints_on( unsigned int mask );
 
 /*
 -------------------------------------------------------------------------------
@@ -98,19 +94,17 @@ extern unsigned int xt_ints_on(unsigned int mask);
   Returns the previous state of the interrupt enables.
 -------------------------------------------------------------------------------
 */
-extern unsigned int xt_ints_off(unsigned int mask);
-
+extern unsigned int xt_ints_off( unsigned int mask );
 
 /*
 -------------------------------------------------------------------------------
   Call this function to set the specified (s/w) interrupt.
 -------------------------------------------------------------------------------
 */
-static inline void xt_set_intset(unsigned int arg)
+static inline void xt_set_intset( unsigned int arg )
 {
-    xthal_set_intset(arg);
+    xthal_set_intset( arg );
 }
-
 
 /*
 -------------------------------------------------------------------------------
@@ -118,10 +112,9 @@ static inline void xt_set_intset(unsigned int arg)
   interrupt.
 -------------------------------------------------------------------------------
 */
-static inline void xt_set_intclear(unsigned int arg)
+static inline void xt_set_intclear( unsigned int arg )
 {
-    xthal_set_intclear(arg);
+    xthal_set_intclear( arg );
 }
-
 
 #endif /* __XTENSA_API_H__ */

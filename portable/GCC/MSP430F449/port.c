@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -33,8 +34,8 @@
 */
 
 /* Standard includes. */
-#include <stdlib.h>
 #include <signal.h>
+#include <stdlib.h>
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
@@ -46,9 +47,9 @@
 
 /* Constants required for hardware setup.  The tick ISR runs off the ACLK,
 not the MCLK. */
-#define portACLK_FREQUENCY_HZ           ( ( TickType_t ) 32768 )
-#define portINITIAL_CRITICAL_NESTING    ( ( uint16_t ) 10 )
-#define portFLAGS_INT_ENABLED   ( ( StackType_t ) 0x08 )
+#define portACLK_FREQUENCY_HZ        ( ( TickType_t ) 32768 )
+#define portINITIAL_CRITICAL_NESTING ( ( uint16_t ) 10 )
+#define portFLAGS_INT_ENABLED        ( ( StackType_t ) 0x08 )
 
 /* We require the address of the pxCurrentTCB variable, but don't want to know
 any details of its type. */
@@ -77,24 +78,23 @@ volatile uint16_t usCriticalNesting = portINITIAL_CRITICAL_NESTING;
  * pointer value is saved into the task control block so it can be retrieved
  * the next time the task executes.
  */
-#define portSAVE_CONTEXT()                                  \
-    asm volatile (  "push   r4                      \n\t"   \
-                    "push   r5                      \n\t"   \
-                    "push   r6                      \n\t"   \
-                    "push   r7                      \n\t"   \
-                    "push   r8                      \n\t"   \
-                    "push   r9                      \n\t"   \
-                    "push   r10                     \n\t"   \
-                    "push   r11                     \n\t"   \
-                    "push   r12                     \n\t"   \
-                    "push   r13                     \n\t"   \
-                    "push   r14                     \n\t"   \
-                    "push   r15                     \n\t"   \
-                    "mov.w  usCriticalNesting, r14  \n\t"   \
-                    "push   r14                     \n\t"   \
-                    "mov.w  pxCurrentTCB, r12       \n\t"   \
-                    "mov.w  r1, @r12                \n\t"   \
-                );
+#define portSAVE_CONTEXT()                              \
+    asm volatile( "push   r4                      \n\t" \
+                  "push   r5                      \n\t" \
+                  "push   r6                      \n\t" \
+                  "push   r7                      \n\t" \
+                  "push   r8                      \n\t" \
+                  "push   r9                      \n\t" \
+                  "push   r10                     \n\t" \
+                  "push   r11                     \n\t" \
+                  "push   r12                     \n\t" \
+                  "push   r13                     \n\t" \
+                  "push   r14                     \n\t" \
+                  "push   r15                     \n\t" \
+                  "mov.w  usCriticalNesting, r14  \n\t" \
+                  "push   r14                     \n\t" \
+                  "mov.w  pxCurrentTCB, r12       \n\t" \
+                  "mov.w  r1, @r12                \n\t" );
 
 /*
  * Macro to restore a task context from the task stack.  This is effectively
@@ -106,26 +106,25 @@ volatile uint16_t usCriticalNesting = portINITIAL_CRITICAL_NESTING;
  * The bic instruction ensures there are no low power bits set in the status
  * register that is about to be popped from the stack.
  */
-#define portRESTORE_CONTEXT()                               \
-    asm volatile (  "mov.w  pxCurrentTCB, r12       \n\t"   \
-                    "mov.w  @r12, r1                \n\t"   \
-                    "pop    r15                     \n\t"   \
-                    "mov.w  r15, usCriticalNesting  \n\t"   \
-                    "pop    r15                     \n\t"   \
-                    "pop    r14                     \n\t"   \
-                    "pop    r13                     \n\t"   \
-                    "pop    r12                     \n\t"   \
-                    "pop    r11                     \n\t"   \
-                    "pop    r10                     \n\t"   \
-                    "pop    r9                      \n\t"   \
-                    "pop    r8                      \n\t"   \
-                    "pop    r7                      \n\t"   \
-                    "pop    r6                      \n\t"   \
-                    "pop    r5                      \n\t"   \
-                    "pop    r4                      \n\t"   \
-                    "bic    #(0xf0),0(r1)           \n\t"   \
-                    "reti                           \n\t"   \
-                );
+#define portRESTORE_CONTEXT()                           \
+    asm volatile( "mov.w  pxCurrentTCB, r12       \n\t" \
+                  "mov.w  @r12, r1                \n\t" \
+                  "pop    r15                     \n\t" \
+                  "mov.w  r15, usCriticalNesting  \n\t" \
+                  "pop    r15                     \n\t" \
+                  "pop    r14                     \n\t" \
+                  "pop    r13                     \n\t" \
+                  "pop    r12                     \n\t" \
+                  "pop    r11                     \n\t" \
+                  "pop    r10                     \n\t" \
+                  "pop    r9                      \n\t" \
+                  "pop    r8                      \n\t" \
+                  "pop    r7                      \n\t" \
+                  "pop    r6                      \n\t" \
+                  "pop    r5                      \n\t" \
+                  "pop    r4                      \n\t" \
+                  "bic    #(0xf0),0(r1)           \n\t" \
+                  "reti                           \n\t" );
 /*-----------------------------------------------------------*/
 
 /*
@@ -141,7 +140,9 @@ static void prvSetupTimerInterrupt( void );
  *
  * See the header file portable.h.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
     /*
         Place a few bytes of known values on the bottom of the stack.
@@ -232,14 +233,14 @@ void vPortEndScheduler( void )
  *
  * The first thing we do is save the registers so we can use a naked attribute.
  */
-void vPortYield( void ) __attribute__ ( ( naked ) );
+void vPortYield( void ) __attribute__( ( naked ) );
 void vPortYield( void )
 {
     /* We want the stack of the task being saved to look exactly as if the task
     was saved during a pre-emptive RTOS tick ISR.  Before calling an ISR the
     msp430 places the status register onto the stack.  As this is a function
     call and not an ISR we have to do this manually. */
-    asm volatile ( "push    r2" );
+    asm volatile( "push    r2" );
     _DINT();
 
     /* Save the context of the current task. */
@@ -289,41 +290,38 @@ static void prvSetupTimerInterrupt( void )
 
 #if configUSE_PREEMPTION == 1
 
-    /*
-     * Tick ISR for preemptive scheduler.  We can use a naked attribute as
-     * the context is saved at the start of vPortYieldFromTick().  The tick
-     * count is incremented after the context is saved.
-     */
-    interrupt (TIMERA0_VECTOR) prvTickISR( void ) __attribute__ ( ( naked ) );
-    interrupt (TIMERA0_VECTOR) prvTickISR( void )
+/*
+ * Tick ISR for preemptive scheduler.  We can use a naked attribute as
+ * the context is saved at the start of vPortYieldFromTick().  The tick
+ * count is incremented after the context is saved.
+ */
+interrupt( TIMERA0_VECTOR ) prvTickISR( void ) __attribute__( ( naked ) );
+interrupt( TIMERA0_VECTOR ) prvTickISR( void )
+{
+    /* Save the context of the interrupted task. */
+    portSAVE_CONTEXT();
+
+    /* Increment the tick count then switch to the highest priority task
+    that is ready to run. */
+    if( xTaskIncrementTick() != pdFALSE )
     {
-        /* Save the context of the interrupted task. */
-        portSAVE_CONTEXT();
-
-        /* Increment the tick count then switch to the highest priority task
-        that is ready to run. */
-        if( xTaskIncrementTick() != pdFALSE )
-        {
-            vTaskSwitchContext();
-        }
-
-        /* Restore the context of the new task. */
-        portRESTORE_CONTEXT();
+        vTaskSwitchContext();
     }
+
+    /* Restore the context of the new task. */
+    portRESTORE_CONTEXT();
+}
 
 #else
 
-    /*
-     * Tick ISR for the cooperative scheduler.  All this does is increment the
-     * tick count.  We don't need to switch context, this can only be done by
-     * manual calls to taskYIELD();
-     */
-    interrupt (TIMERA0_VECTOR) prvTickISR( void );
-    interrupt (TIMERA0_VECTOR) prvTickISR( void )
-    {
-        xTaskIncrementTick();
-    }
+/*
+ * Tick ISR for the cooperative scheduler.  All this does is increment the
+ * tick count.  We don't need to switch context, this can only be done by
+ * manual calls to taskYIELD();
+ */
+interrupt( TIMERA0_VECTOR ) prvTickISR( void );
+interrupt( TIMERA0_VECTOR ) prvTickISR( void )
+{
+    xTaskIncrementTick();
+}
 #endif
-
-
-

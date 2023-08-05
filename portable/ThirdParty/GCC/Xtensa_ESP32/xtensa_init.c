@@ -29,45 +29,44 @@
  */
 
 /*******************************************************************************
-*
-*       XTENSA INITIALIZATION ROUTINES CODED IN C
-*
-*  This file contains miscellaneous Xtensa RTOS-generic initialization functions
-*  that are implemented in C.
-*
-*******************************************************************************/
-
+ *
+ *       XTENSA INITIALIZATION ROUTINES CODED IN C
+ *
+ *  This file contains miscellaneous Xtensa RTOS-generic initialization
+ *functions that are implemented in C.
+ *
+ *******************************************************************************/
 
 #ifdef XT_BOARD
-#include "xtensa/xtbsp.h"
+    #include "xtensa/xtbsp.h"
 #endif
 
-#include "xtensa_rtos.h"
-#include "sdkconfig.h"
 #include "esp_idf_version.h"
-#if (ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(4, 2, 0))
-#include    "esp_clk.h"
+#include "sdkconfig.h"
+#include "xtensa_rtos.h"
+#if( ESP_IDF_VERSION < ESP_IDF_VERSION_VAL( 4, 2, 0 ) )
+    #include "esp_clk.h"
 #else
-#if CONFIG_IDF_TARGET_ESP32
-#include "esp32/clk.h"
-#elif CONFIG_IDF_TARGET_ESP32S2
-#include "esp32s2/clk.h"
-#elif CONFIG_IDF_TARGET_ESP32S3
-#include "esp32s3/clk.h"
-#endif
+    #if CONFIG_IDF_TARGET_ESP32
+        #include "esp32/clk.h"
+    #elif CONFIG_IDF_TARGET_ESP32S2
+        #include "esp32s2/clk.h"
+    #elif CONFIG_IDF_TARGET_ESP32S3
+        #include "esp32s3/clk.h"
+    #endif
 #endif /* ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(4, 2, 0) */
 
 #ifdef XT_RTOS_TIMER_INT
 
-unsigned _xt_tick_divisor = 0;  /* cached number of cycles per tick */
+unsigned _xt_tick_divisor = 0; /* cached number of cycles per tick */
 
-void _xt_tick_divisor_init(void)
+void _xt_tick_divisor_init( void )
 {
     _xt_tick_divisor = esp_clk_cpu_freq() / XT_TICK_PER_SEC;
 }
 
 /* Deprecated, to be removed */
-int xt_clock_freq(void)
+int xt_clock_freq( void )
 {
     return esp_clk_cpu_freq();
 }

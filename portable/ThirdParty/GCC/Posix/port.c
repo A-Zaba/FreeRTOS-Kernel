@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -27,28 +28,28 @@
  */
 
 /*-----------------------------------------------------------
-* Implementation of functions defined in portable.h for the Posix port.
-*
-* Each task has a pthread which eases use of standard debuggers
-* (allowing backtraces of tasks etc). Threads for tasks that are not
-* running are blocked in sigwait().
-*
-* Task switch is done by resuming the thread for the next task by
-* signaling the condition variable and then waiting on a condition variable
-* with the current thread.
-*
-* The timer interrupt uses SIGALRM and care is taken to ensure that
-* the signal handler runs only on the thread for the current task.
-*
-* Use of part of the standard C library requires care as some
-* functions can take pthread mutexes internally which can result in
-* deadlocks as the FreeRTOS kernel can switch tasks while they're
-* holding a pthread mutex.
-*
-* stdio (printf() and friends) should be called from a single task
-* only or serialized with a FreeRTOS primitive such as a binary
-* semaphore or mutex.
-*----------------------------------------------------------*/
+ * Implementation of functions defined in portable.h for the Posix port.
+ *
+ * Each task has a pthread which eases use of standard debuggers
+ * (allowing backtraces of tasks etc). Threads for tasks that are not
+ * running are blocked in sigwait().
+ *
+ * Task switch is done by resuming the thread for the next task by
+ * signaling the condition variable and then waiting on a condition variable
+ * with the current thread.
+ *
+ * The timer interrupt uses SIGALRM and care is taken to ensure that
+ * the signal handler runs only on the thread for the current task.
+ *
+ * Use of part of the standard C library requires care as some
+ * functions can take pthread mutexes internally which can result in
+ * deadlocks as the FreeRTOS kernel can switch tasks while they're
+ * holding a pthread mutex.
+ *
+ * stdio (printf() and friends) should be called from a single task
+ * only or serialized with a FreeRTOS primitive such as a binary
+ * semaphore or mutex.
+ *----------------------------------------------------------*/
 #include "portmacro.h"
 
 #include <errno.h>
@@ -72,7 +73,7 @@
 #include "utils/wait_for_event.h"
 /*-----------------------------------------------------------*/
 
-#define SIG_RESUME    SIGUSR1
+#define SIG_RESUME SIGUSR1
 
 typedef struct THREAD
 {
@@ -118,11 +119,10 @@ static void vPortStartFirstTask( void );
 static void prvPortYieldFromISR( void );
 /*-----------------------------------------------------------*/
 
-static void prvFatalError( const char * pcCall,
-                           int iErrno ) __attribute__ ((__noreturn__));
+static void prvFatalError( const char * pcCall, int iErrno )
+    __attribute__( ( __noreturn__ ) );
 
-void prvFatalError( const char * pcCall,
-                           int iErrno )
+void prvFatalError( const char * pcCall, int iErrno )
 {
     fprintf( stderr, "%s: %s\n", pcCall, strerror( iErrno ) );
     abort();
@@ -141,38 +141,48 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
     size_t ulStackSize;
     int iRet;
 
-    ( void ) pthread_once( &hSigSetupThread, prvSetupSignalsAndSchedulerPolicy );
+    ( void ) pthread_once( &hSigSetupThread,
+                           prvSetupSignalsAndSchedulerPolicy );
 
     /*
      * Store the additional thread data at the start of the stack.
      */
     thread = ( Thread_t * ) ( pxTopOfStack + 1 ) - 1;
     pxTopOfStack = ( StackType_t * ) thread - 1;
-    ulStackSize = ( size_t )( pxTopOfStack + 1 - pxEndOfStack ) * sizeof( *pxTopOfStack );
+    ulStackSize = ( size_t ) ( pxTopOfStack + 1 - pxEndOfStack ) *
+                  sizeof( *pxTopOfStack );
 
-    #ifdef __APPLE__
-        pxEndOfStack = mach_vm_round_page ( pxEndOfStack );
-        ulStackSize = mach_vm_trunc_page ( ulStackSize );
-    #endif
+#ifdef __APPLE__
+    pxEndOfStack = mach_vm_round_page( pxEndOfStack );
+    ulStackSize = mach_vm_trunc_page( ulStackSize );
+#endif
 
     thread->pxCode = pxCode;
     thread->pvParams = pvParameters;
     thread->xDying = pdFALSE;
 
     pthread_attr_init( &xThreadAttributes );
-    iRet = pthread_attr_setstack( &xThreadAttributes, pxEndOfStack, ulStackSize );
+    iRet = pthread_attr_setstack( &xThreadAttributes,
+                                  pxEndOfStack,
+                                  ulStackSize );
     if( iRet != 0 )
     {
-        fprintf( stderr, "[WARN] pthread_attr_setstack failed with return value: %d. Default stack will be used.\n", iRet );
-        fprintf( stderr, "[WARN] Increase the stack size to PTHREAD_STACK_MIN.\n" );
+        fprintf( stderr,
+                 "[WARN] pthread_attr_setstack failed with return value: %d. "
+                 "Default stack will be used.\n",
+                 iRet );
+        fprintf( stderr,
+                 "[WARN] Increase the stack size to PTHREAD_STACK_MIN.\n" );
     }
 
     thread->ev = event_create();
 
     vPortEnterCritical();
 
-    iRet = pthread_create( &thread->pthread, &xThreadAttributes,
-                           prvWaitForStart, thread );
+    iRet = pthread_create( &thread->pthread,
+                           &xThreadAttributes,
+                           prvWaitForStart,
+                           thread );
 
     if( iRet != 0 )
     {
@@ -187,7 +197,8 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
 
 void vPortStartFirstTask( void )
 {
-    Thread_t * pxFirstThread = prvGetThreadFromTask( xTaskGetCurrentTaskHandle() );
+    Thread_t * pxFirstThread = prvGetThreadFromTask(
+        xTaskGetCurrentTaskHandle() );
 
     /* Start the first task. */
     prvResumeThread( pxFirstThread );
@@ -209,8 +220,8 @@ BaseType_t xPortStartScheduler( void )
     prvSetupTimerInterrupt();
 
     /*
-     * Block SIG_RESUME before starting any tasks so the main thread can sigwait on it.
-     * To sigwait on an unblocked signal is undefined.
+     * Block SIG_RESUME before starting any tasks so the main thread can sigwait
+     * on it. To sigwait on an unblocked signal is undefined.
      * https://pubs.opengroup.org/onlinepubs/009604499/functions/sigwait.html
      */
     sigemptyset( &xSignals );
@@ -226,18 +237,20 @@ BaseType_t xPortStartScheduler( void )
         sigwait( &xSignals, &iSignal );
     }
 
-    /* Cancel the Idle task and free its resources */
-    #if ( INCLUDE_xTaskGetIdleTaskHandle == 1 )
-        vPortCancelThread( xTaskGetIdleTaskHandle() );
-    #endif
+/* Cancel the Idle task and free its resources */
+#if( INCLUDE_xTaskGetIdleTaskHandle == 1 )
+    vPortCancelThread( xTaskGetIdleTaskHandle() );
+#endif
 
-    #if ( configUSE_TIMERS == 1 )
-        /* Cancel the Timer task and free its resources */
-        vPortCancelThread( xTimerGetTimerDaemonTaskHandle() );
-    #endif /* configUSE_TIMERS */
+#if( configUSE_TIMERS == 1 )
+    /* Cancel the Timer task and free its resources */
+    vPortCancelThread( xTimerGetTimerDaemonTaskHandle() );
+#endif /* configUSE_TIMERS */
 
     /* Restore original signal mask. */
-    ( void ) pthread_sigmask( SIG_SETMASK, &xSchedulerOriginalSignalMask, NULL );
+    ( void ) pthread_sigmask( SIG_SETMASK,
+                              &xSchedulerOriginalSignalMask,
+                              NULL );
 
     return 0;
 }
@@ -336,7 +349,7 @@ UBaseType_t xPortSetInterruptMask( void )
 {
     /* Interrupts are always disabled inside ISRs (signals
      * handlers). */
-    return ( UBaseType_t )0;
+    return ( UBaseType_t ) 0;
 }
 /*-----------------------------------------------------------*/
 
@@ -352,7 +365,8 @@ static uint64_t prvGetTimeNs( void )
 
     clock_gettime( CLOCK_MONOTONIC, &t );
 
-    return ( uint64_t )t.tv_sec * ( uint64_t )1000000000UL + ( uint64_t )t.tv_nsec;
+    return ( uint64_t ) t.tv_sec * ( uint64_t ) 1000000000UL +
+           ( uint64_t ) t.tv_nsec;
 }
 
 static uint64_t prvStartTimeNs;
@@ -405,36 +419,36 @@ static void vPortSystemTickHandler( int sig )
 
     ( void ) sig;
 
-/* uint64_t xExpectedTicks; */
+    /* uint64_t xExpectedTicks; */
 
     uxCriticalNesting++; /* Signals are blocked in this signal handler. */
 
-    #if ( configUSE_PREEMPTION == 1 )
-        pxThreadToSuspend = prvGetThreadFromTask( xTaskGetCurrentTaskHandle() );
-    #endif
+#if( configUSE_PREEMPTION == 1 )
+    pxThreadToSuspend = prvGetThreadFromTask( xTaskGetCurrentTaskHandle() );
+#endif
 
     /* Tick Increment, accounting for any lost signals or drift in
      * the timer. */
 
-/*
- *      Comment code to adjust timing according to full demo requirements
- *      xExpectedTicks = (prvGetTimeNs() - prvStartTimeNs)
- *        / (portTICK_RATE_MICROSECONDS * 1000);
- * do { */
+    /*
+     *      Comment code to adjust timing according to full demo requirements
+     *      xExpectedTicks = (prvGetTimeNs() - prvStartTimeNs)
+     *        / (portTICK_RATE_MICROSECONDS * 1000);
+     * do { */
     xTaskIncrementTick();
 
-/*        prvTickCount++;
- *    } while (prvTickCount < xExpectedTicks);
- */
+    /*        prvTickCount++;
+     *    } while (prvTickCount < xExpectedTicks);
+     */
 
-    #if ( configUSE_PREEMPTION == 1 )
-        /* Select Next Task. */
-        vTaskSwitchContext();
+#if( configUSE_PREEMPTION == 1 )
+    /* Select Next Task. */
+    vTaskSwitchContext();
 
-        pxThreadToResume = prvGetThreadFromTask( xTaskGetCurrentTaskHandle() );
+    pxThreadToResume = prvGetThreadFromTask( xTaskGetCurrentTaskHandle() );
 
-        prvSwitchThread( pxThreadToResume, pxThreadToSuspend );
-    #endif
+    prvSwitchThread( pxThreadToResume, pxThreadToSuspend );
+#endif
 
     uxCriticalNesting--;
 }

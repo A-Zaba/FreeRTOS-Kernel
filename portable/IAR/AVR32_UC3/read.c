@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT AND BSD-3-Clause
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -70,20 +71,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#include <yfuns.h>
-#include <avr32/io.h>
 #include "usart.h"
-
+#include <avr32/io.h>
+#include <yfuns.h>
 
 _STD_BEGIN
 
-
 #pragma module_name = "?__read"
 
-
-extern volatile avr32_usart_t *volatile stdio_usart_base;
-
+extern volatile avr32_usart_t * volatile stdio_usart_base;
 
 /*! \brief Reads a number of bytes, at most \a size, into the memory area
  *         pointed to by \a buffer.
@@ -95,29 +91,28 @@ extern volatile avr32_usart_t *volatile stdio_usart_base;
  * \return The number of bytes read, \c 0 at the end of the file, or
  *         \c _LLIO_ERROR on failure.
  */
-size_t __read(int handle, uint8_t *buffer, size_t size)
+size_t __read( int handle, uint8_t * buffer, size_t size )
 {
-  int nChars = 0;
+    int nChars = 0;
 
-  // This implementation only reads from stdin.
-  // For all other file handles, it returns failure.
-  if (handle != _LLIO_STDIN)
-  {
-    return _LLIO_ERROR;
-  }
+    // This implementation only reads from stdin.
+    // For all other file handles, it returns failure.
+    if( handle != _LLIO_STDIN )
+    {
+        return _LLIO_ERROR;
+    }
 
-  for (; size > 0; --size)
-  {
-    int c = usart_getchar(stdio_usart_base);
-    if (c < 0)
-      break;
+    for( ; size > 0; --size )
+    {
+        int c = usart_getchar( stdio_usart_base );
+        if( c < 0 )
+            break;
 
-    *buffer++ = c;
-    ++nChars;
-  }
+        *buffer++ = c;
+        ++nChars;
+    }
 
-  return nChars;
+    return nChars;
 }
-
 
 _STD_END

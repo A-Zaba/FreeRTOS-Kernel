@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -27,47 +28,51 @@
  */
 
 /*-----------------------------------------------------------
-* Implementation of functions defined in portable.h for the ARM CM4F port.
-*----------------------------------------------------------*/
+ * Implementation of functions defined in portable.h for the ARM CM4F port.
+ *----------------------------------------------------------*/
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
 #include "task.h"
 
 /* Constants required to manipulate the NVIC. */
-#define portNVIC_SYSTICK_CTRL       ( ( volatile uint32_t * ) 0xe000e010 )
-#define portNVIC_SYSTICK_LOAD       ( ( volatile uint32_t * ) 0xe000e014 )
-#define portNVIC_SHPR3_REG          ( ( volatile uint32_t * ) 0xe000ed20 )
-#define portNVIC_SYSTICK_CLK        0x00000004
-#define portNVIC_SYSTICK_INT        0x00000002
-#define portNVIC_SYSTICK_ENABLE     0x00000001
-#define portMIN_INTERRUPT_PRIORITY  ( 255UL )
-#define portNVIC_PENDSV_PRI         ( ( ( uint32_t ) portMIN_INTERRUPT_PRIORITY ) << 16UL )
-#define portNVIC_SYSTICK_PRI        ( ( ( uint32_t ) portMIN_INTERRUPT_PRIORITY ) << 24UL )
+#define portNVIC_SYSTICK_CTRL      ( ( volatile uint32_t * ) 0xe000e010 )
+#define portNVIC_SYSTICK_LOAD      ( ( volatile uint32_t * ) 0xe000e014 )
+#define portNVIC_SHPR3_REG         ( ( volatile uint32_t * ) 0xe000ed20 )
+#define portNVIC_SYSTICK_CLK       0x00000004
+#define portNVIC_SYSTICK_INT       0x00000002
+#define portNVIC_SYSTICK_ENABLE    0x00000001
+#define portMIN_INTERRUPT_PRIORITY ( 255UL )
+#define portNVIC_PENDSV_PRI \
+    ( ( ( uint32_t ) portMIN_INTERRUPT_PRIORITY ) << 16UL )
+#define portNVIC_SYSTICK_PRI \
+    ( ( ( uint32_t ) portMIN_INTERRUPT_PRIORITY ) << 24UL )
 
 /* Masks off all bits but the VECTACTIVE bits in the ICSR register. */
-#define portVECTACTIVE_MASK         ( 0xFFUL )
+#define portVECTACTIVE_MASK ( 0xFFUL )
 
 /* Constants required to manipulate the VFP. */
-#define portFPCCR                   ( ( volatile uint32_t * ) 0xe000ef34 ) /* Floating point context control register. */
-#define portASPEN_AND_LSPEN_BITS    ( 0x3UL << 30UL )
+#define portFPCCR                                                            \
+    ( ( volatile uint32_t * ) 0xe000ef34 ) /* Floating point context control \
+                                              register. */
+#define portASPEN_AND_LSPEN_BITS ( 0x3UL << 30UL )
 
 /* Constants required to set up the initial stack. */
-#define portINITIAL_XPSR            ( 0x01000000 )
-#define portINITIAL_EXC_RETURN      ( 0xfffffffd )
+#define portINITIAL_XPSR         ( 0x01000000 )
+#define portINITIAL_EXC_RETURN   ( 0xfffffffd )
 
 /* Let the user override the pre-loading of the initial LR with the address of
  * prvTaskExitError() in case it messes up unwinding of the stack in the
  * debugger. */
 #ifdef configTASK_RETURN_ADDRESS
-    #define portTASK_RETURN_ADDRESS    configTASK_RETURN_ADDRESS
+    #define portTASK_RETURN_ADDRESS configTASK_RETURN_ADDRESS
 #else
-    #define portTASK_RETURN_ADDRESS    prvTaskExitError
+    #define portTASK_RETURN_ADDRESS prvTaskExitError
 #endif
 
 /* For strict compliance with the Cortex-M spec the task start address should
  * have bit-0 clear, as it is loaded into the PC on exit from an ISR. */
-#define portSTART_ADDRESS_MASK    ( ( StackType_t ) 0xfffffffeUL )
+#define portSTART_ADDRESS_MASK ( ( StackType_t ) 0xfffffffeUL )
 
 /* The priority used by the kernel is assigned to a variable to make access
  * from inline assembler easier. */
@@ -100,7 +105,8 @@ static void prvTaskExitError( void );
 
 /* This exists purely to allow the const to be used from within the
  * port_asm.asm assembly file. */
-const uint32_t ulMaxSyscallInterruptPriorityConst = configMAX_SYSCALL_INTERRUPT_PRIORITY;
+const uint32_t
+    ulMaxSyscallInterruptPriorityConst = configMAX_SYSCALL_INTERRUPT_PRIORITY;
 
 /*-----------------------------------------------------------*/
 
@@ -118,11 +124,12 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
      * of interrupts, and to ensure alignment. */
     pxTopOfStack--;
 
-    *pxTopOfStack = portINITIAL_XPSR;                                    /* xPSR */
+    *pxTopOfStack = portINITIAL_XPSR; /* xPSR */
     pxTopOfStack--;
-    *pxTopOfStack = ( ( StackType_t ) pxCode ) & portSTART_ADDRESS_MASK; /* PC */
+    *pxTopOfStack = ( ( StackType_t ) pxCode ) &
+                    portSTART_ADDRESS_MASK; /* PC */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) portTASK_RETURN_ADDRESS;             /* LR */
+    *pxTopOfStack = ( StackType_t ) portTASK_RETURN_ADDRESS; /* LR */
 
     /* Save code space by skipping register initialisation. */
     pxTopOfStack -= 5;                            /* R12, R3, R2 and R1. */
@@ -150,7 +157,7 @@ static void prvTaskExitError( void )
     configASSERT( ulCriticalNesting == ~0UL );
     portDISABLE_INTERRUPTS();
 
-    for( ; ; )
+    for( ;; )
     {
     }
 }
@@ -219,12 +226,13 @@ void vPortEnterCritical( void )
 
     /* This is not the interrupt safe version of the enter critical function so
      * assert() if it is being called from an interrupt context.  Only API
-     * functions that end in "FromISR" can be used in an interrupt.  Only assert if
-     * the critical nesting count is 1 to protect against recursive calls if the
-     * assert function also uses a critical section. */
+     * functions that end in "FromISR" can be used in an interrupt.  Only assert
+     * if the critical nesting count is 1 to protect against recursive calls if
+     * the assert function also uses a critical section. */
     if( ulCriticalNesting == 1 )
     {
-        configASSERT( ( ( *( portNVIC_INT_CTRL ) ) & portVECTACTIVE_MASK ) == 0 );
+        configASSERT( ( ( *( portNVIC_INT_CTRL ) ) & portVECTACTIVE_MASK ) ==
+                      0 );
     }
 }
 /*-----------------------------------------------------------*/
@@ -264,6 +272,8 @@ void SysTick_Handler( void )
 void prvSetupTimerInterrupt( void )
 {
     /* Configure SysTick to interrupt at the requested rate. */
-    *( portNVIC_SYSTICK_LOAD ) = ( configCPU_CLOCK_HZ / configTICK_RATE_HZ ) - 1UL;
-    *( portNVIC_SYSTICK_CTRL ) = portNVIC_SYSTICK_CLK | portNVIC_SYSTICK_INT | portNVIC_SYSTICK_ENABLE;
+    *( portNVIC_SYSTICK_LOAD ) = ( configCPU_CLOCK_HZ / configTICK_RATE_HZ ) -
+                                 1UL;
+    *( portNVIC_SYSTICK_CTRL ) = portNVIC_SYSTICK_CLK | portNVIC_SYSTICK_INT |
+                                 portNVIC_SYSTICK_ENABLE;
 }

@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -32,7 +33,7 @@
 
 /* The critical nesting value is initialised to a non zero value to ensure
 interrupts don't accidentally become enabled before the scheduler is started. */
-#define portINITIAL_CRITICAL_NESTING  ( ( uint16_t ) 10 )
+#define portINITIAL_CRITICAL_NESTING ( ( uint16_t ) 10 )
 
 /* Initial PSW value allocated to a newly created task.
  *   1100011000000000
@@ -45,7 +46,7 @@ interrupts don't accidentally become enabled before the scheduler is started. */
  *   |--------------------- Zero Flag set
  *   ---------------------- Global Interrupt Flag set (enabled)
  */
-#define portPSW    ( 0xc6UL )
+#define portPSW                      ( 0xc6UL )
 
 /* The address of the pxCurrentTCB variable, but don't know or need to know its
 type. */
@@ -88,28 +89,31 @@ static void prvTaskExitError( void );
  *
  * See the header file portable.h.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-uint32_t *pulLocal;
+    uint32_t * pulLocal;
 
     /* With large code and large data sizeof( StackType_t ) == 2, and
     sizeof( StackType_t * ) == 4.  With small code and small data
     sizeof( StackType_t ) == 2 and sizeof( StackType_t * ) == 2. */
 
-    #if __DATA_MODEL__ == __DATA_MODEL_FAR__
+#if __DATA_MODEL__ == __DATA_MODEL_FAR__
     {
         /* Far pointer parameters are passed using the A:DE registers (24-bit).
         Although they are stored in memory as a 32-bit value.  Hence decrement
         the stack pointer, so 2 bytes are left for the contents of A, before
         storing the pvParameters value. */
         pxTopOfStack--;
-        pulLocal =  ( uint32_t * ) pxTopOfStack;
+        pulLocal = ( uint32_t * ) pxTopOfStack;
         *pulLocal = ( uint32_t ) pvParameters;
         pxTopOfStack--;
 
         /* The return address is a 32-bit value. So decrement the stack pointer
         in order to make extra room needed to store the correct value.  See the
-        comments above the prvTaskExitError() prototype at the top of this file. */
+        comments above the prvTaskExitError() prototype at the top of this file.
+      */
         pxTopOfStack--;
         pulLocal = ( uint32_t * ) pxTopOfStack;
         *pulLocal = ( uint32_t ) prvTaskExitError;
@@ -126,7 +130,7 @@ uint32_t *pulLocal;
         *pxTopOfStack = ( StackType_t ) 0x1111;
         pxTopOfStack--;
     }
-    #else
+#else
     {
         /* The return address, leaving space for the first two bytes of the
         32-bit value.  See the comments above the prvTaskExitError() prototype
@@ -149,7 +153,7 @@ uint32_t *pulLocal;
         *pxTopOfStack = ( StackType_t ) pvParameters;
         pxTopOfStack--;
     }
-    #endif
+#endif
 
     /* An initial value for the HL register. */
     *pxTopOfStack = ( StackType_t ) 0x2222;
@@ -185,7 +189,8 @@ static void prvTaskExitError( void )
     defined, then stop here so application writers can catch the error. */
     configASSERT( usCriticalNesting == ~0U );
     portDISABLE_INTERRUPTS();
-    for( ;; );
+    for( ;; )
+        ;
 }
 /*-----------------------------------------------------------*/
 

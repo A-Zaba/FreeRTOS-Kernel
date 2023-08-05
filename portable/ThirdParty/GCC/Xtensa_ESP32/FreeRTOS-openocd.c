@@ -14,14 +14,13 @@
 #include "sdkconfig.h"
 
 #ifdef __GNUC__
-    #define USED    __attribute__( ( used ) )
+    #define USED __attribute__( ( used ) )
 #else
     #define USED
 #endif
 
 /*
- * This file is no longer needed as AFTER FreeRTOS V10.14.1 OpenOCD is fixed in the kernel.
- * #ifdef CONFIG_ESP32_DEBUG_OCDAWARE
- *   const int USED DRAM_ATTR uxTopUsedPriority = configMAX_PRIORITIES - 1;
- * #endif
+ * This file is no longer needed as AFTER FreeRTOS V10.14.1 OpenOCD is fixed in
+ * the kernel. #ifdef CONFIG_ESP32_DEBUG_OCDAWARE const int USED DRAM_ATTR
+ * uxTopUsedPriority = configMAX_PRIORITIES - 1; #endif
  */

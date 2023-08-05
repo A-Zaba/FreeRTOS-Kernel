@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -39,7 +40,7 @@
  * @brief Total heap size.
  */
 #ifndef secureconfigTOTAL_HEAP_SIZE
-    #define secureconfigTOTAL_HEAP_SIZE    ( ( ( size_t ) ( 10 * 1024 ) ) )
+    #define secureconfigTOTAL_HEAP_SIZE ( ( ( size_t ) ( 10 * 1024 ) ) )
 #endif
 
 /* No test marker by default. */
@@ -58,20 +59,20 @@
 #endif
 
 /* Block sizes must not get too small. */
-#define secureheapMINIMUM_BLOCK_SIZE    ( ( size_t ) ( xHeapStructSize << 1 ) )
+#define secureheapMINIMUM_BLOCK_SIZE ( ( size_t ) ( xHeapStructSize << 1 ) )
 
 /* Assumes 8bit bytes! */
-#define secureheapBITS_PER_BYTE         ( ( size_t ) 8 )
+#define secureheapBITS_PER_BYTE      ( ( size_t ) 8 )
 /*-----------------------------------------------------------*/
 
 /* Allocate the memory for the heap. */
-#if ( configAPPLICATION_ALLOCATED_HEAP == 1 )
+#if( configAPPLICATION_ALLOCATED_HEAP == 1 )
 
 /* The application writer has already defined the array used for the RTOS
-* heap - probably so it can be placed in a special segment or address. */
-    extern uint8_t ucHeap[ secureconfigTOTAL_HEAP_SIZE ];
-#else /* configAPPLICATION_ALLOCATED_HEAP */
-    static uint8_t ucHeap[ secureconfigTOTAL_HEAP_SIZE ];
+ * heap - probably so it can be placed in a special segment or address. */
+extern uint8_t ucHeap[ secureconfigTOTAL_HEAP_SIZE ];
+#else  /* configAPPLICATION_ALLOCATED_HEAP */
+static uint8_t ucHeap[ secureconfigTOTAL_HEAP_SIZE ];
 #endif /* configAPPLICATION_ALLOCATED_HEAP */
 
 /**
@@ -81,7 +82,8 @@
  */
 typedef struct A_BLOCK_LINK
 {
-    struct A_BLOCK_LINK * pxNextFreeBlock; /**< The next free block in the list. */
+    struct A_BLOCK_LINK * pxNextFreeBlock; /**< The next free block in the list.
+                                            */
     size_t xBlockSize;                     /**< The size of the free block. */
 } BlockLink_t;
 /*-----------------------------------------------------------*/
@@ -108,7 +110,10 @@ static void prvInsertBlockIntoFreeList( BlockLink_t * pxBlockToInsert );
  * @brief The size of the structure placed at the beginning of each allocated
  * memory block must by correctly byte aligned.
  */
-static const size_t xHeapStructSize = ( sizeof( BlockLink_t ) + ( ( size_t ) ( secureportBYTE_ALIGNMENT - 1 ) ) ) & ~( ( size_t ) secureportBYTE_ALIGNMENT_MASK );
+static const size_t
+    xHeapStructSize = ( sizeof( BlockLink_t ) +
+                        ( ( size_t ) ( secureportBYTE_ALIGNMENT - 1 ) ) ) &
+                      ~( ( size_t ) secureportBYTE_ALIGNMENT_MASK );
 
 /**
  * @brief Create a couple of list links to mark the start and end of the list.
@@ -177,7 +182,9 @@ static void prvHeapInit( void )
     xFreeBytesRemaining = pxFirstFreeBlock->xBlockSize;
 
     /* Work out the position of the top bit in a size_t variable. */
-    xBlockAllocatedBit = ( ( size_t ) 1 ) << ( ( sizeof( size_t ) * secureheapBITS_PER_BYTE ) - 1 );
+    xBlockAllocatedBit = ( ( size_t ) 1 )
+                         << ( ( sizeof( size_t ) * secureheapBITS_PER_BYTE ) -
+                              1 );
 }
 /*-----------------------------------------------------------*/
 
@@ -188,7 +195,8 @@ static void prvInsertBlockIntoFreeList( BlockLink_t * pxBlockToInsert )
 
     /* Iterate through the list until a block is found that has a higher address
      * than the block being inserted. */
-    for( pxIterator = &xStart; pxIterator->pxNextFreeBlock < pxBlockToInsert; pxIterator = pxIterator->pxNextFreeBlock )
+    for( pxIterator = &xStart; pxIterator->pxNextFreeBlock < pxBlockToInsert;
+         pxIterator = pxIterator->pxNextFreeBlock )
     {
         /* Nothing to do here, just iterate to the right position. */
     }
@@ -211,13 +219,16 @@ static void prvInsertBlockIntoFreeList( BlockLink_t * pxBlockToInsert )
      * make a contiguous block of memory? */
     puc = ( uint8_t * ) pxBlockToInsert;
 
-    if( ( puc + pxBlockToInsert->xBlockSize ) == ( uint8_t * ) pxIterator->pxNextFreeBlock )
+    if( ( puc + pxBlockToInsert->xBlockSize ) ==
+        ( uint8_t * ) pxIterator->pxNextFreeBlock )
     {
         if( pxIterator->pxNextFreeBlock != pxEnd )
         {
             /* Form one big block from the two blocks. */
-            pxBlockToInsert->xBlockSize += pxIterator->pxNextFreeBlock->xBlockSize;
-            pxBlockToInsert->pxNextFreeBlock = pxIterator->pxNextFreeBlock->pxNextFreeBlock;
+            pxBlockToInsert->xBlockSize += pxIterator->pxNextFreeBlock
+                                               ->xBlockSize;
+            pxBlockToInsert->pxNextFreeBlock = pxIterator->pxNextFreeBlock
+                                                   ->pxNextFreeBlock;
         }
         else
         {
@@ -279,8 +290,11 @@ void * pvPortMalloc( size_t xWantedSize )
             if( ( xWantedSize & secureportBYTE_ALIGNMENT_MASK ) != 0x00 )
             {
                 /* Byte alignment required. */
-                xWantedSize += ( secureportBYTE_ALIGNMENT - ( xWantedSize & secureportBYTE_ALIGNMENT_MASK ) );
-                secureportASSERT( ( xWantedSize & secureportBYTE_ALIGNMENT_MASK ) == 0 );
+                xWantedSize += ( secureportBYTE_ALIGNMENT -
+                                 ( xWantedSize &
+                                   secureportBYTE_ALIGNMENT_MASK ) );
+                secureportASSERT(
+                    ( xWantedSize & secureportBYTE_ALIGNMENT_MASK ) == 0 );
             }
             else
             {
@@ -299,7 +313,8 @@ void * pvPortMalloc( size_t xWantedSize )
             pxPreviousBlock = &xStart;
             pxBlock = xStart.pxNextFreeBlock;
 
-            while( ( pxBlock->xBlockSize < xWantedSize ) && ( pxBlock->pxNextFreeBlock != NULL ) )
+            while( ( pxBlock->xBlockSize < xWantedSize ) &&
+                   ( pxBlock->pxNextFreeBlock != NULL ) )
             {
                 pxPreviousBlock = pxBlock;
                 pxBlock = pxBlock->pxNextFreeBlock;
@@ -311,7 +326,9 @@ void * pvPortMalloc( size_t xWantedSize )
             {
                 /* Return the memory space pointed to - jumping over the
                  * BlockLink_t structure at its start. */
-                pvReturn = ( void * ) ( ( ( uint8_t * ) pxPreviousBlock->pxNextFreeBlock ) + xHeapStructSize );
+                pvReturn = ( void * ) ( ( ( uint8_t * ) pxPreviousBlock
+                                              ->pxNextFreeBlock ) +
+                                        xHeapStructSize );
 
                 /* This block is being returned for use so must be taken out
                  * of the list of free blocks. */
@@ -319,22 +336,27 @@ void * pvPortMalloc( size_t xWantedSize )
 
                 /* If the block is larger than required it can be split into
                  * two. */
-                if( ( pxBlock->xBlockSize - xWantedSize ) > secureheapMINIMUM_BLOCK_SIZE )
+                if( ( pxBlock->xBlockSize - xWantedSize ) >
+                    secureheapMINIMUM_BLOCK_SIZE )
                 {
                     /* This block is to be split into two.  Create a new
                      * block following the number of bytes requested. The void
                      * cast is used to prevent byte alignment warnings from the
                      * compiler. */
-                    pxNewBlockLink = ( void * ) ( ( ( uint8_t * ) pxBlock ) + xWantedSize );
-                    secureportASSERT( ( ( ( size_t ) pxNewBlockLink ) & secureportBYTE_ALIGNMENT_MASK ) == 0 );
+                    pxNewBlockLink = ( void * ) ( ( ( uint8_t * ) pxBlock ) +
+                                                  xWantedSize );
+                    secureportASSERT( ( ( ( size_t ) pxNewBlockLink ) &
+                                        secureportBYTE_ALIGNMENT_MASK ) == 0 );
 
                     /* Calculate the sizes of two blocks split from the single
                      * block. */
-                    pxNewBlockLink->xBlockSize = pxBlock->xBlockSize - xWantedSize;
+                    pxNewBlockLink->xBlockSize = pxBlock->xBlockSize -
+                                                 xWantedSize;
                     pxBlock->xBlockSize = xWantedSize;
 
                     /* Insert the new block into the list of free blocks. */
-                    pxNewBlockLink->pxNextFreeBlock = pxPreviousBlock->pxNextFreeBlock;
+                    pxNewBlockLink->pxNextFreeBlock = pxPreviousBlock
+                                                          ->pxNextFreeBlock;
                     pxPreviousBlock->pxNextFreeBlock = pxNewBlockLink;
                 }
                 else
@@ -375,21 +397,22 @@ void * pvPortMalloc( size_t xWantedSize )
 
     traceMALLOC( pvReturn, xWantedSize );
 
-    #if ( secureconfigUSE_MALLOC_FAILED_HOOK == 1 )
+#if( secureconfigUSE_MALLOC_FAILED_HOOK == 1 )
+    {
+        if( pvReturn == NULL )
         {
-            if( pvReturn == NULL )
-            {
-                extern void vApplicationMallocFailedHook( void );
-                vApplicationMallocFailedHook();
-            }
-            else
-            {
-                mtCOVERAGE_TEST_MARKER();
-            }
+            extern void vApplicationMallocFailedHook( void );
+            vApplicationMallocFailedHook();
         }
-    #endif /* if ( secureconfigUSE_MALLOC_FAILED_HOOK == 1 ) */
+        else
+        {
+            mtCOVERAGE_TEST_MARKER();
+        }
+    }
+#endif /* if ( secureconfigUSE_MALLOC_FAILED_HOOK == 1 ) */
 
-    secureportASSERT( ( ( ( size_t ) pvReturn ) & ( size_t ) secureportBYTE_ALIGNMENT_MASK ) == 0 );
+    secureportASSERT( ( ( ( size_t ) pvReturn ) &
+                        ( size_t ) secureportBYTE_ALIGNMENT_MASK ) == 0 );
     return pvReturn;
 }
 /*-----------------------------------------------------------*/

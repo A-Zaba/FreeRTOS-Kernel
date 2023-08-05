@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -50,26 +51,27 @@
 
 /* A critical section is exited when the critical section nesting count reaches
 this value. */
-#define portNO_CRITICAL_NESTING         ( ( uint32_t ) 0 )
+#define portNO_CRITICAL_NESTING       ( ( uint32_t ) 0 )
 
 /* Tasks are not created with a floating point context, but can be given a
 floating point context after they have been created.  A variable is stored as
 part of the tasks context that holds portNO_FLOATING_POINT_CONTEXT if the task
 does not have an FPU context, or any other value if the task does have an FPU
 context. */
-#define portNO_FLOATING_POINT_CONTEXT   ( ( StackType_t ) 0 )
+#define portNO_FLOATING_POINT_CONTEXT ( ( StackType_t ) 0 )
 
 /* Constants required to setup the initial task context. */
-#define portINITIAL_SPSR                ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, interrupts enabled. */
-#define portTHUMB_MODE_BIT              ( ( StackType_t ) 0x20 )
-#define portTHUMB_MODE_ADDRESS          ( 0x01UL )
+#define portINITIAL_SPSR \
+    ( ( StackType_t ) 0x1f ) /* System mode, ARM mode, interrupts enabled. */
+#define portTHUMB_MODE_BIT      ( ( StackType_t ) 0x20 )
+#define portTHUMB_MODE_ADDRESS  ( 0x01UL )
 
 /* Masks all bits in the APSR other than the mode bits. */
-#define portAPSR_MODE_BITS_MASK         ( 0x1F )
+#define portAPSR_MODE_BITS_MASK ( 0x1F )
 
 /* The value of the mode bits in the APSR when the CPU is executing in user
 mode. */
-#define portAPSR_USER_MODE              ( 0x10 )
+#define portAPSR_USER_MODE      ( 0x10 )
 
 /*-----------------------------------------------------------*/
 
@@ -104,13 +106,14 @@ uint32_t ulPortYieldRequired = pdFALSE;
 if the nesting depth is 0. */
 uint32_t ulPortInterruptNesting = 0UL;
 
-
 /*-----------------------------------------------------------*/
 
 /*
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
     /* Setup the initial stack of the task.  The stack is set exactly as
     expected by the portRESTORE_CONTEXT() macro.
@@ -139,7 +142,7 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
     pxTopOfStack--;
 
     /* Next all the registers other than the stack pointer. */
-    *pxTopOfStack = ( StackType_t ) prvTaskExitError;   /* R14 */
+    *pxTopOfStack = ( StackType_t ) prvTaskExitError; /* R14 */
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) 0x12121212; /* R12 */
     pxTopOfStack--;
@@ -192,17 +195,18 @@ static void prvTaskExitError( void )
     defined, then stop here so application writers can catch the error. */
     configASSERT( ulPortInterruptNesting == ~0UL );
     portDISABLE_INTERRUPTS();
-    for( ;; );
+    for( ;; )
+        ;
 }
 /*-----------------------------------------------------------*/
 
 BaseType_t xPortStartScheduler( void )
 {
-uint32_t ulAPSR;
+    uint32_t ulAPSR;
 
     /* Only continue if the CPU is not in User mode.  The CPU must be in a
     Privileged mode for the scheduler to start. */
-    __asm volatile ( "MRS %0, APSR" : "=r" ( ulAPSR ) );
+    __asm volatile( "MRS %0, APSR" : "=r"( ulAPSR ) );
     ulAPSR &= portAPSR_MODE_BITS_MASK;
     configASSERT( ulAPSR != portAPSR_USER_MODE );
 
@@ -286,13 +290,13 @@ void FreeRTOS_Tick_Handler( void )
 
 void vPortTaskUsesFPU( void )
 {
-uint32_t ulInitialFPSCR = 0;
+    uint32_t ulInitialFPSCR = 0;
 
     /* A task is registering the fact that it needs an FPU context.  Set the
     FPU flag (which is saved as part of the task context). */
     ulPortTaskHasFPUContext = pdTRUE;
 
     /* Initialise the floating point status register. */
-    __asm( "FMXR    FPSCR, %0" :: "r" (ulInitialFPSCR) );
+    __asm( "FMXR    FPSCR, %0" ::"r"( ulInitialFPSCR ) );
 }
 /*-----------------------------------------------------------*/

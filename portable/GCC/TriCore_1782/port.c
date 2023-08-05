@@ -4,22 +4,23 @@
  *
  * SPDX-License-Identifier: MIT
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  *
  * https://www.FreeRTOS.org
  * https://github.com/FreeRTOS
@@ -31,49 +32,57 @@
 #include <string.h>
 
 /* TriCore specific includes. */
-#include <tc1782.h>
-#include <machine/intrinsics.h>
 #include <machine/cint.h>
+#include <machine/intrinsics.h>
 #include <machine/wdtcon.h>
+#include <tc1782.h>
 
 /* Kernel includes. */
 #include "FreeRTOS.h"
-#include "task.h"
 #include "list.h"
+#include "task.h"
 
 #if configCHECK_FOR_STACK_OVERFLOW > 0
-    #error "Stack checking cannot be used with this port, as, unlike most ports, the pxTopOfStack member of the TCB is consumed CSA.  CSA starvation, loosely equivalent to stack overflow, will result in a trap exception."
-    /* The stack pointer is accessible using portCSA_TO_ADDRESS( portCSA_TO_ADDRESS( pxCurrentTCB->pxTopOfStack )[ 0 ] )[ 2 ]; */
+    #error \
+        "Stack checking cannot be used with this port, as, unlike most ports, the pxTopOfStack member of the TCB is consumed CSA.  CSA starvation, loosely equivalent to stack overflow, will result in a trap exception."
+/* The stack pointer is accessible using portCSA_TO_ADDRESS( portCSA_TO_ADDRESS(
+ * pxCurrentTCB->pxTopOfStack )[ 0 ] )[ 2 ]; */
 #endif /* configCHECK_FOR_STACK_OVERFLOW */
-
 
 /*-----------------------------------------------------------*/
 
 /* System register Definitions. */
-#define portSYSTEM_PROGRAM_STATUS_WORD                  ( 0x000008FFUL ) /* Supervisor Mode, MPU Register Set 0 and Call Depth Counting disabled. */
-#define portINITIAL_PRIVILEGED_PROGRAM_STATUS_WORD      ( 0x000014FFUL ) /* IO Level 1, MPU Register Set 1 and Call Depth Counting disabled. */
-#define portINITIAL_UNPRIVILEGED_PROGRAM_STATUS_WORD    ( 0x000010FFUL ) /* IO Level 0, MPU Register Set 1 and Call Depth Counting disabled. */
-#define portINITIAL_PCXI_UPPER_CONTEXT_WORD             ( 0x00C00000UL ) /* The lower 20 bits identify the CSA address. */
-#define portINITIAL_SYSCON                              ( 0x00000000UL ) /* MPU Disable. */
+#define portSYSTEM_PROGRAM_STATUS_WORD                                     \
+    ( 0x000008FFUL ) /* Supervisor Mode, MPU Register Set 0 and Call Depth \
+                        Counting disabled. */
+#define portINITIAL_PRIVILEGED_PROGRAM_STATUS_WORD                             \
+    ( 0x000014FFUL ) /* IO Level 1, MPU Register Set 1 and Call Depth Counting \
+                        disabled. */
+#define portINITIAL_UNPRIVILEGED_PROGRAM_STATUS_WORD                           \
+    ( 0x000010FFUL ) /* IO Level 0, MPU Register Set 1 and Call Depth Counting \
+                        disabled. */
+#define portINITIAL_PCXI_UPPER_CONTEXT_WORD \
+    ( 0x00C00000UL ) /* The lower 20 bits identify the CSA address. */
+#define portINITIAL_SYSCON       ( 0x00000000UL ) /* MPU Disable. */
 
 /* CSA manipulation macros. */
-#define portCSA_FCX_MASK                    ( 0x000FFFFFUL )
+#define portCSA_FCX_MASK         ( 0x000FFFFFUL )
 
 /* OS Interrupt and Trap mechanisms. */
-#define portRESTORE_PSW_MASK                ( ~( 0x000000FFUL ) )
-#define portSYSCALL_TRAP                    ( 6 )
+#define portRESTORE_PSW_MASK     ( ~( 0x000000FFUL ) )
+#define portSYSCALL_TRAP         ( 6 )
 
 /* Each CSA contains 16 words of data. */
-#define portNUM_WORDS_IN_CSA                ( 16 )
+#define portNUM_WORDS_IN_CSA     ( 16 )
 
 /* The interrupt enable bit in the PCP_SRC register. */
-#define portENABLE_CPU_INTERRUPT            ( 1U << 12U )
+#define portENABLE_CPU_INTERRUPT ( 1U << 12U )
 /*-----------------------------------------------------------*/
 
 /*
  * Perform any hardware configuration necessary to generate the tick interrupt.
  */
-static void prvSystemTickHandler( int ) __attribute__((longcall));
+static void prvSystemTickHandler( int ) __attribute__( ( longcall ) );
 static void prvSetupTimerInterrupt( void );
 
 /*
@@ -89,17 +98,20 @@ static void prvInterruptYield( int iTrapIdentification );
 /*-----------------------------------------------------------*/
 
 /* This reference is required by the save/restore context macros. */
-extern volatile uint32_t *pxCurrentTCB;
+extern volatile uint32_t * pxCurrentTCB;
 
 /* Precalculate the compare match value at compile time. */
-static const uint32_t ulCompareMatchValue = ( configPERIPHERAL_CLOCK_HZ / configTICK_RATE_HZ );
+static const uint32_t ulCompareMatchValue = ( configPERIPHERAL_CLOCK_HZ /
+                                              configTICK_RATE_HZ );
 
 /*-----------------------------------------------------------*/
 
-StackType_t *pxPortInitialiseStack( StackType_t * pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
-uint32_t *pulUpperCSA = NULL;
-uint32_t *pulLowerCSA = NULL;
+    uint32_t * pulUpperCSA = NULL;
+    uint32_t * pulLowerCSA = NULL;
 
     /* 16 Address Registers (4 Address registers are global), 16 Data
     Registers, and 3 System Registers.
@@ -112,8 +124,9 @@ uint32_t *pulLowerCSA = NULL;
     Need two CSAs to store the context of a task.
         The upper context contains D8-D15, A10-A15, PSW and PCXI->NULL.
         The lower context contains D0-D7, A2-A7, A11 and PCXI->UpperContext.
-        The pxCurrentTCB->pxTopOfStack points to the Lower Context RSLCX matching the initial BISR.
-        The Lower Context points to the Upper Context ready for the return from the interrupt handler.
+        The pxCurrentTCB->pxTopOfStack points to the Lower Context RSLCX
+    matching the initial BISR. The Lower Context points to the Upper Context
+    ready for the return from the interrupt handler.
 
      The Real stack pointer for the task is stored in the A10 which is restored
      with the upper context. */
@@ -155,21 +168,24 @@ uint32_t *pulLowerCSA = NULL;
     memset( pulUpperCSA, 0, portNUM_WORDS_IN_CSA * sizeof( uint32_t ) );
 
     /* Upper Context. */
-    pulUpperCSA[ 2 ] = ( uint32_t )pxTopOfStack;        /* A10; Stack Return aka Stack Pointer */
-    pulUpperCSA[ 1 ] = portSYSTEM_PROGRAM_STATUS_WORD;      /* PSW  */
+    pulUpperCSA[ 2 ] = ( uint32_t ) pxTopOfStack; /* A10; Stack Return aka Stack
+                                                     Pointer */
+    pulUpperCSA[ 1 ] = portSYSTEM_PROGRAM_STATUS_WORD; /* PSW  */
 
     /* Clear the lower CSA. */
     memset( pulLowerCSA, 0, portNUM_WORDS_IN_CSA * sizeof( uint32_t ) );
 
     /* Lower Context. */
-    pulLowerCSA[ 8 ] = ( uint32_t ) pvParameters;       /* A4;  Address Type Parameter Register */
-    pulLowerCSA[ 1 ] = ( uint32_t ) pxCode;         /* A11; Return Address aka RA */
+    pulLowerCSA[ 8 ] = ( uint32_t ) pvParameters; /* A4;  Address Type Parameter
+                                                     Register */
+    pulLowerCSA[ 1 ] = ( uint32_t ) pxCode; /* A11; Return Address aka RA */
 
     /* PCXI pointing to the Upper context. */
-    pulLowerCSA[ 0 ] = ( portINITIAL_PCXI_UPPER_CONTEXT_WORD | ( uint32_t ) portADDRESS_TO_CSA( pulUpperCSA ) );
+    pulLowerCSA[ 0 ] = ( portINITIAL_PCXI_UPPER_CONTEXT_WORD |
+                         ( uint32_t ) portADDRESS_TO_CSA( pulUpperCSA ) );
 
     /* Save the link to the CSA in the top of stack. */
-    pxTopOfStack = (uint32_t * ) portADDRESS_TO_CSA( pulLowerCSA );
+    pxTopOfStack = ( uint32_t * ) portADDRESS_TO_CSA( pulLowerCSA );
 
     /* DSync to ensure that buffering is not a problem. */
     _dsync();
@@ -180,10 +196,10 @@ uint32_t *pulLowerCSA = NULL;
 
 int32_t xPortStartScheduler( void )
 {
-extern void vTrapInstallHandlers( void );
-uint32_t ulMFCR = 0UL;
-uint32_t *pulUpperCSA = NULL;
-uint32_t *pulLowerCSA = NULL;
+    extern void vTrapInstallHandlers( void );
+    uint32_t ulMFCR = 0UL;
+    uint32_t * pulUpperCSA = NULL;
+    uint32_t * pulLowerCSA = NULL;
 
     /* Interrupts at or below configMAX_SYSCALL_INTERRUPT_PRIORITY are disable
     when this function is called. */
@@ -203,8 +219,11 @@ uint32_t *pulLowerCSA = NULL;
 
     /* Enable then install the priority 1 interrupt for pending context
     switches from an ISR.  See mod_SRC in the TriCore manual. */
-    CPU_SRC0.reg =  ( portENABLE_CPU_INTERRUPT ) | ( configKERNEL_YIELD_PRIORITY );
-    if( 0 == _install_int_handler( configKERNEL_YIELD_PRIORITY, prvInterruptYield, 0 ) )
+    CPU_SRC0.reg = ( portENABLE_CPU_INTERRUPT ) |
+                   ( configKERNEL_YIELD_PRIORITY );
+    if( 0 == _install_int_handler( configKERNEL_YIELD_PRIORITY,
+                                   prvInterruptYield,
+                                   0 ) )
     {
         /* Failed to install the yield handler, force an assert. */
         configASSERT( ( ( volatile void * ) NULL ) );
@@ -228,7 +247,7 @@ uint32_t *pulLowerCSA = NULL;
 
     /* Finally, perform the equivalent of a portRESTORE_CONTEXT() */
     pulLowerCSA = portCSA_TO_ADDRESS( ( *pxCurrentTCB ) );
-    pulUpperCSA = portCSA_TO_ADDRESS( pulLowerCSA[0] );
+    pulUpperCSA = portCSA_TO_ADDRESS( pulLowerCSA[ 0 ] );
     _dsync();
     _mtcr( $PCXI, *pxCurrentTCB );
     _isync();
@@ -250,21 +269,27 @@ static void prvSetupTimerInterrupt( void )
     unlock_wdtcon();
     {
         /* Wait until access to Endint protected register is enabled. */
-        while( 0 != ( WDT_CON0.reg & 0x1UL ) );
+        while( 0 != ( WDT_CON0.reg & 0x1UL ) )
+            ;
 
         /* RMC == 1 so STM Clock == FPI */
         STM_CLC.reg = ( 1UL << 8 );
     }
     lock_wdtcon();
 
-    /* Determine how many bits are used without changing other bits in the CMCON register. */
+    /* Determine how many bits are used without changing other bits in the CMCON
+     * register. */
     STM_CMCON.reg &= ~( 0x1fUL );
-    STM_CMCON.reg |= ( 0x1fUL - __CLZ( configPERIPHERAL_CLOCK_HZ / configTICK_RATE_HZ ) );
+    STM_CMCON.reg |= ( 0x1fUL - __CLZ( configPERIPHERAL_CLOCK_HZ /
+                                       configTICK_RATE_HZ ) );
 
-    /* Take into account the current time so a tick doesn't happen immediately. */
+    /* Take into account the current time so a tick doesn't happen immediately.
+     */
     STM_CMP0.reg = ulCompareMatchValue + STM_TIM0.reg;
 
-    if( 0 != _install_int_handler( configKERNEL_INTERRUPT_PRIORITY, prvSystemTickHandler, 0 ) )
+    if( 0 != _install_int_handler( configKERNEL_INTERRUPT_PRIORITY,
+                                   prvSystemTickHandler,
+                                   0 ) )
     {
         /* Set-up the interrupt. */
         STM_SRC0.reg = ( configKERNEL_INTERRUPT_PRIORITY | 0x00005000UL );
@@ -285,11 +310,11 @@ static void prvSetupTimerInterrupt( void )
 
 static void prvSystemTickHandler( int iArg )
 {
-uint32_t ulSavedInterruptMask;
-uint32_t *pxUpperCSA = NULL;
-uint32_t xUpperCSA = 0UL;
-extern volatile uint32_t *pxCurrentTCB;
-int32_t lYieldRequired;
+    uint32_t ulSavedInterruptMask;
+    uint32_t * pxUpperCSA = NULL;
+    uint32_t xUpperCSA = 0UL;
+    extern volatile uint32_t * pxCurrentTCB;
+    int32_t lYieldRequired;
 
     /* Just to avoid compiler warnings about unused parameters. */
     ( void ) iArg;
@@ -327,24 +352,24 @@ int32_t lYieldRequired;
     if( lYieldRequired != pdFALSE )
     {
         /* Save the context of a task.
-        The upper context is automatically saved when entering a trap or interrupt.
-        Need to save the lower context as well and copy the PCXI CSA ID into
-        pxCurrentTCB->pxTopOfStack. Only Lower Context CSA IDs may be saved to the
-        TCB of a task.
+        The upper context is automatically saved when entering a trap or
+        interrupt. Need to save the lower context as well and copy the PCXI CSA
+        ID into pxCurrentTCB->pxTopOfStack. Only Lower Context CSA IDs may be
+        saved to the TCB of a task.
 
-        Call vTaskSwitchContext to select the next task, note that this changes the
-        value of pxCurrentTCB so that it needs to be reloaded.
+        Call vTaskSwitchContext to select the next task, note that this changes
+        the value of pxCurrentTCB so that it needs to be reloaded.
 
         Call vPortSetMPURegisterSetOne to change the MPU mapping for the task
         that has just been switched in.
 
         Load the context of the task.
         Need to restore the lower context by loading the CSA from
-        pxCurrentTCB->pxTopOfStack into PCXI (effectively changing the call stack).
-        In the Interrupt handler post-amble, RSLCX will restore the lower context
-        of the task. RFE will restore the upper context of the task, jump to the
-        return address and restore the previous state of interrupts being
-        enabled/disabled. */
+        pxCurrentTCB->pxTopOfStack into PCXI (effectively changing the call
+        stack). In the Interrupt handler post-amble, RSLCX will restore the
+        lower context of the task. RFE will restore the upper context of the
+        task, jump to the return address and restore the previous state of
+        interrupts being enabled/disabled. */
         _disable();
         _dsync();
         xUpperCSA = __MFCR( $PCXI );
@@ -376,10 +401,10 @@ int32_t lYieldRequired;
  * than they can be freed assuming that tasks are being spawned and
  * deleted frequently.
  */
-void vPortReclaimCSA( uint32_t *pxTCB )
+void vPortReclaimCSA( uint32_t * pxTCB )
 {
-uint32_t pxHeadCSA, pxTailCSA, pxFreeCSA;
-uint32_t *pulNextCSA;
+    uint32_t pxHeadCSA, pxTailCSA, pxFreeCSA;
+    uint32_t * pulNextCSA;
 
     /* A pointer to the first CSA in the list of CSAs consumed by the task is
     stored in the first element of the tasks TCB structure (where the stack
@@ -439,32 +464,32 @@ void vPortEndScheduler( void )
 
 static void prvTrapYield( int iTrapIdentification )
 {
-uint32_t *pxUpperCSA = NULL;
-uint32_t xUpperCSA = 0UL;
-extern volatile uint32_t *pxCurrentTCB;
+    uint32_t * pxUpperCSA = NULL;
+    uint32_t xUpperCSA = 0UL;
+    extern volatile uint32_t * pxCurrentTCB;
 
     switch( iTrapIdentification )
     {
         case portSYSCALL_TASK_YIELD:
             /* Save the context of a task.
-            The upper context is automatically saved when entering a trap or interrupt.
-            Need to save the lower context as well and copy the PCXI CSA ID into
-            pxCurrentTCB->pxTopOfStack. Only Lower Context CSA IDs may be saved to the
-            TCB of a task.
+            The upper context is automatically saved when entering a trap or
+            interrupt. Need to save the lower context as well and copy the PCXI
+            CSA ID into pxCurrentTCB->pxTopOfStack. Only Lower Context CSA IDs
+            may be saved to the TCB of a task.
 
-            Call vTaskSwitchContext to select the next task, note that this changes the
-            value of pxCurrentTCB so that it needs to be reloaded.
+            Call vTaskSwitchContext to select the next task, note that this
+            changes the value of pxCurrentTCB so that it needs to be reloaded.
 
-            Call vPortSetMPURegisterSetOne to change the MPU mapping for the task
-            that has just been switched in.
+            Call vPortSetMPURegisterSetOne to change the MPU mapping for the
+            task that has just been switched in.
 
             Load the context of the task.
             Need to restore the lower context by loading the CSA from
-            pxCurrentTCB->pxTopOfStack into PCXI (effectively changing the call stack).
-            In the Interrupt handler post-amble, RSLCX will restore the lower context
-            of the task. RFE will restore the upper context of the task, jump to the
-            return address and restore the previous state of interrupts being
-            enabled/disabled. */
+            pxCurrentTCB->pxTopOfStack into PCXI (effectively changing the call
+            stack). In the Interrupt handler post-amble, RSLCX will restore the
+            lower context of the task. RFE will restore the upper context of the
+            task, jump to the return address and restore the previous state of
+            interrupts being enabled/disabled. */
             _disable();
             _dsync();
             xUpperCSA = __MFCR( $PCXI );
@@ -486,9 +511,9 @@ extern volatile uint32_t *pxCurrentTCB;
 
 static void prvInterruptYield( int iId )
 {
-uint32_t *pxUpperCSA = NULL;
-uint32_t xUpperCSA = 0UL;
-extern volatile uint32_t *pxCurrentTCB;
+    uint32_t * pxUpperCSA = NULL;
+    uint32_t xUpperCSA = 0UL;
+    extern volatile uint32_t * pxCurrentTCB;
 
     /* Just to remove compiler warnings. */
     ( void ) iId;
@@ -526,11 +551,13 @@ extern volatile uint32_t *pxCurrentTCB;
 
 uint32_t uxPortSetInterruptMaskFromISR( void )
 {
-uint32_t uxReturn = 0UL;
+    uint32_t uxReturn = 0UL;
 
     _disable();
     uxReturn = __MFCR( $ICR );
-    _mtcr( $ICR, ( ( uxReturn & ~portCCPN_MASK ) | configMAX_SYSCALL_INTERRUPT_PRIORITY ) );
+    _mtcr( $ICR,
+           ( ( uxReturn & ~portCCPN_MASK ) |
+             configMAX_SYSCALL_INTERRUPT_PRIORITY ) );
     _isync();
     _enable();
 
