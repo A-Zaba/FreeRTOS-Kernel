@@ -9,7 +9,7 @@ jobs:
     steps:
       # Install python 3
       - name: Tool Setup
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.7.10
           architecture:   x64

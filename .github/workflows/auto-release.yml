@@ -23,7 +23,7 @@ jobs:
     steps:
       # Install python 3
       - name: Tool Setup
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           architecture:   x64
         env:
