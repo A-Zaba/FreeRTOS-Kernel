@@ -30,18 +30,18 @@ jobs:
         - name: Clone This Repo
           uses: actions/checkout@v3
         - name: Run spellings check
-          uses: Skptak/CI-CD-Github-Actions/spellings@main
+          uses: Skptak/CI-CD-Github-Actions/rust-spell-check@main
           with:
             path: ./
             exclude-dirs: portable, ThirdParty, docs
     
         - name: Run spellings check of MemMang
-          uses: Skptak/CI-CD-Github-Actions/spellings@main
+          uses: Skptak/CI-CD-Github-Actions/rust-spell-check@main
           with:
             path: ./portable/MemMang
             
         - name: Run spellings check of MemMang
-          uses: Skptak/CI-CD-Github-Actions/spellings@main
+          uses: Skptak/CI-CD-Github-Actions/rust-spell-check@main
           with:
             path: ./portable/MemMang
 
