@@ -132,46 +132,48 @@
 #define portFPCCR                                                            \
     ( ( volatile uint32_t * ) 0xe000ef34 ) /* Floating Point Context Control \
                                               Register. */
-#define portFPCCR_ASPEN_POS                  ( 31UL )
-#define portFPCCR_ASPEN_MASK                 ( 1UL << portFPCCR_ASPEN_POS )
-#define portFPCCR_LSPEN_POS                  ( 30UL )
-#define portFPCCR_LSPEN_MASK                 ( 1UL << portFPCCR_LSPEN_POS )
+#define portFPCCR_ASPEN_POS  ( 31UL )
+#define portFPCCR_ASPEN_MASK ( 1UL << portFPCCR_ASPEN_POS )
+#define portFPCCR_LSPEN_POS  ( 30UL )
+#define portFPCCR_LSPEN_MASK ( 1UL << portFPCCR_LSPEN_POS )
 /*-----------------------------------------------------------*/
 
 /**
  * @brief Offsets in the stack to the parameters when inside the SVC handler.
  */
-#define portOFFSET_TO_LR                     ( 5 )
-#define portOFFSET_TO_PC                     ( 6 )
-#define portOFFSET_TO_PSR                    ( 7 )
+#define portOFFSET_TO_LR     ( 5 )
+#define portOFFSET_TO_PC     ( 6 )
+#define portOFFSET_TO_PSR    ( 7 )
 /*-----------------------------------------------------------*/
 
 /**
  * @brief Constants required to manipulate the MPU.
  */
-#define portMPU_TYPE_REG                     ( *( ( volatile uint32_t * ) 0xe000ed90 ) )
-#define portMPU_CTRL_REG                     ( *( ( volatile uint32_t * ) 0xe000ed94 ) )
-#define portMPU_RNR_REG                      ( *( ( volatile uint32_t * ) 0xe000ed98 ) )
+#define portMPU_TYPE_REG     ( *( ( volatile uint32_t * ) 0xe000ed90 ) )
+#define portMPU_CTRL_REG     ( *( ( volatile uint32_t * ) 0xe000ed94 ) )
+#define portMPU_RNR_REG      ( *( ( volatile uint32_t * ) 0xe000ed98 ) )
 
-#define portMPU_RBAR_REG                     ( *( ( volatile uint32_t * ) 0xe000ed9c ) )
-#define portMPU_RLAR_REG                     ( *( ( volatile uint32_t * ) 0xe000eda0 ) )
+#define portMPU_RBAR_REG     ( *( ( volatile uint32_t * ) 0xe000ed9c ) )
+#define portMPU_RLAR_REG     ( *( ( volatile uint32_t * ) 0xe000eda0 ) )
 
-#define portMPU_RBAR_A1_REG                  ( *( ( volatile uint32_t * ) 0xe000eda4 ) )
-#define portMPU_RLAR_A1_REG                  ( *( ( volatile uint32_t * ) 0xe000eda8 ) )
+#define portMPU_RBAR_A1_REG  ( *( ( volatile uint32_t * ) 0xe000eda4 ) )
+#define portMPU_RLAR_A1_REG  ( *( ( volatile uint32_t * ) 0xe000eda8 ) )
 
-#define portMPU_RBAR_A2_REG                  ( *( ( volatile uint32_t * ) 0xe000edac ) )
-#define portMPU_RLAR_A2_REG                  ( *( ( volatile uint32_t * ) 0xe000edb0 ) )
+#define portMPU_RBAR_A2_REG  ( *( ( volatile uint32_t * ) 0xe000edac ) )
+#define portMPU_RLAR_A2_REG  ( *( ( volatile uint32_t * ) 0xe000edb0 ) )
 
-#define portMPU_RBAR_A3_REG                  ( *( ( volatile uint32_t * ) 0xe000edb4 ) )
-#define portMPU_RLAR_A3_REG                  ( *( ( volatile uint32_t * ) 0xe000edb8 ) )
+#define portMPU_RBAR_A3_REG  ( *( ( volatile uint32_t * ) 0xe000edb4 ) )
+#define portMPU_RLAR_A3_REG  ( *( ( volatile uint32_t * ) 0xe000edb8 ) )
 
-#define portMPU_MAIR0_REG                    ( *( ( volatile uint32_t * ) 0xe000edc0 ) )
-#define portMPU_MAIR1_REG                    ( *( ( volatile uint32_t * ) 0xe000edc4 ) )
+#define portMPU_MAIR0_REG    ( *( ( volatile uint32_t * ) 0xe000edc0 ) )
+#define portMPU_MAIR1_REG    ( *( ( volatile uint32_t * ) 0xe000edc4 ) )
 
-#define portMPU_RBAR_ADDRESS_MASK            ( 0xffffffe0 ) /* Must be 32-byte aligned. \
-                                                             */
-#define portMPU_RLAR_ADDRESS_MASK            ( 0xffffffe0 ) /* Must be 32-byte aligned. \
-                                                             */
+#define portMPU_RBAR_ADDRESS_MASK              \
+    ( 0xffffffe0 ) /* Must be 32-byte aligned. \
+                    */
+#define portMPU_RLAR_ADDRESS_MASK              \
+    ( 0xffffffe0 ) /* Must be 32-byte aligned. \
+                    */
 
 #define portMPU_RBAR_ACCESS_PERMISSIONS_MASK ( 3UL << 1UL )
 
@@ -785,8 +787,9 @@ __attribute__( ( weak ) ) void vPortSuppressTicksAndSleep(
 #endif /* configUSE_TICKLESS_IDLE */
 /*-----------------------------------------------------------*/
 
-__attribute__( ( weak ) ) void vPortSetupTimerInterrupt( void ) /* PRIVILEGED_FUNCTION
-                                                                 */
+__attribute__( ( weak ) ) void vPortSetupTimerInterrupt(
+    void ) /* PRIVILEGED_FUNCTION
+            */
 {
 /* Calculate the constants required to configure the tick interrupt. */
 #if( configUSE_TICKLESS_IDLE == 1 )
@@ -848,8 +851,9 @@ static void prvTaskExitError( void )
 /*-----------------------------------------------------------*/
 
 #if( configENABLE_MPU == 1 )
-static uint32_t prvGetRegionAccessPermissions( uint32_t ulRBARValue ) /* PRIVILEGED_FUNCTION
-                                                                       */
+static uint32_t prvGetRegionAccessPermissions(
+    uint32_t ulRBARValue ) /* PRIVILEGED_FUNCTION
+                            */
 {
     uint32_t ulAccessPermissions = 0;
 
@@ -1185,8 +1189,9 @@ void vPortSVCHandler_C( uint32_t * pulCallerStackAddress ) /* PRIVILEGED_FUNCTIO
 
 #if( ( configENABLE_MPU == 1 ) && ( configUSE_MPU_WRAPPERS_V1 == 0 ) )
 
-void vSystemCallEnter( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_FUNCTION
-                                                                 */
+void vSystemCallEnter( uint32_t * pulTaskStack,
+                       uint32_t ulLR ) /* PRIVILEGED_FUNCTION
+                                        */
 {
     extern TaskHandle_t pxCurrentTCB;
     xMPU_SETTINGS * pxMpuSettings;
@@ -1306,8 +1311,9 @@ void vSystemCallEnter( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_FU
 
 #if( ( configENABLE_MPU == 1 ) && ( configUSE_MPU_WRAPPERS_V1 == 0 ) )
 
-void vSystemCallEnter_1( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_FUNCTION
-                                                                   */
+void vSystemCallEnter_1( uint32_t * pulTaskStack,
+                         uint32_t ulLR ) /* PRIVILEGED_FUNCTION
+                                          */
 {
     extern TaskHandle_t pxCurrentTCB;
     xMPU_SETTINGS * pxMpuSettings;
@@ -1437,8 +1443,9 @@ void vSystemCallEnter_1( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_
 
 #if( ( configENABLE_MPU == 1 ) && ( configUSE_MPU_WRAPPERS_V1 == 0 ) )
 
-void vSystemCallExit( uint32_t * pulSystemCallStack, uint32_t ulLR ) /* PRIVILEGED_FUNCTION
-                                                                      */
+void vSystemCallExit( uint32_t * pulSystemCallStack,
+                      uint32_t ulLR ) /* PRIVILEGED_FUNCTION
+                                       */
 {
     extern TaskHandle_t pxCurrentTCB;
     xMPU_SETTINGS * pxMpuSettings;
@@ -1563,13 +1570,14 @@ BaseType_t xPortIsTaskPrivileged( void ) /* PRIVILEGED_FUNCTION */
 
 #if( configENABLE_MPU == 1 )
 
-StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
-                                     StackType_t * pxEndOfStack,
-                                     TaskFunction_t pxCode,
-                                     void * pvParameters,
-                                     BaseType_t xRunPrivileged,
-                                     xMPU_SETTINGS * xMPUSettings ) /* PRIVILEGED_FUNCTION
-                                                                     */
+StackType_t * pxPortInitialiseStack(
+    StackType_t * pxTopOfStack,
+    StackType_t * pxEndOfStack,
+    TaskFunction_t pxCode,
+    void * pvParameters,
+    BaseType_t xRunPrivileged,
+    xMPU_SETTINGS * xMPUSettings ) /* PRIVILEGED_FUNCTION
+                                    */
 {
     uint32_t ulIndex = 0;
 
@@ -1610,8 +1618,9 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
 
     #if( configENABLE_TRUSTZONE == 1 )
     {
-        xMPUSettings->ulContext[ ulIndex ] = portNO_SECURE_CONTEXT; /* xSecureContext.
-                                                                     */
+        xMPUSettings
+            ->ulContext[ ulIndex ] = portNO_SECURE_CONTEXT; /* xSecureContext.
+                                                             */
         ulIndex++;
     }
     #endif /* configENABLE_TRUSTZONE */
@@ -2051,10 +2060,11 @@ void vPortStoreTaskMPUSettings( xMPU_SETTINGS * xMPUSettings,
 /*-----------------------------------------------------------*/
 
 #if( configENABLE_MPU == 1 )
-BaseType_t xPortIsAuthorizedToAccessBuffer( const void * pvBuffer,
-                                            uint32_t ulBufferLength,
-                                            uint32_t ulAccessRequested ) /* PRIVILEGED_FUNCTION
-                                                                          */
+BaseType_t xPortIsAuthorizedToAccessBuffer(
+    const void * pvBuffer,
+    uint32_t ulBufferLength,
+    uint32_t ulAccessRequested ) /* PRIVILEGED_FUNCTION
+                                  */
 
 {
     uint32_t i, ulBufferStartAddress, ulBufferEndAddress;

@@ -461,8 +461,9 @@ __asm void prvTriggerLazyStacking( void ) /* PRIVILEGED_FUNCTION */
 
 #if( configUSE_MPU_WRAPPERS_V1 == 0 )
 
-void vSystemCallEnter( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_FUNCTION
-                                                                 */
+void vSystemCallEnter( uint32_t * pulTaskStack,
+                       uint32_t ulLR ) /* PRIVILEGED_FUNCTION
+                                        */
 {
     extern TaskHandle_t pxCurrentTCB;
     xMPU_SETTINGS * pxMpuSettings;
@@ -556,8 +557,9 @@ void vSystemCallEnter( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_FU
 
 #if( configUSE_MPU_WRAPPERS_V1 == 0 )
 
-void vSystemCallEnter_1( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_FUNCTION
-                                                                   */
+void vSystemCallEnter_1( uint32_t * pulTaskStack,
+                         uint32_t ulLR ) /* PRIVILEGED_FUNCTION
+                                          */
 {
     extern TaskHandle_t pxCurrentTCB;
     xMPU_SETTINGS * pxMpuSettings;
@@ -661,8 +663,9 @@ void vSystemCallEnter_1( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_
 
 #if( configUSE_MPU_WRAPPERS_V1 == 0 )
 
-void vSystemCallExit( uint32_t * pulSystemCallStack, uint32_t ulLR ) /* PRIVILEGED_FUNCTION
-                                                                      */
+void vSystemCallExit( uint32_t * pulSystemCallStack,
+                      uint32_t ulLR ) /* PRIVILEGED_FUNCTION
+                                       */
 {
     extern TaskHandle_t pxCurrentTCB;
     xMPU_SETTINGS * pxMpuSettings;
@@ -769,16 +772,16 @@ __asm void vPortSVCHandler( void )
         PRESERVE8
 
             tst lr,
-        #4 ite eq mrseq r0, msp mrsne r0,
+    # 4 ite eq mrseq r0, msp mrsne r0,
         psp
 
             ldr r1,
         [ r0, #24 ] ldrb r2, [ r1, # - 2 ] cmp r2,
-        #portSVC_SYSTEM_CALL_ENTER beq syscall_enter cmp r2,
-        #portSVC_SYSTEM_CALL_ENTER_1 beq syscall_enter_1 cmp r2,
-        #portSVC_SYSTEM_CALL_EXIT beq syscall_exit b vSVCHandler_C
+    #portSVC_SYSTEM_CALL_ENTER beq syscall_enter cmp r2,
+    #portSVC_SYSTEM_CALL_ENTER_1 beq syscall_enter_1 cmp r2,
+    #portSVC_SYSTEM_CALL_EXIT beq syscall_exit b vSVCHandler_C
 
-            syscall_enter mov r1,
+        syscall_enter mov r1,
         lr b vSystemCallEnter
 
             syscall_enter_1 mov r1,
@@ -802,7 +805,7 @@ __asm void vPortSVCHandler( void )
     #ifndef USE_PROCESS_STACK /* Code should not be required if a main() is \
                                  using the process stack. */
             tst lr,
-        #4 ite eq mrseq r0, msp mrsne r0,
+        # 4 ite eq mrseq r0, msp mrsne r0,
         psp
     #else
             mrs r0,
@@ -834,7 +837,7 @@ __asm void prvRestoreContextOfFirstTask( void ) {
     [r3] /* r2 = pxCurrentTCB. */
     add r2,
     r2,
-    #4 /* r2 = Second item in the TCB which is xMPUSettings. */
+# 4 /* r2 = Second item in the TCB which is xMPUSettings. */
 
     dmb /* Complete outstanding transfers before disabling MPU. */
         ldr r0,
@@ -843,7 +846,7 @@ __asm void prvRestoreContextOfFirstTask( void ) {
     [r0] /* Read the value of MPU_CTRL. */
     bic r3,
     r3,
-    #1 /* r3 = r3 & ~1 i.e. Clear the bit 0 in r3. */
+# 1 /* r3 = r3 & ~1 i.e. Clear the bit 0 in r3. */
     str r3,
     [r0] /* Disable MPU. */
 
@@ -871,7 +874,7 @@ __asm void prvRestoreContextOfFirstTask( void ) {
     [r0] /* Read the value of MPU_CTRL. */
     orr r3,
     r3,
-    #1 /* r3 = r3 | 1 i.e. Set the bit 0 in r3. */
+# 1 /* r3 = r3 | 1 i.e. Set the bit 0 in r3. */
     str r3,
     [r0] /* Enable MPU. */
     dsb  /* Force memory writes before continuing. */
@@ -898,7 +901,7 @@ __asm void prvRestoreContextOfFirstTask( void ) {
             first member of TCB. */
 
     mov r0,
-    #0 msr basepri,
+# 0 msr basepri,
     r0 bx lr
     /* *INDENT-ON* */
 } /*-----------------------------------------------------------*/
@@ -1064,8 +1067,8 @@ __asm void prvStartFirstTask( void )
              * was used before the scheduler was started - which would otherwise
              * result in the unnecessary leaving of space in the SVC stack for
              * lazy saving of FPU registers. */
-                mov r0,
-        #0 msr control,
+            mov r0,
+# 0 msr control,
         r0
             /* Globally enable interrupts. */
             cpsie i cpsie f dsb isb svc
@@ -1163,9 +1166,9 @@ __asm void xPortPendSVHandler( void )
 
     ldr r3, = pxCurrentTCB /* r3 = &( pxCurrentTCB ). */
                 ldr r2,
-        [r3] /* r2 = pxCurrentTCB. */
+        [ r3 ] /* r2 = pxCurrentTCB. */
         ldr r1,
-        [r2] /* r1 = Location where the context should be saved. */
+        [ r2 ] /* r1 = Location where the context should be saved. */
 
         /*------------ Save Context. ----------- */
         mrs r3,
@@ -1174,17 +1177,17 @@ __asm void xPortPendSVHandler( void )
 
             add r0,
         r0,
-        #0x20 /* Move r0 to location where s0 is saved. */
+# 0x20 /* Move r0 to location where s0 is saved. */
         tst lr,
-        #0x10 ittt eq vstmiaeq r1 !,
-        { s16 - s31 } /* Store s16-s31. */
+# 0x10 ittt eq vstmiaeq r1 !,
+    { s16 - s31 } /* Store s16-s31. */
     vldmiaeq r0,
-        { s0 - s16 } /* Copy hardware saved FP context into s0-s16. */
+    { s0 - s16 } /* Copy hardware saved FP context into s0-s16. */
     vstmiaeq r1 !,
         { s0 - s16 } /* Store hardware saved FP context. */
     sub r0,
         r0,
-        #0x20 /* Set r0 back to the location of hardware saved context. */
+# 0x20 /* Set r0 back to the location of hardware saved context. */
 
         stmia r1 !,
         { r3 - r11, lr } /* Store CONTROL register, r4-r11 and LR. */
@@ -1199,7 +1202,7 @@ __asm void xPortPendSVHandler( void )
 
         /*---------- Select next task. --------- */
         mov r0,
-        #configMAX_SYSCALL_INTERRUPT_PRIORITY
+#configMAX_SYSCALL_INTERRUPT_PRIORITY
 #if( configENABLE_ERRATA_837070_WORKAROUND == 1 )
         cpsid i /* ARM Cortex-M7 r0p1 Errata 837070 workaround. */
 #endif
@@ -1209,7 +1212,7 @@ __asm void xPortPendSVHandler( void )
             cpsie i /* ARM Cortex-M7 r0p1 Errata 837070 workaround. */
 #endif
                 bl vTaskSwitchContext mov r0,
-        #0 msr basepri,
+# 0 msr basepri,
         r0
 
             /*------------ Program MPU. ------------ */
@@ -1219,7 +1222,7 @@ __asm void xPortPendSVHandler( void )
         [r3] /* r2 = pxCurrentTCB. */
         add r2,
         r2,
-        #4 /* r2 = Second item in the TCB which is xMPUSettings. */
+# 4 /* r2 = Second item in the TCB which is xMPUSettings. */
 
         dmb /* Complete outstanding transfers before disabling MPU. */
             ldr r0,
@@ -1227,7 +1230,7 @@ __asm void xPortPendSVHandler( void )
         ldr r3,
         [r0] /* Read the value of MPU_CTRL. */
         bic r3,
-        #1 /* r3 = r3 & ~1 i.e. Clear the bit 0 in r3. */
+# 1 /* r3 = r3 & ~1 i.e. Clear the bit 0 in r3. */
         str r3,
         [r0] /* Disable MPU. */
 
@@ -1254,7 +1257,7 @@ __asm void xPortPendSVHandler( void )
         ldr r3,
         [r0] /* Read the value of MPU_CTRL. */
         orr r3,
-        #1 /* r3 = r3 | 1 i.e. Set the bit 0 in r3. */
+# 1 /* r3 = r3 | 1 i.e. Set the bit 0 in r3. */
         str r3,
         [r0] /* Enable MPU. */
         dsb  /* Force memory writes before continuing. */
@@ -1280,7 +1283,7 @@ __asm void xPortPendSVHandler( void )
         r3
 
             tst lr,
-        #0x10 ittt eq vldmdbeq r1 !,
+# 0x10 ittt eq vldmdbeq r1 !,
         { s0 - s16 } /* s0-s16 contain hardware saved FP context. */
     vstmiaeq r0 !,
         { s0 - s16 } /* Copy hardware saved FP context on the task stack. */
@@ -1345,16 +1348,14 @@ __asm void vPortEnableVFP( void )
     /* *INDENT-OFF* */
     PRESERVE8
 
-    ldr.w r0,
-        = 0xE000ED88 /* The FPU enable bits are in the CPACR. */
-        ldr r1,
-        [r0]
+    ldr.w r0, = 0xE000ED88 /* The FPU enable bits are in the CPACR. */
+              ldr r1,
+          [r0]
 
         orr r1,
-        r1,
-        #( 0xf << 20 ) /* Enable CP10 and CP11 coprocessors, then save back. */
-        str r1,
-        [r0] bx r14 nop nop
+          r1,
+#( 0xf << 20 ) /* Enable CP10 and CP11 coprocessors, then save back. */
+          str r1, [r0] bx r14 nop nop
     /* *INDENT-ON* */
 }
 /*-----------------------------------------------------------*/
@@ -1399,8 +1400,7 @@ static void prvSetupMPU( void )
         portMPU_REGION_BASE_ADDRESS_REG =
             ( ( uint32_t ) __privileged_functions_start__ ) | /* Base address.
                                                                */
-            ( portMPU_REGION_VALID ) |
-            ( portPRIVILEGED_FLASH_REGION );
+            ( portMPU_REGION_VALID ) | ( portPRIVILEGED_FLASH_REGION );
 
         portMPU_REGION_ATTRIBUTE_REG = ( portMPU_REGION_PRIVILEGED_READ_ONLY ) |
                                        ( ( configTEX_S_C_B_FLASH &
@@ -1484,12 +1484,12 @@ __asm BaseType_t xIsPrivileged( void )
     mrs r0,
         control /* r0 = CONTROL. */
             tst r0,
-        #1 /* Perform r0 & 1 (bitwise AND) and update the conditions flag. */
+# 1 /* Perform r0 & 1 (bitwise AND) and update the conditions flag. */
         ite ne movne r0,
-        #0 /* CONTROL[0]!=0. Return false to indicate that the processor is not
+# 0 /* CONTROL[0]!=0. Return false to indicate that the processor is not
               privileged. */
         moveq r0,
-        #1    /* CONTROL[0]==0. Return true to indicate that the processor is
+# 1           /* CONTROL[0]==0. Return true to indicate that the processor is
                  privileged. */
         bx lr /* Return. */
     /* *INDENT-ON* */
@@ -1504,7 +1504,7 @@ __asm void vResetPrivilege( void )
     mrs r0,
         control /* r0 = CONTROL. */
             orrs r0,
-        #1 /* r0 = r0 | 1. */
+# 1 /* r0 = r0 | 1. */
         msr control,
         r0        /* CONTROL = r0. */
             bx lr /* Return. */
@@ -1673,10 +1673,11 @@ void vPortStoreTaskMPUSettings( xMPU_SETTINGS * xMPUSettings,
 }
 /*-----------------------------------------------------------*/
 
-BaseType_t xPortIsAuthorizedToAccessBuffer( const void * pvBuffer,
-                                            uint32_t ulBufferLength,
-                                            uint32_t ulAccessRequested ) /* PRIVILEGED_FUNCTION
-                                                                          */
+BaseType_t xPortIsAuthorizedToAccessBuffer(
+    const void * pvBuffer,
+    uint32_t ulBufferLength,
+    uint32_t ulAccessRequested ) /* PRIVILEGED_FUNCTION
+                                  */
 
 {
     uint32_t i, ulBufferStartAddress, ulBufferEndAddress;

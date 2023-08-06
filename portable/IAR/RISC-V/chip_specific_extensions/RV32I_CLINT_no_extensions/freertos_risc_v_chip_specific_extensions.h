@@ -66,6 +66,6 @@ portasmSAVE_ADDITIONAL_REGISTERS MACRO
         portasmRESTORE_ADDITIONAL_REGISTERS MACRO
             /* No additional registers to restore, so this macro does nothing.
              */
-                ENDM
+            ENDM
 
 #endif /* __FREERTOS_RISC_V_EXTENSIONS_H__ */

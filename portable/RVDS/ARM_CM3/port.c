@@ -236,7 +236,7 @@ __asm void vPortSVCHandler( void )
     msr psp,
         r0 /* Restore the task stack pointer. */
             isb mov r0,
-        #0 msr basepri, r0 orr r14, #0xd bx r14
+# 0 msr basepri, r0 orr r14, #0xd bx r14
     /* *INDENT-ON* */
 }
 /*-----------------------------------------------------------*/

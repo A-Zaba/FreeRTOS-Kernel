@@ -510,10 +510,11 @@ typedef struct
         !portUSING_MPU_WRAPPERS /* If MPU wrappers not used, we still need to \
                                    allocate coproc area */
         #undef portUSING_MPU_WRAPPERS
-        #define portUSING_MPU_WRAPPERS 1 /* Enable it to allocate coproc area \
-                                          */
-        #define MPU_WRAPPERS_H         /* Override mpu_wrapper.h to disable unwanted \
-                                          code */
+        #define portUSING_MPU_WRAPPERS                                 \
+            1                     /* Enable it to allocate coproc area \
+                                   */
+        #define MPU_WRAPPERS_H    /* Override mpu_wrapper.h to disable unwanted \
+                                     code */
         #define PRIVILEGED_FUNCTION
         #define PRIVILEGED_DATA
     #endif

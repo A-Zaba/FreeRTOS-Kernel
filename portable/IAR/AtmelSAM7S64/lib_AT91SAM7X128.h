@@ -372,7 +372,7 @@ __inline int AT91F_PDC_IsNextRxEmpty( // \return return 1 if transfer is
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_PDC_Open
 //* \brief Open PDC: disable TX and RX reset transfer descriptors, re-enable RX
-//and TX
+// and TX
 //*----------------------------------------------------------------------------
 __inline void AT91F_PDC_Open( AT91PS_PDC pPDC ) // \arg pointer to a PDC
                                                 // controller
@@ -1249,7 +1249,7 @@ __inline unsigned int AT91F_PMC_GetMCKReg( AT91PS_PMC pPMC ) // \arg pointer to
 //*------------------------------------------------------------------------------
 //* \fn    AT91F_PMC_GetMasterClock
 //* \brief Return master clock in Hz which correponds to processor clock for
-//ARM7
+// ARM7
 //*------------------------------------------------------------------------------
 __inline unsigned int AT91F_PMC_GetMasterClock(
     AT91PS_PMC pPMC,         // \arg pointer to PMC controller

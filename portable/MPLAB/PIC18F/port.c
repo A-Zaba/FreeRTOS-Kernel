@@ -148,12 +148,12 @@ static void prvLowInterrupt( void );
 #define portSAVE_CONTEXT( ucForcedInterruptFlags )                             \
     {                                                                          \
         _asm /* Save the status and WREG registers first, as these will get    \
-             modified by the operations below. */                                                   \
+             modified by the operations below. */                              \
             MOVFF WREG,                                                        \
             PREINC1 MOVFF STATUS,                                              \
             PREINC1 /* Save the INTCON register with the appropriate bits      \
-                    forced if necessary - as described above. */                                            \
-                        MOVFF INTCON,                                          \
+                    forced if necessary - as described above. */               \
+                MOVFF INTCON,                                                  \
             WREG IORLW ucForcedInterruptFlags MOVFF WREG,                      \
             PREINC1 _endasm                                                    \
                                                                                \
@@ -167,7 +167,7 @@ static void prvLowInterrupt( void );
             PREINC1 MOVFF PRODL, PREINC1 MOVFF PCLATU, PREINC1 MOVFF PCLATH,   \
             PREINC1 /* Store the .tempdata and MATH_DATA areas as described    \
                        above. */                                               \
-                        CLRF FSR0L,                                            \
+                CLRF FSR0L,                                                    \
             0 CLRF FSR0H, 0 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,            \
             PREINC1 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,                    \
             PREINC1 MOVFF POSTINC0, PREINC1 MOVFF POSTINC0,                    \
@@ -180,8 +180,8 @@ static void prvLowInterrupt( void );
             PREINC1 MOVFF POSTINC0, PREINC1 MOVFF INDF0, PREINC1 MOVFF FSR0L,  \
             PREINC1 MOVFF FSR0H,                                               \
             PREINC1 /* Store the hardware stack pointer in a temp register     \
-                    before we modify it. */                                                                 \
-                        MOVFF STKPTR,                                          \
+                    before we modify it. */                                    \
+                MOVFF STKPTR,                                                  \
             FSR0L _endasm                                                      \
                                                                                \
             /* Store each address from the hardware stack. */                  \
@@ -222,9 +222,9 @@ static void prvLowInterrupt( void );
             FSR1H                                                              \
                                                                                \
                 /* How many return addresses are there on the hardware stack?  \
-                Discard the first byte as we are pointing to the next free                            \
+                Discard the first byte as we are pointing to the next free     \
                 space. */                                                      \
-                    MOVFF POSTDEC1,                                            \
+                MOVFF POSTDEC1,                                                \
             FSR0L MOVFF POSTDEC1,                                              \
             FSR0L _endasm                                                      \
                                                                                \
@@ -259,13 +259,13 @@ static void prvLowInterrupt( void );
             FSR0H MOVFF POSTDEC1, FSR0L MOVFF POSTDEC1, FSR2H MOVFF POSTDEC1,  \
             FSR2L MOVFF POSTDEC1,                                              \
             BSR /* The next byte is the INTCON register.  Read this into WREG  \
-                as some manipulation is required. */                                                  \
-                    MOVFF POSTDEC1,                                            \
+                as some manipulation is required. */                           \
+                MOVFF POSTDEC1,                                                \
             WREG _endasm                                                       \
                                                                                \
             /* From the INTCON register, only the interrupt enable bits form   \
-            part of the tasks context.  It is perfectly legitimate for another                 \
-            task to have modified any other bits.  We therefore only restore                      \
+            part of the tasks context.  It is perfectly legitimate for another \
+            task to have modified any other bits.  We therefore only restore   \
             the top two bits.                                                  \
             */                                                                 \
             if( WREG & portGLOBAL_INTERRUPT_FLAG )                             \
@@ -278,8 +278,8 @@ static void prvLowInterrupt( void );
         {                                                                      \
             _asm MOVFF POSTDEC1, STATUS MOVFF POSTDEC1,                        \
                 WREG /* Return without effecting interrupts.  The context may  \
-                     have been saved from a critical region. */                                         \
-                         RETURN 0 _endasm                                      \
+                     have been saved from a critical region. */                \
+                    RETURN 0 _endasm                                           \
         }                                                                      \
     }
 /*-----------------------------------------------------------*/

@@ -54,13 +54,13 @@
         PUSH DE PUSH BC
             /* Save the other register banks - only necessary in the GCC port.
              */
-                SEL RB1 PUSH AX PUSH BC PUSH DE PUSH HL SEL RB2 PUSH AX PUSH BC
-                    PUSH DE PUSH HL
-                        /* Registers in bank 3 are for ISR use only so don't
-                           need saving. */
-                            SEL RB0
-                                /* Save the usCriticalNesting value. */
-                                MOVW AX,
+            SEL RB1 PUSH AX PUSH BC PUSH DE PUSH HL SEL RB2 PUSH AX PUSH BC PUSH
+                DE PUSH HL
+                    /* Registers in bank 3 are for ISR use only so don't
+                       need saving. */
+                    SEL RB0
+                        /* Save the usCriticalNesting value. */
+                        MOVW AX,
     !_usCriticalNesting PUSH AX
         /* Save the Stack pointer. */
         MOVW AX,
@@ -68,9 +68,9 @@
     AX
         /* Switch stack pointers. */
         movw sp,
-    #_stack /* Set stack pointer */
+#_stack /* Set stack pointer */
 
-        .endm
+    .endm
 
         /*
          * portRESTORE_CONTEXT MACRO
@@ -89,12 +89,12 @@
         /* Restore the alternative register banks - only necessary in the GCC
         port.  Register bank 3 is dedicated for interrupts use so is not saved
         or restored. */
-            SEL RB2 POP HL POP DE POP BC POP AX SEL RB1 POP HL POP DE POP BC POP
-                AX SEL RB0
-                    /* Restore the necessary general purpose registers. */
-                    POP BC POP DE
-                        /* Restore the ES register. */
-                        POP AX MOV ES,
+        SEL RB2 POP HL POP DE POP BC POP AX SEL RB1 POP HL POP DE POP BC POP AX
+            SEL RB0
+                /* Restore the necessary general purpose registers. */
+                POP BC POP DE
+                    /* Restore the ES register. */
+                    POP AX MOV ES,
     A
         /* Restore the CS register. */
         XCH A,

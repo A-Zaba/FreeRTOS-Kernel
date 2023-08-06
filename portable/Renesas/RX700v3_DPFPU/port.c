@@ -428,10 +428,10 @@ static void prvYieldHandler( void )
          * stack.
          *
          * R15 is saved before it is clobbered. */
-            PUSH.L R15
+        PUSH.L R15
 
-                /* Read the user stack pointer. */
-                MVFC USP,
+            /* Read the user stack pointer. */
+            MVFC USP,
         R15
 
             /* Move the address down to the data being moved. */
@@ -450,11 +450,11 @@ static void prvYieldHandler( void )
 
                 /* All the rest of the registers are saved directly to the user
                    stack. */
-                    SETPSW U
+                SETPSW U
 
-                        /* Save the rest of the general registers (R15 has been
-                           saved already). */
-                            PUSHM R1 -
+                    /* Save the rest of the general registers (R15 has been
+                       saved already). */
+                    PUSHM R1 -
             R14
 
                 /* Save the FPSW and accumulators. */
@@ -506,7 +506,7 @@ static void prvYieldHandler( void )
 
             /* Reset the interrupt mask as no more data structure access is
                required. */
-                MVTIPL #configKERNEL_INTERRUPT_PRIORITY
+            MVTIPL #configKERNEL_INTERRUPT_PRIORITY
 
         /* Load the stack pointer of the task that is now selected as the
          * Running state task from its TCB. */

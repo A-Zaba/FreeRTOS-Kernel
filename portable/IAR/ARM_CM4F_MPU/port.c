@@ -450,8 +450,9 @@ void vPortSVCHandler_C( uint32_t * pulParam ) /* PRIVILEGED_FUNCTION */
 
 #if( configUSE_MPU_WRAPPERS_V1 == 0 )
 
-void vSystemCallEnter( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_FUNCTION
-                                                                 */
+void vSystemCallEnter( uint32_t * pulTaskStack,
+                       uint32_t ulLR ) /* PRIVILEGED_FUNCTION
+                                        */
 {
     extern TaskHandle_t pxCurrentTCB;
     xMPU_SETTINGS * pxMpuSettings;
@@ -554,8 +555,9 @@ void vSystemCallEnter( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_FU
 
 #if( configUSE_MPU_WRAPPERS_V1 == 0 )
 
-void vSystemCallEnter_1( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_FUNCTION
-                                                                   */
+void vSystemCallEnter_1( uint32_t * pulTaskStack,
+                         uint32_t ulLR ) /* PRIVILEGED_FUNCTION
+                                          */
 {
     extern TaskHandle_t pxCurrentTCB;
     xMPU_SETTINGS * pxMpuSettings;
@@ -668,8 +670,9 @@ void vSystemCallEnter_1( uint32_t * pulTaskStack, uint32_t ulLR ) /* PRIVILEGED_
 
 #if( configUSE_MPU_WRAPPERS_V1 == 0 )
 
-void vSystemCallExit( uint32_t * pulSystemCallStack, uint32_t ulLR ) /* PRIVILEGED_FUNCTION
-                                                                      */
+void vSystemCallExit( uint32_t * pulSystemCallStack,
+                      uint32_t ulLR ) /* PRIVILEGED_FUNCTION
+                                       */
 {
     extern TaskHandle_t pxCurrentTCB;
     xMPU_SETTINGS * pxMpuSettings;
@@ -1107,8 +1110,7 @@ static void prvSetupMPU( void )
         portMPU_REGION_BASE_ADDRESS_REG =
             ( ( uint32_t ) __privileged_functions_start__ ) | /* Base address.
                                                                */
-            ( portMPU_REGION_VALID ) |
-            ( portPRIVILEGED_FLASH_REGION );
+            ( portMPU_REGION_VALID ) | ( portPRIVILEGED_FLASH_REGION );
 
         portMPU_REGION_ATTRIBUTE_REG = ( portMPU_REGION_PRIVILEGED_READ_ONLY ) |
                                        ( ( configTEX_S_C_B_FLASH &
@@ -1344,10 +1346,11 @@ void vPortStoreTaskMPUSettings( xMPU_SETTINGS * xMPUSettings,
 }
 /*-----------------------------------------------------------*/
 
-BaseType_t xPortIsAuthorizedToAccessBuffer( const void * pvBuffer,
-                                            uint32_t ulBufferLength,
-                                            uint32_t ulAccessRequested ) /* PRIVILEGED_FUNCTION
-                                                                          */
+BaseType_t xPortIsAuthorizedToAccessBuffer(
+    const void * pvBuffer,
+    uint32_t ulBufferLength,
+    uint32_t ulAccessRequested ) /* PRIVILEGED_FUNCTION
+                                  */
 
 {
     uint32_t i, ulBufferStartAddress, ulBufferEndAddress;

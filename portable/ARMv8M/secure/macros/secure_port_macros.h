@@ -55,9 +55,12 @@
 /**
  * @brief Set the non-secure PRIMASK value.
  */
-#define secureportSET_NON_SECURE_PRIMASK( ulPrimaskValue )                   \
-    __asm volatile( "msr primask_ns, %0" : : "r"( ulPrimaskValue ) : "memor" \
-                                                                     "y" )
+#define secureportSET_NON_SECURE_PRIMASK( ulPrimaskValue ) \
+    __asm volatile( "msr primask_ns, %0"                   \
+                    :                                      \
+                    : "r"( ulPrimaskValue )                \
+                    : "memor"                              \
+                      "y" )
 
 /**
  * @brief Read the PSP value in the given variable.

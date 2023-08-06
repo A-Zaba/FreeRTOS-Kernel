@@ -267,15 +267,15 @@ typedef struct MPU_SETTINGS
 /* Scheduler utilities. */
 
 #define portYIELD()                 __asm { SVC portSVC_YIELD }
-#define portYIELD_WITHIN_API()                                          \
-    {                                                                   \
-        /* Set a PendSV to request a context switch. */                 \
-        portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;                 \
-                                                                        \
-        /* Barriers are normally not required but do ensure the code is \
-         * completely within the specified behaviour for the architecture. */                \
-        __dsb( portSY_FULL_READ_WRITE );                                \
-        __isb( portSY_FULL_READ_WRITE );                                \
+#define portYIELD_WITHIN_API()                                                \
+    {                                                                         \
+        /* Set a PendSV to request a context switch. */                       \
+        portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;                       \
+                                                                              \
+        /* Barriers are normally not required but do ensure the code is       \
+         * completely within the specified behaviour for the architecture. */ \
+        __dsb( portSY_FULL_READ_WRITE );                                      \
+        __isb( portSY_FULL_READ_WRITE );                                      \
     }
 /*-----------------------------------------------------------*/
 

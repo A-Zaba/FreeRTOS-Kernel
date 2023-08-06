@@ -39,7 +39,7 @@
 
             /* If ulInterruptNesting is zero the rest of the task context will
             need saving and a stack switch might be required. */
-                movl ulInterruptNesting,
+            movl ulInterruptNesting,
     % eax test % eax, % eax jne 2f
 
                                   /* Interrupts are not nested, so save the rest

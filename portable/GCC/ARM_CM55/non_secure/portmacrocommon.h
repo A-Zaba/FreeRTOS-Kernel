@@ -120,10 +120,11 @@ extern void vClearInterruptMask(
     uint32_t ulMask ) /* __attribute__(( naked )) PRIVILEGED_FUNCTION */;
 
 #if( configENABLE_TRUSTZONE == 1 )
-extern void vPortAllocateSecureContext( uint32_t ulSecureStackSize ); /* __attribute__
-                                                                         ((
-                                                                         naked
-                                                                         )) */
+extern void vPortAllocateSecureContext(
+    uint32_t ulSecureStackSize ); /* __attribute__
+                                     ((
+                                     naked
+                                     )) */
 extern void vPortFreeSecureContext(
     uint32_t * pulTCB ) /* __attribute__ (( naked )) PRIVILEGED_FUNCTION */;
 #endif /* configENABLE_TRUSTZONE */

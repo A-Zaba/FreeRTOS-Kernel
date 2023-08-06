@@ -45,34 +45,35 @@ void SecureContext_SaveContextAsm( SecureContext_t * pxSecureContext )
 void SecureContext_LoadContextAsm( SecureContext_t * pxSecureContext )
 {
     /* pxSecureContext value is in r0. */
-    __asm volatile( " .syntax unified                   \n"
-                    "                                   \n"
-                    " mrs r1, ipsr                      \n" /* r1 = IPSR. */
-                    " cbz r1, load_ctx_therad_mode      \n" /* Do nothing if the
-                                                               processor is
-                                                               running in the
-                                                               Thread Mode. */
-                    " ldmia r0!, {r1, r2}               \n" /* r1 =
-                                                               pxSecureContext->pucCurrentStackPointer,
-                                                               r2 =
-                                                               pxSecureContext->pucStackLimit.
-                                                             */
-                    "                                   \n"
+    __asm volatile(
+        " .syntax unified                   \n"
+        "                                   \n"
+        " mrs r1, ipsr                      \n" /* r1 = IPSR. */
+        " cbz r1, load_ctx_therad_mode      \n" /* Do nothing if the
+                                                   processor is
+                                                   running in the
+                                                   Thread Mode. */
+        " ldmia r0!, {r1, r2}               \n" /* r1 =
+                                                   pxSecureContext->pucCurrentStackPointer,
+                                                   r2 =
+                                                   pxSecureContext->pucStackLimit.
+                                                 */
+        "                                   \n"
 #if( configENABLE_MPU == 1 )
-                    " ldmia r1!, {r3}               \n" /* Read CONTROL register
-                                                           value from task's
-                                                           stack. r3 = CONTROL.
-                                                         */
-                    " msr control, r3               \n" /* CONTROL = r3. */
-#endif                                                  /* configENABLE_MPU */
-                    "                                   \n"
-                    " msr psplim, r2                    \n" /* PSPLIM = r2. */
-                    " msr psp, r1                       \n" /* PSP = r1. */
-                    "                                   \n"
-                    " load_ctx_therad_mode:             \n"
-                    "    bx lr                          \n"
-                    "                                   \n" ::
-                        : "r0", "r1", "r2" );
+        " ldmia r1!, {r3}               \n" /* Read CONTROL register
+                                               value from task's
+                                               stack. r3 = CONTROL.
+                                             */
+        " msr control, r3               \n" /* CONTROL = r3. */
+#endif                                      /* configENABLE_MPU */
+        "                                   \n"
+        " msr psplim, r2                    \n" /* PSPLIM = r2. */
+        " msr psp, r1                       \n" /* PSP = r1. */
+        "                                   \n"
+        " load_ctx_therad_mode:             \n"
+        "    bx lr                          \n"
+        "                                   \n" ::
+            : "r0", "r1", "r2" );
 }
 /*-----------------------------------------------------------*/
 

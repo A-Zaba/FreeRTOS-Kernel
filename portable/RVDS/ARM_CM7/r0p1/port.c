@@ -277,8 +277,8 @@ __asm void prvStartFirstTask( void )
              * was used before the scheduler was started - which would otherwise
              * result in the unnecessary leaving of space in the SVC stack for
              * lazy saving of FPU registers. */
-                mov r0,
-        #0 msr control,
+            mov r0,
+# 0 msr control,
         r0
             /* Globally enable interrupts. */
             cpsie i cpsie f dsb isb
@@ -300,7 +300,7 @@ __asm void prvEnableVFP( void ) {
     /* Enable CP10 and CP11 coprocessors, then save back. */
     orr r1,
     r1,
-    #( 0xf << 20 ) str r1,
+#( 0xf << 20 ) str r1,
     [r0] bx r14 nop
     /* *INDENT-ON* */
 } /*-----------------------------------------------------------*/
@@ -478,13 +478,13 @@ __asm void xPortPendSVHandler( void )
             /* Get the location of the current TCB. */
             ldr r3,
         = pxCurrentTCB ldr r2,
-        [r3]
+        [ r3 ]
 
         /* Is the task using the FPU context?  If so, push high vfp registers.
          */
         tst r14,
-        #0x10 it eq vstmdbeq r0 !,
-        { s16 - s31 }
+# 0x10 it eq vstmdbeq r0 !,
+    { s16 - s31 }
 
     /* Save the core registers. */
     stmdb r0 !,
@@ -496,7 +496,7 @@ __asm void xPortPendSVHandler( void )
 
         stmdb sp !,
         { r0, r3 } mov r0,
-        #configMAX_SYSCALL_INTERRUPT_PRIORITY cpsid i msr basepri,
+#configMAX_SYSCALL_INTERRUPT_PRIORITY cpsid i msr basepri,
         r0 dsb isb cpsie i bl vTaskSwitchContext mov r0, #0 msr basepri,
         r0 ldmia sp !,
         { r0, r3 }
@@ -513,7 +513,7 @@ __asm void xPortPendSVHandler( void )
     /* Is the task using the FPU context?  If so, pop the high vfp registers
      * too. */
     tst r14,
-        #0x10 it eq vldmiaeq r0 !,
+# 0x10 it eq vldmiaeq r0 !,
         { s16 - s31 }
 
     msr psp,

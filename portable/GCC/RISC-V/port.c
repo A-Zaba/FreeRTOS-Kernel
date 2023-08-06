@@ -93,15 +93,14 @@ void vPortSetupTimerInterrupt( void ) __attribute__( ( weak ) );
 /* Used to program the machine timer compare register. */
 uint64_t ullNextTime = 0ULL;
 const uint64_t * pullNextTime = &ullNextTime;
-const size_t
-    uxTimerIncrementsForOneTick = ( size_t ) ( ( configCPU_CLOCK_HZ ) /
-                                               ( configTICK_RATE_HZ ) ); /* Assumes
-                                                                            increment
-                                                                            won't
-                                                                            go
-                                                                            over
-                                                                            32-bits.
-                                                                          */
+const size_t uxTimerIncrementsForOneTick =
+    ( size_t ) ( ( configCPU_CLOCK_HZ ) / ( configTICK_RATE_HZ ) ); /* Assumes
+                                                                       increment
+                                                                       won't
+                                                                       go
+                                                                       over
+                                                                       32-bits.
+                                                                     */
 uint32_t const ullMachineTimerCompareRegisterBase = configMTIMECMP_BASE_ADDRESS;
 volatile uint64_t * pullMachineTimerCompareRegister = NULL;
 

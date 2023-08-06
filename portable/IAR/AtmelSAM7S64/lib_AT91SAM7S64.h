@@ -274,7 +274,7 @@ __inline int AT91F_PDC_IsNextRxEmpty( // \return return 1 if transfer is
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_PDC_Open
 //* \brief Open PDC: disable TX and RX reset transfer descriptors, re-enable RX
-//and TX
+// and TX
 //*----------------------------------------------------------------------------
 __inline void AT91F_PDC_Open( AT91PS_PDC pPDC ) // \arg pointer to a PDC
                                                 // controller
@@ -581,7 +581,7 @@ __inline void AT91F_SSC_DisableIt( AT91PS_SSC pSSC,    // \arg pointer to a SSC
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_SSC_ReceiveFrame
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1
-//if PDC has been initialized with Next Buffer, 0 if PDC is busy
+// if PDC has been initialized with Next Buffer, 0 if PDC is busy
 //*----------------------------------------------------------------------------
 __inline unsigned int AT91F_SSC_ReceiveFrame( AT91PS_SSC pSSC,
                                               char * pBuffer,
@@ -599,7 +599,7 @@ __inline unsigned int AT91F_SSC_ReceiveFrame( AT91PS_SSC pSSC,
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_SSC_SendFrame
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1
-//if PDC has been initialized with Next Buffer, 0 if PDC is busy
+// if PDC has been initialized with Next Buffer, 0 if PDC is busy
 //*----------------------------------------------------------------------------
 __inline unsigned int AT91F_SSC_SendFrame( AT91PS_SSC pSSC,
                                            char * pBuffer,
@@ -734,7 +734,7 @@ __inline void AT91F_SPI_CfgMode( AT91PS_SPI pSPI, // pointer to a SPI controller
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_SPI_CfgPCS
 //* \brief Switch to the correct PCS of SPI Mode Register : Fixed Peripheral
-//Selected
+// Selected
 //*----------------------------------------------------------------------------
 __inline void AT91F_SPI_CfgPCS( AT91PS_SPI pSPI,  // pointer to a SPI controller
                                 char PCS_Device ) // PCS of the Device
@@ -747,7 +747,7 @@ __inline void AT91F_SPI_CfgPCS( AT91PS_SPI pSPI,  // pointer to a SPI controller
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_SPI_ReceiveFrame
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1
-//if PDC has been initializaed with Next Buffer, 0 if PDC is busy
+// if PDC has been initializaed with Next Buffer, 0 if PDC is busy
 //*----------------------------------------------------------------------------
 __inline unsigned int AT91F_SPI_ReceiveFrame( AT91PS_SPI pSPI,
                                               char * pBuffer,
@@ -765,7 +765,7 @@ __inline unsigned int AT91F_SPI_ReceiveFrame( AT91PS_SPI pSPI,
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_SPI_SendFrame
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1
-//if PDC has been initializaed with Next Buffer, 0 if PDC is bSPIy
+// if PDC has been initializaed with Next Buffer, 0 if PDC is bSPIy
 //*----------------------------------------------------------------------------
 __inline unsigned int AT91F_SPI_SendFrame( AT91PS_SPI pSPI,
                                            char * pBuffer,
@@ -1208,7 +1208,7 @@ __inline unsigned int AT91F_PMC_GetMCKReg( AT91PS_PMC pPMC ) // \arg pointer to
 //*------------------------------------------------------------------------------
 //* \fn    AT91F_PMC_GetMasterClock
 //* \brief Return master clock in Hz which correponds to processor clock for
-//ARM7
+// ARM7
 //*------------------------------------------------------------------------------
 __inline unsigned int AT91F_PMC_GetMasterClock(
     AT91PS_PMC pPMC,         // \arg pointer to PMC controller
@@ -2511,7 +2511,7 @@ __inline int AT91F_US_GetChar( const AT91PS_USART pUSART )
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_US_SendFrame
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1
-//if PDC has been initializaed with Next Buffer, 0 if PDC is busy
+// if PDC has been initializaed with Next Buffer, 0 if PDC is busy
 //*----------------------------------------------------------------------------
 __inline unsigned int AT91F_US_SendFrame( AT91PS_USART pUSART,
                                           char * pBuffer,
@@ -2529,7 +2529,7 @@ __inline unsigned int AT91F_US_SendFrame( AT91PS_USART pUSART,
 //*----------------------------------------------------------------------------
 //* \fn    AT91F_US_ReceiveFrame
 //* \brief Return 2 if PDC has been initialized with Buffer and Next Buffer, 1
-//if PDC has been initializaed with Next Buffer, 0 if PDC is busy
+// if PDC has been initializaed with Next Buffer, 0 if PDC is busy
 //*----------------------------------------------------------------------------
 __inline unsigned int AT91F_US_ReceiveFrame( AT91PS_USART pUSART,
                                              char * pBuffer,
@@ -2998,8 +2998,9 @@ __inline void AT91F_PWMC_CH2_CfgPIO( void )
     AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA, // PIO controller base address
                          ( ( unsigned int ) AT91C_PA2_PWM2 ), // Peripheral A
                          ( ( unsigned int ) AT91C_PA25_PWM2 ) |
-                             ( ( unsigned int ) AT91C_PA13_PWM2 ) ); // Peripheral
-                                                                     // B
+                             ( ( unsigned int )
+                                   AT91C_PA13_PWM2 ) ); // Peripheral
+                                                        // B
 }
 
 //*----------------------------------------------------------------------------
@@ -3012,8 +3013,9 @@ __inline void AT91F_PWMC_CH1_CfgPIO( void )
     AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA, // PIO controller base address
                          ( ( unsigned int ) AT91C_PA1_PWM1 ), // Peripheral A
                          ( ( unsigned int ) AT91C_PA24_PWM1 ) |
-                             ( ( unsigned int ) AT91C_PA12_PWM1 ) ); // Peripheral
-                                                                     // B
+                             ( ( unsigned int )
+                                   AT91C_PA12_PWM1 ) ); // Peripheral
+                                                        // B
 }
 
 //*----------------------------------------------------------------------------
@@ -3026,8 +3028,9 @@ __inline void AT91F_PWMC_CH0_CfgPIO( void )
     AT91F_PIO_CfgPeriph( AT91C_BASE_PIOA, // PIO controller base address
                          ( ( unsigned int ) AT91C_PA0_PWM0 ), // Peripheral A
                          ( ( unsigned int ) AT91C_PA23_PWM0 ) |
-                             ( ( unsigned int ) AT91C_PA11_PWM0 ) ); // Peripheral
-                                                                     // B
+                             ( ( unsigned int )
+                                   AT91C_PA11_PWM0 ) ); // Peripheral
+                                                        // B
 }
 
 //*----------------------------------------------------------------------------
@@ -3086,8 +3089,9 @@ __inline void AT91F_SPI_CfgPIO( void )
                              ( ( unsigned int ) AT91C_PA10_NPCS2 ) |
                              ( ( unsigned int ) AT91C_PA22_NPCS3 ) |
                              ( ( unsigned int ) AT91C_PA3_NPCS3 ) |
-                             ( ( unsigned int ) AT91C_PA5_NPCS3 ) ); // Peripheral
-                                                                     // B
+                             ( ( unsigned int )
+                                   AT91C_PA5_NPCS3 ) ); // Peripheral
+                                                        // B
 }
 
 //*----------------------------------------------------------------------------
@@ -3121,8 +3125,9 @@ __inline void AT91F_TC2_CfgPIO( void )
                          0,               // Peripheral A
                          ( ( unsigned int ) AT91C_PA26_TIOA2 ) |
                              ( ( unsigned int ) AT91C_PA27_TIOB2 ) |
-                             ( ( unsigned int ) AT91C_PA29_TCLK2 ) ); // Peripheral
-                                                                      // B
+                             ( ( unsigned int )
+                                   AT91C_PA29_TCLK2 ) ); // Peripheral
+                                                         // B
 }
 
 //*----------------------------------------------------------------------------
@@ -3146,8 +3151,9 @@ __inline void AT91F_TC1_CfgPIO( void )
                          0,               // Peripheral A
                          ( ( unsigned int ) AT91C_PA15_TIOA1 ) |
                              ( ( unsigned int ) AT91C_PA16_TIOB1 ) |
-                             ( ( unsigned int ) AT91C_PA28_TCLK1 ) ); // Peripheral
-                                                                      // B
+                             ( ( unsigned int )
+                                   AT91C_PA28_TCLK1 ) ); // Peripheral
+                                                         // B
 }
 
 //*----------------------------------------------------------------------------
@@ -3171,8 +3177,9 @@ __inline void AT91F_TC0_CfgPIO( void )
                          0,               // Peripheral A
                          ( ( unsigned int ) AT91C_PA0_TIOA0 ) |
                              ( ( unsigned int ) AT91C_PA1_TIOB0 ) |
-                             ( ( unsigned int ) AT91C_PA4_TCLK0 ) ); // Peripheral
-                                                                     // B
+                             ( ( unsigned int )
+                                   AT91C_PA4_TCLK0 ) ); // Peripheral
+                                                        // B
 }
 
 //*----------------------------------------------------------------------------

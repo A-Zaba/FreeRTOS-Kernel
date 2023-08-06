@@ -59,12 +59,13 @@
 #define portEXL_BIT        ( 0x00000002 )
 #define portMX_BIT         ( 0x01000000 ) /* Allow access to DSP instructions. */
 #define portCU1_BIT        ( 0x20000000 ) /* enable CP1 for parts with hardware. */
-#define portFR_BIT         ( 0x04000000 ) /* Enable 64 bit floating point registers. \
-                                           */
+#define portFR_BIT                                            \
+    ( 0x04000000 ) /* Enable 64 bit floating point registers. \
+                    */
 
 /* Bits within the CAUSE register. */
-#define portCORE_SW_0      ( 0x00000100 )
-#define portCORE_SW_1      ( 0x00000200 )
+#define portCORE_SW_0 ( 0x00000100 )
+#define portCORE_SW_1 ( 0x00000200 )
 
 /* The EXL bit is set to ensure interrupts do not occur while the context of
 the first task is being restored. */

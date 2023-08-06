@@ -113,7 +113,7 @@ portasmSAVE_ADDITIONAL_REGISTERS /* Defined in
                                     to save any registers unique to the RISC-V
                                     implementation. */
 
-                                     load_x t0,
+    load_x t0,
     pxCurrentTCB /* Load pxCurrentTCB. */
         store_x sp,
     0( t0 ) /* Write sp to first TCB member. */

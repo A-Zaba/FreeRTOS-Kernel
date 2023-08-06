@@ -297,9 +297,9 @@ static void prvStartFirstTask( void )
 
                 /* Restore the registers from the stack of the task pointed to
                 by pxCurrentTCB. */
-                    POP R15 MVTACLO R15     /* Accumulator low 32 bits. */
-                        POP R15 MVTACHI R15 /* Accumulator high 32 bits. */
-                            POPM R1 -
+                POP R15 MVTACLO R15     /* Accumulator low 32 bits. */
+                    POP R15 MVTACHI R15 /* Accumulator high 32 bits. */
+                        POPM R1 -
             R15     /* R1 to R15 - R0 is not included as it is the SP. */
                 RTE /* This pops the remaining registers. */
                     NOP NOP
@@ -373,11 +373,11 @@ static void prvYieldHandler( void )
 
                 /* All the rest of the registers are saved directly to the user
                    stack. */
-                    SETPSW U
+                SETPSW U
 
-                        /* Save the rest of the general registers (R15 has been
-                           saved already). */
-                            PUSHM R1 -
+                    /* Save the rest of the general registers (R15 has been
+                       saved already). */
+                    PUSHM R1 -
             R14
 
                 /* Save the accumulator. */
@@ -410,7 +410,7 @@ static void prvYieldHandler( void )
 
                 /* Restore the context of the new task.  The PSW (Program Status
                 Word) and PC will be popped by the RTE instruction. */
-                    POP R15 MVTACLO R15 POP R15 MVTACHI R15 POPM R1 -
+                POP R15 MVTACLO R15 POP R15 MVTACHI R15 POPM R1 -
             R15 RTE NOP NOP
 }
 /*-----------------------------------------------------------*/

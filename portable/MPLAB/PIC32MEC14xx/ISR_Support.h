@@ -47,7 +47,7 @@
 
         /* Also save s6 and s5 so they can be used.  Any nesting interrupts
         should maintain the values of these registers across the ISR. */
-            sw s6,
+        sw s6,
     44( sp ) sw s5, 40( sp ) sw k1,
     portSTATUS_STACK_LOCATION( sp )
 

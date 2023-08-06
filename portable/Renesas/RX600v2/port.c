@@ -272,10 +272,10 @@ static void prvYieldHandler( void )
         when the interrupt occurred from the interrupt stack to the user stack.
 
         R15 is saved before it is clobbered. */
-            PUSH.L R15
+        PUSH.L R15
 
-                /* Read the user stack pointer. */
-                MVFC USP,
+            /* Read the user stack pointer. */
+            MVFC USP,
         R15
 
             /* Move the address down to the data being moved. */
@@ -296,11 +296,11 @@ static void prvYieldHandler( void )
 
                 /* All the rest of the registers are saved directly to the user
                    stack. */
-                    SETPSW U
+                SETPSW U
 
-                        /* Save the rest of the general registers (R15 has been
-                           saved already). */
-                            PUSHM R1 -
+                    /* Save the rest of the general registers (R15 has been
+                       saved already). */
+                    PUSHM R1 -
             R14
 
                 /* Save the FPSW and accumulators. */
@@ -326,7 +326,7 @@ static void prvYieldHandler( void )
 
             /* Reset the interrupt mask as no more data structure access is
                required. */
-                MVTIPL #configKERNEL_INTERRUPT_PRIORITY
+            MVTIPL #configKERNEL_INTERRUPT_PRIORITY
 
         /* Load the stack pointer of the task that is now selected as the
         Running state task from its TCB. */
@@ -336,7 +336,7 @@ static void prvYieldHandler( void )
 
             /* Restore the context of the new task.  The PSW (Program Status
             Word) and PC will be popped by the RTE instruction. */
-                POP R15 MVTACLO R15,
+            POP R15 MVTACLO R15,
         A0 /* Accumulator low 32 bits. */
             POP R15 MVTACHI R15,
         A0 /* Accumulator high 32 bits. */

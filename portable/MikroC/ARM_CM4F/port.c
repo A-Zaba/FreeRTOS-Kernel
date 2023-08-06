@@ -262,8 +262,8 @@ void vPortSVCHandler( void ) iv IVT_INT_SVCall ics ICS_OFF
         ldr r1, [ r3 ] /* Use pxCurrentTCBConst to get the pxCurrentTCB address. */
         ldr r0, [ r1 ] /* The first item in pxCurrentTCB is the task top of stack. */
         ldm r0 !, ( r4 - r11, r14 ) /* Pop the registers that are not automatically saved
-                             on exception entry and the critical nesting count.
-                           */
+         on exception entry and the critical nesting count.
+       */
         msr psp, r0                /* Restore the task stack pointer. */
         isb
         mov r0, #0
@@ -486,7 +486,7 @@ void xPortPendSVHandler( void ) iv IVT_INT_PendSV ics ICS_OFF
         ldr r2, [ r3 ]
 
         tst r14, #0x10 /* Is the task using the FPU context?  If so, push high vfp
-                 registers. */
+registers. */
         it eq
         vstmdbeq r0 !, ( s16 - s31 )
 
@@ -511,7 +511,7 @@ void xPortPendSVHandler( void ) iv IVT_INT_PendSV ics ICS_OFF
         ldm r0 !, ( r4 - r11, r14 ) /* Pop the core registers. */
 
         tst r14, #0x10 /* Is the task using the FPU context?  If so, pop the high vfp
-                 registers too. */
+registers too. */
         it eq
         vldmiaeq r0 !, ( s16 - s31 )
 

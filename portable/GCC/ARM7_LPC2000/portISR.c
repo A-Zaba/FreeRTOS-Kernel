@@ -154,7 +154,7 @@ void vPortDisableInterruptsFromThumb( void )
                     "MSR    CPSR, R0        \n\t" /* Write back modified value.
                                                    */
                     "LDMIA  SP!, {R0}       \n\t" /* Pop R0. */
-                    "BX     R14" );               /* Return back to thumb.               */
+                    "BX     R14" ); /* Return back to thumb.               */
 }
 
 void vPortEnableInterruptsFromThumb( void )
@@ -165,7 +165,7 @@ void vPortEnableInterruptsFromThumb( void )
                     "MSR    CPSR, R0        \n\t" /* Write back modified value.
                                                    */
                     "LDMIA  SP!, {R0}       \n\t" /* Pop R0. */
-                    "BX     R14" );               /* Return back to thumb.               */
+                    "BX     R14" ); /* Return back to thumb.               */
 }
 
 #endif /* THUMB_INTERWORK */

@@ -27,9 +27,9 @@ EXTERN vTaskSwitchContext EXTERN ulCriticalNesting EXTERN pxCurrentTCB EXTERN
     ;
 Save the LR and SPSR onto the system mode stack before switching to;
 system mode to save the remaining system mode registers SRSDB sp !,
-    #SYS_MODE CPS #SYS_MODE PUSH { R0 - R12, R14 }
+#SYS_MODE CPS #SYS_MODE PUSH{ R0 - R12, R14 }
 
-;
+    ;
 Push the critical nesting count LDR R2, = ulCriticalNesting LDR R1,
                                     [ R2 ] PUSH { R1 }
 

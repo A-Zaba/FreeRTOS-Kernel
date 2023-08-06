@@ -51,11 +51,12 @@ BaseType_t MPU_xTaskDelayUntil( TickType_t * const pxPreviousWakeTime,
                                 const TickType_t xTimeIncrement )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-BaseType_t MPU_xTaskDelayUntil( TickType_t * const pxPreviousWakeTime,
-                                const TickType_t xTimeIncrement ) /* __attribute__
-                                                                     (( naked ))
-                                                                     FREERTOS_SYSTEM_CALL
-                                                                   */
+BaseType_t MPU_xTaskDelayUntil(
+    TickType_t * const pxPreviousWakeTime,
+    const TickType_t xTimeIncrement ) /* __attribute__
+                                         (( naked ))
+                                         FREERTOS_SYSTEM_CALL
+                                       */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xTaskDelayUntilImpl                       \n"
@@ -81,7 +82,7 @@ BaseType_t MPU_xTaskDelayUntil( TickType_t * const pxPreviousWakeTime,
 }
 
     #endif /* if ( INCLUDE_xTaskDelayUntil == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( INCLUDE_xTaskAbortDelay == 1 )
 
@@ -116,7 +117,7 @@ BaseType_t MPU_xTaskAbortDelay( TaskHandle_t xTask ) /* __attribute__ (( naked
 }
 
     #endif /* if ( INCLUDE_xTaskAbortDelay == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( INCLUDE_vTaskDelay == 1 )
 
@@ -151,17 +152,18 @@ void MPU_vTaskDelay( const TickType_t xTicksToDelay ) /* __attribute__ (( naked
 }
 
     #endif /* if ( INCLUDE_vTaskDelay == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( INCLUDE_uxTaskPriorityGet == 1 )
 
 UBaseType_t MPU_uxTaskPriorityGet( const TaskHandle_t xTask )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-UBaseType_t MPU_uxTaskPriorityGet( const TaskHandle_t xTask ) /* __attribute__
-                                                                 (( naked ))
-                                                                 FREERTOS_SYSTEM_CALL
-                                                               */
+UBaseType_t MPU_uxTaskPriorityGet(
+    const TaskHandle_t xTask ) /* __attribute__
+                                  (( naked ))
+                                  FREERTOS_SYSTEM_CALL
+                                */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_uxTaskPriorityGetImpl                     \n"
@@ -187,7 +189,7 @@ UBaseType_t MPU_uxTaskPriorityGet( const TaskHandle_t xTask ) /* __attribute__
 }
 
     #endif /* if ( INCLUDE_uxTaskPriorityGet == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( INCLUDE_eTaskGetState == 1 )
 
@@ -221,7 +223,7 @@ eTaskState MPU_eTaskGetState( TaskHandle_t xTask ) /* __attribute__ (( naked ))
 }
 
     #endif /* if ( INCLUDE_eTaskGetState == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TRACE_FACILITY == 1 )
 
@@ -261,7 +263,7 @@ void MPU_vTaskGetInfo( TaskHandle_t xTask,
 }
 
     #endif /* if ( configUSE_TRACE_FACILITY == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( INCLUDE_xTaskGetIdleTaskHandle == 1 )
 
@@ -295,7 +297,7 @@ TaskHandle_t MPU_xTaskGetIdleTaskHandle( void ) /* __attribute__ (( naked ))
 }
 
     #endif /* if ( INCLUDE_xTaskGetIdleTaskHandle == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( INCLUDE_vTaskSuspend == 1 )
 
@@ -330,7 +332,7 @@ void MPU_vTaskSuspend( TaskHandle_t xTaskToSuspend ) /* __attribute__ (( naked
 }
 
     #endif /* if ( INCLUDE_vTaskSuspend == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( INCLUDE_vTaskSuspend == 1 )
 
@@ -459,7 +461,7 @@ configRUN_TIME_COUNTER_TYPE MPU_ulTaskGetRunTimeCounter(
 }
 
     #endif /* if ( ( configGENERATE_RUN_TIME_STATS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configGENERATE_RUN_TIME_STATS == 1 )
 
@@ -494,7 +496,7 @@ configRUN_TIME_COUNTER_TYPE MPU_ulTaskGetRunTimePercent(
 }
 
     #endif /* if ( ( configGENERATE_RUN_TIME_STATS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( ( configGENERATE_RUN_TIME_STATS == 1 ) && \
          ( INCLUDE_xTaskGetIdleTaskHandle == 1 ) )
@@ -530,7 +532,7 @@ configRUN_TIME_COUNTER_TYPE MPU_ulTaskGetIdleRunTimePercent(
 
     #endif /* if ( ( configGENERATE_RUN_TIME_STATS == 1 ) && ( \
               INCLUDE_xTaskGetIdleTaskHandle == 1 ) ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( ( configGENERATE_RUN_TIME_STATS == 1 ) && \
          ( INCLUDE_xTaskGetIdleTaskHandle == 1 ) )
@@ -566,7 +568,7 @@ configRUN_TIME_COUNTER_TYPE MPU_ulTaskGetIdleRunTimeCounter(
 
     #endif /* if ( ( configGENERATE_RUN_TIME_STATS == 1 ) && ( \
               INCLUDE_xTaskGetIdleTaskHandle == 1 ) ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_APPLICATION_TASK_TAG == 1 )
 
@@ -603,7 +605,7 @@ void MPU_vTaskSetApplicationTaskTag(
 }
 
     #endif /* if ( configUSE_APPLICATION_TASK_TAG == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_APPLICATION_TASK_TAG == 1 )
 
@@ -637,7 +639,7 @@ TaskHookFunction_t MPU_xTaskGetApplicationTaskTag(
 }
 
     #endif /* if ( configUSE_APPLICATION_TASK_TAG == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configNUM_THREAD_LOCAL_STORAGE_POINTERS != 0 )
 
@@ -646,12 +648,13 @@ void MPU_vTaskSetThreadLocalStoragePointer( TaskHandle_t xTaskToSet,
                                             void * pvValue )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-void MPU_vTaskSetThreadLocalStoragePointer( TaskHandle_t xTaskToSet,
-                                            BaseType_t xIndex,
-                                            void * pvValue ) /* __attribute__ ((
-                                                                naked ))
-                                                                FREERTOS_SYSTEM_CALL
-                                                              */
+void MPU_vTaskSetThreadLocalStoragePointer(
+    TaskHandle_t xTaskToSet,
+    BaseType_t xIndex,
+    void * pvValue ) /* __attribute__ ((
+                        naked ))
+                        FREERTOS_SYSTEM_CALL
+                      */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_vTaskSetThreadLocalStoragePointerImpl     \n"
@@ -677,7 +680,7 @@ void MPU_vTaskSetThreadLocalStoragePointer( TaskHandle_t xTaskToSet,
 }
 
     #endif /* if ( configNUM_THREAD_LOCAL_STORAGE_POINTERS != 0 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configNUM_THREAD_LOCAL_STORAGE_POINTERS != 0 )
 
@@ -713,7 +716,7 @@ void * MPU_pvTaskGetThreadLocalStoragePointer(
 }
 
     #endif /* if ( configNUM_THREAD_LOCAL_STORAGE_POINTERS != 0 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TRACE_FACILITY == 1 )
 
@@ -755,17 +758,18 @@ UBaseType_t MPU_uxTaskGetSystemState(
 }
 
     #endif /* if ( configUSE_TRACE_FACILITY == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( INCLUDE_uxTaskGetStackHighWaterMark == 1 )
 
 UBaseType_t MPU_uxTaskGetStackHighWaterMark( TaskHandle_t xTask )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-UBaseType_t MPU_uxTaskGetStackHighWaterMark( TaskHandle_t xTask ) /* __attribute__
-                                                                     (( naked ))
-                                                                     FREERTOS_SYSTEM_CALL
-                                                                   */
+UBaseType_t MPU_uxTaskGetStackHighWaterMark(
+    TaskHandle_t xTask ) /* __attribute__
+                            (( naked ))
+                            FREERTOS_SYSTEM_CALL
+                          */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_uxTaskGetStackHighWaterMarkImpl           \n"
@@ -791,7 +795,7 @@ UBaseType_t MPU_uxTaskGetStackHighWaterMark( TaskHandle_t xTask ) /* __attribute
 }
 
     #endif /* if ( INCLUDE_uxTaskGetStackHighWaterMark == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( INCLUDE_uxTaskGetStackHighWaterMark2 == 1 )
 
@@ -825,7 +829,7 @@ configSTACK_DEPTH_TYPE MPU_uxTaskGetStackHighWaterMark2(
 }
 
     #endif /* if ( INCLUDE_uxTaskGetStackHighWaterMark2 == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( ( INCLUDE_xTaskGetCurrentTaskHandle == 1 ) || \
          ( configUSE_MUTEXES == 1 ) )
@@ -861,7 +865,7 @@ TaskHandle_t MPU_xTaskGetCurrentTaskHandle( void ) /* __attribute__ (( naked ))
 
     #endif /* if ( ( INCLUDE_xTaskGetCurrentTaskHandle == 1 ) || ( \
               configUSE_MUTEXES == 1 ) ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( INCLUDE_xTaskGetSchedulerState == 1 )
 
@@ -900,10 +904,11 @@ BaseType_t MPU_xTaskGetSchedulerState( void ) /* __attribute__ (( naked ))
 void MPU_vTaskSetTimeOutState( TimeOut_t * const pxTimeOut )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-void MPU_vTaskSetTimeOutState( TimeOut_t * const pxTimeOut ) /* __attribute__ ((
-                                                                naked ))
-                                                                FREERTOS_SYSTEM_CALL
-                                                              */
+void MPU_vTaskSetTimeOutState(
+    TimeOut_t * const pxTimeOut ) /* __attribute__ ((
+                                     naked ))
+                                     FREERTOS_SYSTEM_CALL
+                                   */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_vTaskSetTimeOutStateImpl                  \n"
@@ -1003,7 +1008,7 @@ BaseType_t MPU_xTaskGenericNotify(
 }
 
     #endif /* if ( configUSE_TASK_NOTIFICATIONS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TASK_NOTIFICATIONS == 1 )
 
@@ -1014,14 +1019,15 @@ BaseType_t MPU_xTaskGenericNotifyWait( UBaseType_t uxIndexToWaitOn,
                                        TickType_t xTicksToWait )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-BaseType_t MPU_xTaskGenericNotifyWait( UBaseType_t uxIndexToWaitOn,
-                                       uint32_t ulBitsToClearOnEntry,
-                                       uint32_t ulBitsToClearOnExit,
-                                       uint32_t * pulNotificationValue,
-                                       TickType_t xTicksToWait ) /* __attribute__
-                                                                    (( naked ))
-                                                                    FREERTOS_SYSTEM_CALL
-                                                                  */
+BaseType_t MPU_xTaskGenericNotifyWait(
+    UBaseType_t uxIndexToWaitOn,
+    uint32_t ulBitsToClearOnEntry,
+    uint32_t ulBitsToClearOnExit,
+    uint32_t * pulNotificationValue,
+    TickType_t xTicksToWait ) /* __attribute__
+                                 (( naked ))
+                                 FREERTOS_SYSTEM_CALL
+                               */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xTaskGenericNotifyWaitImpl                \n"
@@ -1047,7 +1053,7 @@ BaseType_t MPU_xTaskGenericNotifyWait( UBaseType_t uxIndexToWaitOn,
 }
 
     #endif /* if ( configUSE_TASK_NOTIFICATIONS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TASK_NOTIFICATIONS == 1 )
 
@@ -1056,12 +1062,13 @@ uint32_t MPU_ulTaskGenericNotifyTake( UBaseType_t uxIndexToWaitOn,
                                       TickType_t xTicksToWait )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-uint32_t MPU_ulTaskGenericNotifyTake( UBaseType_t uxIndexToWaitOn,
-                                      BaseType_t xClearCountOnExit,
-                                      TickType_t xTicksToWait ) /* __attribute__
-                                                                   (( naked ))
-                                                                   FREERTOS_SYSTEM_CALL
-                                                                 */
+uint32_t MPU_ulTaskGenericNotifyTake(
+    UBaseType_t uxIndexToWaitOn,
+    BaseType_t xClearCountOnExit,
+    TickType_t xTicksToWait ) /* __attribute__
+                                 (( naked ))
+                                 FREERTOS_SYSTEM_CALL
+                               */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_ulTaskGenericNotifyTakeImpl               \n"
@@ -1087,7 +1094,7 @@ uint32_t MPU_ulTaskGenericNotifyTake( UBaseType_t uxIndexToWaitOn,
 }
 
     #endif /* if ( configUSE_TASK_NOTIFICATIONS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TASK_NOTIFICATIONS == 1 )
 
@@ -1124,7 +1131,7 @@ BaseType_t MPU_xTaskGenericNotifyStateClear(
 }
 
     #endif /* if ( configUSE_TASK_NOTIFICATIONS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TASK_NOTIFICATIONS == 1 )
 
@@ -1133,13 +1140,14 @@ uint32_t MPU_ulTaskGenericNotifyValueClear( TaskHandle_t xTask,
                                             uint32_t ulBitsToClear )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-uint32_t MPU_ulTaskGenericNotifyValueClear( TaskHandle_t xTask,
-                                            UBaseType_t uxIndexToClear,
-                                            uint32_t ulBitsToClear ) /* __attribute__
-                                                                        (( naked
-                                                                        ))
-                                                                        FREERTOS_SYSTEM_CALL
-                                                                      */
+uint32_t MPU_ulTaskGenericNotifyValueClear(
+    TaskHandle_t xTask,
+    UBaseType_t uxIndexToClear,
+    uint32_t ulBitsToClear ) /* __attribute__
+                                (( naked
+                                ))
+                                FREERTOS_SYSTEM_CALL
+                              */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_ulTaskGenericNotifyValueClearImpl         \n"
@@ -1173,14 +1181,15 @@ BaseType_t MPU_xQueueGenericSend( QueueHandle_t xQueue,
                                   const BaseType_t xCopyPosition )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-BaseType_t MPU_xQueueGenericSend( QueueHandle_t xQueue,
-                                  const void * const pvItemToQueue,
-                                  TickType_t xTicksToWait,
-                                  const BaseType_t xCopyPosition ) /* __attribute__
-                                                                      (( naked
-                                                                      ))
-                                                                      FREERTOS_SYSTEM_CALL
-                                                                    */
+BaseType_t MPU_xQueueGenericSend(
+    QueueHandle_t xQueue,
+    const void * const pvItemToQueue,
+    TickType_t xTicksToWait,
+    const BaseType_t xCopyPosition ) /* __attribute__
+                                        (( naked
+                                        ))
+                                        FREERTOS_SYSTEM_CALL
+                                      */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xQueueGenericSendImpl                     \n"
@@ -1209,11 +1218,12 @@ BaseType_t MPU_xQueueGenericSend( QueueHandle_t xQueue,
 UBaseType_t MPU_uxQueueMessagesWaiting( const QueueHandle_t xQueue )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-UBaseType_t MPU_uxQueueMessagesWaiting( const QueueHandle_t xQueue ) /* __attribute__
-                                                                        (( naked
-                                                                        ))
-                                                                        FREERTOS_SYSTEM_CALL
-                                                                      */
+UBaseType_t MPU_uxQueueMessagesWaiting(
+    const QueueHandle_t xQueue ) /* __attribute__
+                                    (( naked
+                                    ))
+                                    FREERTOS_SYSTEM_CALL
+                                  */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_uxQueueMessagesWaitingImpl                \n"
@@ -1242,11 +1252,12 @@ UBaseType_t MPU_uxQueueMessagesWaiting( const QueueHandle_t xQueue ) /* __attrib
 UBaseType_t MPU_uxQueueSpacesAvailable( const QueueHandle_t xQueue )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-UBaseType_t MPU_uxQueueSpacesAvailable( const QueueHandle_t xQueue ) /* __attribute__
-                                                                        (( naked
-                                                                        ))
-                                                                        FREERTOS_SYSTEM_CALL
-                                                                      */
+UBaseType_t MPU_uxQueueSpacesAvailable(
+    const QueueHandle_t xQueue ) /* __attribute__
+                                    (( naked
+                                    ))
+                                    FREERTOS_SYSTEM_CALL
+                                  */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_uxQueueSpacesAvailableImpl                \n"
@@ -1347,11 +1358,12 @@ BaseType_t MPU_xQueueSemaphoreTake( QueueHandle_t xQueue,
                                     TickType_t xTicksToWait )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-BaseType_t MPU_xQueueSemaphoreTake( QueueHandle_t xQueue,
-                                    TickType_t xTicksToWait ) /* __attribute__
-                                                                 (( naked ))
-                                                                 FREERTOS_SYSTEM_CALL
-                                                               */
+BaseType_t MPU_xQueueSemaphoreTake(
+    QueueHandle_t xQueue,
+    TickType_t xTicksToWait ) /* __attribute__
+                                 (( naked ))
+                                 FREERTOS_SYSTEM_CALL
+                               */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xQueueSemaphoreTakeImpl                   \n"
@@ -1383,10 +1395,11 @@ BaseType_t MPU_xQueueSemaphoreTake( QueueHandle_t xQueue,
 TaskHandle_t MPU_xQueueGetMutexHolder( QueueHandle_t xSemaphore )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-TaskHandle_t MPU_xQueueGetMutexHolder( QueueHandle_t xSemaphore ) /* __attribute__
-                                                                     (( naked ))
-                                                                     FREERTOS_SYSTEM_CALL
-                                                                   */
+TaskHandle_t MPU_xQueueGetMutexHolder(
+    QueueHandle_t xSemaphore ) /* __attribute__
+                                  (( naked ))
+                                  FREERTOS_SYSTEM_CALL
+                                */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xQueueGetMutexHolderImpl                  \n"
@@ -1413,7 +1426,7 @@ TaskHandle_t MPU_xQueueGetMutexHolder( QueueHandle_t xSemaphore ) /* __attribute
 
     #endif /* if ( ( configUSE_MUTEXES == 1 ) && ( \
               INCLUDE_xSemaphoreGetMutexHolder == 1 ) ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_RECURSIVE_MUTEXES == 1 )
 
@@ -1421,12 +1434,13 @@ BaseType_t MPU_xQueueTakeMutexRecursive( QueueHandle_t xMutex,
                                          TickType_t xTicksToWait )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-BaseType_t MPU_xQueueTakeMutexRecursive( QueueHandle_t xMutex,
-                                         TickType_t xTicksToWait ) /* __attribute__
-                                                                      (( naked
-                                                                      ))
-                                                                      FREERTOS_SYSTEM_CALL
-                                                                    */
+BaseType_t MPU_xQueueTakeMutexRecursive(
+    QueueHandle_t xMutex,
+    TickType_t xTicksToWait ) /* __attribute__
+                                 (( naked
+                                 ))
+                                 FREERTOS_SYSTEM_CALL
+                               */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xQueueTakeMutexRecursiveImpl              \n"
@@ -1452,17 +1466,18 @@ BaseType_t MPU_xQueueTakeMutexRecursive( QueueHandle_t xMutex,
 }
 
     #endif /* if ( configUSE_RECURSIVE_MUTEXES == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_RECURSIVE_MUTEXES == 1 )
 
 BaseType_t MPU_xQueueGiveMutexRecursive( QueueHandle_t pxMutex )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-BaseType_t MPU_xQueueGiveMutexRecursive( QueueHandle_t pxMutex ) /* __attribute__
-                                                                    (( naked ))
-                                                                    FREERTOS_SYSTEM_CALL
-                                                                  */
+BaseType_t MPU_xQueueGiveMutexRecursive(
+    QueueHandle_t pxMutex ) /* __attribute__
+                               (( naked ))
+                               FREERTOS_SYSTEM_CALL
+                             */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xQueueGiveMutexRecursiveImpl              \n"
@@ -1488,7 +1503,7 @@ BaseType_t MPU_xQueueGiveMutexRecursive( QueueHandle_t pxMutex ) /* __attribute_
 }
 
     #endif /* if ( configUSE_RECURSIVE_MUTEXES == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_QUEUE_SETS == 1 )
 
@@ -1525,7 +1540,7 @@ QueueSetMemberHandle_t MPU_xQueueSelectFromSet(
 }
 
     #endif /* if ( configUSE_QUEUE_SETS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_QUEUE_SETS == 1 )
 
@@ -1533,11 +1548,12 @@ BaseType_t MPU_xQueueAddToSet( QueueSetMemberHandle_t xQueueOrSemaphore,
                                QueueSetHandle_t xQueueSet )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-BaseType_t MPU_xQueueAddToSet( QueueSetMemberHandle_t xQueueOrSemaphore,
-                               QueueSetHandle_t xQueueSet ) /* __attribute__ ((
-                                                               naked ))
-                                                               FREERTOS_SYSTEM_CALL
-                                                             */
+BaseType_t MPU_xQueueAddToSet(
+    QueueSetMemberHandle_t xQueueOrSemaphore,
+    QueueSetHandle_t xQueueSet ) /* __attribute__ ((
+                                    naked ))
+                                    FREERTOS_SYSTEM_CALL
+                                  */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xQueueAddToSetImpl                        \n"
@@ -1563,7 +1579,7 @@ BaseType_t MPU_xQueueAddToSet( QueueSetMemberHandle_t xQueueOrSemaphore,
 }
 
     #endif /* if ( configUSE_QUEUE_SETS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configQUEUE_REGISTRY_SIZE > 0 )
 
@@ -1598,7 +1614,7 @@ void MPU_vQueueAddToRegistry( QueueHandle_t xQueue,
 }
 
     #endif /* if ( configQUEUE_REGISTRY_SIZE > 0 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configQUEUE_REGISTRY_SIZE > 0 )
 
@@ -1634,7 +1650,7 @@ void MPU_vQueueUnregisterQueue( QueueHandle_t xQueue ) /* __attribute__ (( naked
 }
 
     #endif /* if ( configQUEUE_REGISTRY_SIZE > 0 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configQUEUE_REGISTRY_SIZE > 0 )
 
@@ -1670,17 +1686,18 @@ const char * MPU_pcQueueGetName( QueueHandle_t xQueue ) /* __attribute__ ((
 }
 
     #endif /* if ( configQUEUE_REGISTRY_SIZE > 0 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
 
 void * MPU_pvTimerGetTimerID( const TimerHandle_t xTimer )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-void * MPU_pvTimerGetTimerID( const TimerHandle_t xTimer ) /* __attribute__ ((
-                                                              naked ))
-                                                              FREERTOS_SYSTEM_CALL
-                                                            */
+void * MPU_pvTimerGetTimerID(
+    const TimerHandle_t xTimer ) /* __attribute__ ((
+                                    naked ))
+                                    FREERTOS_SYSTEM_CALL
+                                  */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_pvTimerGetTimerIDImpl                     \n"
@@ -1706,7 +1723,7 @@ void * MPU_pvTimerGetTimerID( const TimerHandle_t xTimer ) /* __attribute__ ((
 }
 
     #endif /* if ( configUSE_TIMERS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
 
@@ -1741,17 +1758,18 @@ void MPU_vTimerSetTimerID( TimerHandle_t xTimer,
 }
 
     #endif /* if ( configUSE_TIMERS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
 
 BaseType_t MPU_xTimerIsTimerActive( TimerHandle_t xTimer )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-BaseType_t MPU_xTimerIsTimerActive( TimerHandle_t xTimer ) /* __attribute__ ((
-                                                              naked ))
-                                                              FREERTOS_SYSTEM_CALL
-                                                            */
+BaseType_t MPU_xTimerIsTimerActive(
+    TimerHandle_t xTimer ) /* __attribute__ ((
+                              naked ))
+                              FREERTOS_SYSTEM_CALL
+                            */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xTimerIsTimerActiveImpl                   \n"
@@ -1777,7 +1795,7 @@ BaseType_t MPU_xTimerIsTimerActive( TimerHandle_t xTimer ) /* __attribute__ ((
 }
 
     #endif /* if ( configUSE_TIMERS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
 
@@ -1813,7 +1831,7 @@ TaskHandle_t MPU_xTimerGetTimerDaemonTaskHandle( void ) /* __attribute__ ((
 }
 
     #endif /* if ( configUSE_TIMERS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
 
@@ -1857,7 +1875,7 @@ BaseType_t MPU_xTimerGenericCommandFromTask(
 }
 
     #endif /* if ( configUSE_TIMERS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
 
@@ -1893,7 +1911,7 @@ const char * MPU_pcTimerGetName( TimerHandle_t xTimer ) /* __attribute__ ((
 }
 
     #endif /* if ( configUSE_TIMERS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
 
@@ -1901,11 +1919,12 @@ void MPU_vTimerSetReloadMode( TimerHandle_t xTimer,
                               const BaseType_t uxAutoReload )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-void MPU_vTimerSetReloadMode( TimerHandle_t xTimer,
-                              const BaseType_t uxAutoReload ) /* __attribute__
-                                                                 (( naked ))
-                                                                 FREERTOS_SYSTEM_CALL
-                                                               */
+void MPU_vTimerSetReloadMode(
+    TimerHandle_t xTimer,
+    const BaseType_t uxAutoReload ) /* __attribute__
+                                       (( naked ))
+                                       FREERTOS_SYSTEM_CALL
+                                     */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_vTimerSetReloadModeImpl                   \n"
@@ -1931,17 +1950,18 @@ void MPU_vTimerSetReloadMode( TimerHandle_t xTimer,
 }
 
     #endif /* if ( configUSE_TIMERS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
 
 BaseType_t MPU_xTimerGetReloadMode( TimerHandle_t xTimer )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-BaseType_t MPU_xTimerGetReloadMode( TimerHandle_t xTimer ) /* __attribute__ ((
-                                                              naked ))
-                                                              FREERTOS_SYSTEM_CALL
-                                                            */
+BaseType_t MPU_xTimerGetReloadMode(
+    TimerHandle_t xTimer ) /* __attribute__ ((
+                              naked ))
+                              FREERTOS_SYSTEM_CALL
+                            */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xTimerGetReloadModeImpl                   \n"
@@ -1967,17 +1987,18 @@ BaseType_t MPU_xTimerGetReloadMode( TimerHandle_t xTimer ) /* __attribute__ ((
 }
 
     #endif /* if ( configUSE_TIMERS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
 
 UBaseType_t MPU_uxTimerGetReloadMode( TimerHandle_t xTimer )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-UBaseType_t MPU_uxTimerGetReloadMode( TimerHandle_t xTimer ) /* __attribute__ ((
-                                                                naked ))
-                                                                FREERTOS_SYSTEM_CALL
-                                                              */
+UBaseType_t MPU_uxTimerGetReloadMode(
+    TimerHandle_t xTimer ) /* __attribute__ ((
+                              naked ))
+                              FREERTOS_SYSTEM_CALL
+                            */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_uxTimerGetReloadModeImpl                  \n"
@@ -2003,7 +2024,7 @@ UBaseType_t MPU_uxTimerGetReloadMode( TimerHandle_t xTimer ) /* __attribute__ ((
 }
 
     #endif /* if ( configUSE_TIMERS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
 
@@ -2039,17 +2060,18 @@ TickType_t MPU_xTimerGetPeriod( TimerHandle_t xTimer ) /* __attribute__ (( naked
 }
 
     #endif /* if ( configUSE_TIMERS == 1 ) */
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TIMERS == 1 )
 
 TickType_t MPU_xTimerGetExpiryTime( TimerHandle_t xTimer )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-TickType_t MPU_xTimerGetExpiryTime( TimerHandle_t xTimer ) /* __attribute__ ((
-                                                              naked ))
-                                                              FREERTOS_SYSTEM_CALL
-                                                            */
+TickType_t MPU_xTimerGetExpiryTime(
+    TimerHandle_t xTimer ) /* __attribute__ ((
+                              naked ))
+                              FREERTOS_SYSTEM_CALL
+                            */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xTimerGetExpiryTimeImpl                   \n"
@@ -2084,14 +2106,15 @@ EventBits_t MPU_xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
                                      TickType_t xTicksToWait )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-EventBits_t MPU_xEventGroupWaitBits( EventGroupHandle_t xEventGroup,
-                                     const EventBits_t uxBitsToWaitFor,
-                                     const BaseType_t xClearOnExit,
-                                     const BaseType_t xWaitForAllBits,
-                                     TickType_t xTicksToWait ) /* __attribute__
-                                                                  (( naked ))
-                                                                  FREERTOS_SYSTEM_CALL
-                                                                */
+EventBits_t MPU_xEventGroupWaitBits(
+    EventGroupHandle_t xEventGroup,
+    const EventBits_t uxBitsToWaitFor,
+    const BaseType_t xClearOnExit,
+    const BaseType_t xWaitForAllBits,
+    TickType_t xTicksToWait ) /* __attribute__
+                                 (( naked ))
+                                 FREERTOS_SYSTEM_CALL
+                               */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xEventGroupWaitBitsImpl                   \n"
@@ -2154,12 +2177,13 @@ EventBits_t MPU_xEventGroupSetBits( EventGroupHandle_t xEventGroup,
                                     const EventBits_t uxBitsToSet )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-EventBits_t MPU_xEventGroupSetBits( EventGroupHandle_t xEventGroup,
-                                    const EventBits_t uxBitsToSet ) /* __attribute__
-                                                                       (( naked
-                                                                       ))
-                                                                       FREERTOS_SYSTEM_CALL
-                                                                     */
+EventBits_t MPU_xEventGroupSetBits(
+    EventGroupHandle_t xEventGroup,
+    const EventBits_t uxBitsToSet ) /* __attribute__
+                                       (( naked
+                                       ))
+                                       FREERTOS_SYSTEM_CALL
+                                     */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xEventGroupSetBitsImpl                    \n"
@@ -2191,13 +2215,14 @@ EventBits_t MPU_xEventGroupSync( EventGroupHandle_t xEventGroup,
                                  TickType_t xTicksToWait )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-EventBits_t MPU_xEventGroupSync( EventGroupHandle_t xEventGroup,
-                                 const EventBits_t uxBitsToSet,
-                                 const EventBits_t uxBitsToWaitFor,
-                                 TickType_t xTicksToWait ) /* __attribute__ ((
-                                                              naked ))
-                                                              FREERTOS_SYSTEM_CALL
-                                                            */
+EventBits_t MPU_xEventGroupSync(
+    EventGroupHandle_t xEventGroup,
+    const EventBits_t uxBitsToSet,
+    const EventBits_t uxBitsToWaitFor,
+    TickType_t xTicksToWait ) /* __attribute__ ((
+                                 naked ))
+                                 FREERTOS_SYSTEM_CALL
+                               */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xEventGroupSyncImpl                       \n"
@@ -2228,10 +2253,11 @@ EventBits_t MPU_xEventGroupSync( EventGroupHandle_t xEventGroup,
 UBaseType_t MPU_uxEventGroupGetNumber( void * xEventGroup )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-UBaseType_t MPU_uxEventGroupGetNumber( void * xEventGroup ) /* __attribute__ ((
-                                                               naked ))
-                                                               FREERTOS_SYSTEM_CALL
-                                                             */
+UBaseType_t MPU_uxEventGroupGetNumber(
+    void * xEventGroup ) /* __attribute__ ((
+                            naked ))
+                            FREERTOS_SYSTEM_CALL
+                          */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_uxEventGroupGetNumberImpl                 \n"
@@ -2257,7 +2283,7 @@ UBaseType_t MPU_uxEventGroupGetNumber( void * xEventGroup ) /* __attribute__ ((
 }
 
     #endif /*( configUSE_TRACE_FACILITY == 1 )*/
-/*-----------------------------------------------------------*/
+           /*-----------------------------------------------------------*/
 
     #if( configUSE_TRACE_FACILITY == 1 )
 
@@ -2265,11 +2291,12 @@ void MPU_vEventGroupSetNumber( void * xEventGroup,
                                UBaseType_t uxEventGroupNumber )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-void MPU_vEventGroupSetNumber( void * xEventGroup,
-                               UBaseType_t uxEventGroupNumber ) /* __attribute__
-                                                                   (( naked ))
-                                                                   FREERTOS_SYSTEM_CALL
-                                                                 */
+void MPU_vEventGroupSetNumber(
+    void * xEventGroup,
+    UBaseType_t uxEventGroupNumber ) /* __attribute__
+                                        (( naked ))
+                                        FREERTOS_SYSTEM_CALL
+                                      */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_vEventGroupSetNumberImpl                  \n"
@@ -2341,13 +2368,14 @@ size_t MPU_xStreamBufferReceive( StreamBufferHandle_t xStreamBuffer,
                                  TickType_t xTicksToWait )
     __attribute__( ( naked ) ) FREERTOS_SYSTEM_CALL;
 
-size_t MPU_xStreamBufferReceive( StreamBufferHandle_t xStreamBuffer,
-                                 void * pvRxData,
-                                 size_t xBufferLengthBytes,
-                                 TickType_t xTicksToWait ) /* __attribute__ ((
-                                                              naked ))
-                                                              FREERTOS_SYSTEM_CALL
-                                                            */
+size_t MPU_xStreamBufferReceive(
+    StreamBufferHandle_t xStreamBuffer,
+    void * pvRxData,
+    size_t xBufferLengthBytes,
+    TickType_t xTicksToWait ) /* __attribute__ ((
+                                 naked ))
+                                 FREERTOS_SYSTEM_CALL
+                               */
 {
     __asm volatile( " .syntax unified                                       \n"
                     " .extern MPU_xStreamBufferReceiveImpl                  \n"

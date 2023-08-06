@@ -1232,8 +1232,7 @@ static void prvSetupMPU( void )
         portMPU_REGION_BASE_ADDRESS_REG =
             ( ( uint32_t ) __privileged_functions_start__ ) | /* Base address.
                                                                */
-            ( portMPU_REGION_VALID ) |
-            ( portPRIVILEGED_FLASH_REGION );
+            ( portMPU_REGION_VALID ) | ( portPRIVILEGED_FLASH_REGION );
 
         portMPU_REGION_ATTRIBUTE_REG = ( portMPU_REGION_PRIVILEGED_READ_ONLY ) |
                                        ( portMPU_REGION_CACHEABLE_BUFFERABLE ) |
@@ -1497,10 +1496,11 @@ void vPortStoreTaskMPUSettings( xMPU_SETTINGS * xMPUSettings,
 }
 /*-----------------------------------------------------------*/
 
-BaseType_t xPortIsAuthorizedToAccessBuffer( const void * pvBuffer,
-                                            uint32_t ulBufferLength,
-                                            uint32_t ulAccessRequested ) /* PRIVILEGED_FUNCTION
-                                                                          */
+BaseType_t xPortIsAuthorizedToAccessBuffer(
+    const void * pvBuffer,
+    uint32_t ulBufferLength,
+    uint32_t ulAccessRequested ) /* PRIVILEGED_FUNCTION
+                                  */
 
 {
     uint32_t i, ulBufferStartAddress, ulBufferEndAddress;
