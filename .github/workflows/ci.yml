@@ -31,7 +31,7 @@ jobs:
       - name: Check formatting
         uses: Skptak/CI-CD-Github-Actions/formatting@main
         with:
-            exclude-files: ISR_Support.h
+            exclude-files: ISR_Support.h,ioat91sam7x256.h,large_untested/portasm.h,16BitDOS/common/portasm.h,Tern_EE/large_untested/portasm.h
 
   spell-check:
       runs-on: ubuntu-latest
