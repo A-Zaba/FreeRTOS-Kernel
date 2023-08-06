@@ -262,8 +262,8 @@ void vPortSVCHandler( void ) iv IVT_INT_SVCall ics ICS_OFF
         ldr r1, [ r3 ] /* Use pxCurrentTCBConst to get the pxCurrentTCB address. */
         ldr r0, [ r1 ] /* The first item in pxCurrentTCB is the task top of stack. */
         ldm r0 !, ( r4 - r11, r14 ) /* Pop the registers that are not automatically saved
-         on exception entry and the critical nesting count.
-       */
+on exception entry and the critical nesting count.
+*/
         msr psp, r0                /* Restore the task stack pointer. */
         isb
         mov r0, #0
