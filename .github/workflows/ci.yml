@@ -42,17 +42,6 @@ jobs:
           uses: Skptak/CI-CD-Github-Actions/rust-spell-check@main
           with:
             path: ./
-            exclude-dirs: portable, ThirdParty, docs
-
-        - name: Run spellings check of MemMang
-          uses: Skptak/CI-CD-Github-Actions/rust-spell-check@main
-          with:
-            path: ./portable/MemMang
-
-        - name: Run spellings check of MemMang
-          uses: Skptak/CI-CD-Github-Actions/rust-spell-check@main
-          with:
-            path: ./portable/MemMang
 
   link-verifier:
     runs-on: ubuntu-latest
@@ -61,3 +50,5 @@ jobs:
         uses: actions/checkout@v3
       - name: Link Verificication
         uses: Skptak/CI-CD-Github-Actions/link-verifier@main
+        with:
+          exclude-dirs: ThirdParty
