@@ -598,7 +598,6 @@ SetNextTx
 SetRTT
 SetRttIncINT
 SetTx
-Soren@darwin23.0 [11:34] ~/repos/FreeRTOS-Forks/FreeRTOS-Kernel
 Synopsys
 SysTick
 SysTickIsrHandler
